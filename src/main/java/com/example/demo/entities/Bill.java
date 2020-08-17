@@ -1,44 +1,42 @@
 package com.example.demo.entities;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "bill")
 public class Bill{
     @Id
-    @Column(name = "billId")
-    private int billId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private int userId;
-
-    @Column(name = "amount")
-    private double internet;
-
-    @Column(name = "billType")
-    private String billType;
-
-    @Column(name = "number")
-    private int number;
-
-    @Column(name = "location")
-    private String location;
 
     @Column(name = "date")
     private Date date;
 
+    @Column(name = "amount")
+    private double amount;
+
+    @Column(name = "type")
+    private String type;
+
+    @Column(name = "number")
+    private String number;
+
+    @Column(name = "location")
+    private String location;
+
     public Bill() {
     }
 
-    public int getBillId() {
-        return billId;
+    public int getId() {
+        return id;
     }
 
-    public void setBillId(int billId) {
-        this.billId = billId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getUserId() {
@@ -49,27 +47,27 @@ public class Bill{
         this.userId = userId;
     }
 
-    public double getInternet() {
-        return internet;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setInternet(double internet) {
-        this.internet = internet;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
-    public String getBillType() {
-        return billType;
+    public String getType() {
+        return type;
     }
 
-    public void setBillType(String billType) {
-        this.billType = billType;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public int getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 

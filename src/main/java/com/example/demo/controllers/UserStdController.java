@@ -26,7 +26,7 @@ public class UserStdController {
         return userStdRepository.findAll();
     }
     @GetMapping("/userstds/{id}")
-    public ResponseEntity<UserStd> getUserStdById(@PathVariable(value = "1") int userId)
+    public ResponseEntity<UserStd> getUserStdById(@PathVariable("id") final int userId)
     {
         UserStd user = userStdRepository.findById(userId).get();
         return ResponseEntity.ok().body(user);
@@ -37,13 +37,13 @@ public class UserStdController {
         userStdRepository.save(userStd);
     }
     @PutMapping("/userstds/{id}")
-    public void edit(@RequestBody UserStd userStd, @PathVariable Integer id)
+    public void edit(@RequestBody UserStd userStd, @PathVariable("id") final Integer id)
     {
         UserStd existedUser = userStdRepository.findById(id).get();
         userStdRepository.save(existedUser);
     }
     @DeleteMapping("/userstds/{id}")
-    public void delete (@PathVariable Integer id)
+    public void delete (@PathVariable("id") final Integer id)
     {
         userStdRepository.deleteById(id);
     }

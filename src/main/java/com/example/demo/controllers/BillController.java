@@ -26,10 +26,10 @@ public class BillController {
         return billRepository.findAll();
     }
     @GetMapping("/bills/{id}")
-    public ResponseEntity<Bill> getBillById(@PathVariable(value = "1") int userId)
+    public ResponseEntity<Bill> getBillById(@PathVariable("id") final int billId)
     {
-        Bill user = billRepository.findById(userId).get();
-        return ResponseEntity.ok().body(user);
+        Bill bill = billRepository.findById(billId).get();
+        return ResponseEntity.ok().body(bill);
     }
     @PostMapping("/bills")
     public void add(@RequestBody Bill bill)
@@ -37,13 +37,13 @@ public class BillController {
         billRepository.save(bill);
     }
     @PutMapping("/bills/{id}")
-    public void edit(@RequestBody Bill bill, @PathVariable Integer id)
+    public void edit(@RequestBody Bill bill, @PathVariable ("id") final Integer id)
     {
-        Bill existedUser = billRepository.findById(id).get();
-        billRepository.save(existedUser);
+        Bill existedBill = billRepository.findById(id).get();
+        billRepository.save(existedBill);
     }
     @DeleteMapping("/bills/{id}")
-    public void delete (@PathVariable Integer id)
+    public void delete (@PathVariable ("id") final Integer id)
     {
         billRepository.deleteById(id);
     }

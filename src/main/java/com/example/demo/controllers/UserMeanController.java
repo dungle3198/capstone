@@ -22,11 +22,11 @@ public class UserMeanController {
     }
 
     @GetMapping("/usermeans")
-    public List<UserMean> userMeanss(){
+    public List<UserMean> userMeans(){
         return userMeanRepository.findAll();
     }
     @GetMapping("/usermeans/{id}")
-    public ResponseEntity<UserMean> getUserMeanById(@PathVariable(value = "1") int userId)
+    public ResponseEntity<UserMean> getUserMeanById(@PathVariable("id") final int userId)
     {
         UserMean user = userMeanRepository.findById(userId).get();
         return ResponseEntity.ok().body(user);
@@ -37,13 +37,13 @@ public class UserMeanController {
         userMeanRepository.save(userMean);
     }
     @PutMapping("/usermeans/{id}")
-    public void edit(@RequestBody UserMean userMean, @PathVariable Integer id)
+    public void edit(@RequestBody UserMean userMean, @PathVariable("id") final Integer id)
     {
         UserMean existedUser = userMeanRepository.findById(id).get();
         userMeanRepository.save(existedUser);
     }
     @DeleteMapping("/usermeans/{id}")
-    public void delete (@PathVariable Integer id)
+    public void delete (@PathVariable("id") final Integer id)
     {
         userMeanRepository.deleteById(id);
     }

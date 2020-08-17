@@ -25,7 +25,7 @@ public class UserController {
 		return userRepository.findAll();
 	}
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable(value = "1") int userId)
+	public ResponseEntity<User> getUserById(@PathVariable("id") final int userId)
 	{
 		User user = userRepository.findById(userId).get();
 		return ResponseEntity.ok().body(user);
@@ -36,13 +36,13 @@ public class UserController {
 		userRepository.save(user);
 	}
 	@PutMapping("/users/{id}")
-	public void add(@RequestBody User user, @PathVariable Integer id)
+	public void edit(@RequestBody User user, @PathVariable("id") final Integer id)
 	{
 		User existedUser = userRepository.findById(id).get();
 		userRepository.save(existedUser);
 	}
 	@DeleteMapping("/users/{id}")
-	public void delete (@PathVariable Integer id)
+	public void delete (@PathVariable("id") final Integer id)
 	{
 		userRepository.deleteById(id);
 	}
