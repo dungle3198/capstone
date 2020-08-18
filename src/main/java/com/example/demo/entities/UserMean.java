@@ -34,6 +34,11 @@ public class UserMean {
     public int getId() {
         return id;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public double getElectricity() {
         return electricity;
     }
