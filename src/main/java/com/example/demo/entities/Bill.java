@@ -1,6 +1,9 @@
 package com.example.demo.entities;
+
+
 import javax.persistence.*;
 import java.util.Date;
+
 
 @Entity
 @Table(name = "bill")
@@ -10,8 +13,9 @@ public class Bill{
     @Column(name = "id")
     private int id;
 
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "date")
     private Date date;
@@ -39,12 +43,12 @@ public class Bill{
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public double getAmount() {
@@ -86,4 +90,5 @@ public class Bill{
     public void setDate(Date date) {
         this.date = date;
     }
+
 }

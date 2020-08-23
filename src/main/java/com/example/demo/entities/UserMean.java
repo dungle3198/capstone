@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "user_mean")
@@ -71,14 +72,14 @@ public class UserMean {
         this.gas = gas;
     }
 
-    public double calculateMean(double [] arrays, String billType)
+    public double calculateMean(List<Double> arrays, String billType)
     {
         double sum = 0;
         for(double value : arrays)
         {
             sum += value;
         }
-        double mean = sum/ arrays.length;
+        double mean = sum/ arrays.size();
         switch (billType)
         {
             case "internet":

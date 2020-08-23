@@ -1,6 +1,8 @@
 package com.example.demo.entities;
 import javax.persistence.*;
 import java.lang.Math;
+import java.util.List;
+
 @Entity
 @Table(name = "user_std")
 public class UserStd{
@@ -72,11 +74,11 @@ public class UserStd{
         this.gas = gas;
     }
 
-    public double calculateStd(double [] arrays, double mean ,String billType)
+    public double calculateStd(List<Double> arrays, double mean , String billType)
     {
         double result = 0;
         double sum = 0;
-        int n = arrays.length - 1;
+        int n = arrays.size() - 1;
         for(double value : arrays)
         {
             sum += (value-mean) * (value - mean);

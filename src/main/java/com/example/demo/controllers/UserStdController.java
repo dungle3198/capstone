@@ -43,19 +43,6 @@ public class UserStdController {
     }
 
     @CrossOrigin
-    @PutMapping("/userstds/{id}")
-    public void edit(@RequestBody UserStd userStd, @PathVariable("id") final Integer id)
-    {
-        UserStd existedUser = userStdRepository.findById(id).get();
-        existedUser.setId(userStd.getId());
-        existedUser.setElectricity(userStd.getElectricity());
-        existedUser.setGas(userStd.getGas());
-        existedUser.setInternet(userStd.getInternet());
-        existedUser.setWater(userStd.getWater());
-        userStdRepository.save(existedUser);
-    }
-
-    @CrossOrigin
     @DeleteMapping("/userstds/{id}")
     public void delete (@PathVariable("id") final Integer id)
     {

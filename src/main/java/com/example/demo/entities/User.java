@@ -1,11 +1,11 @@
 package com.example.demo.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -20,6 +20,9 @@ public class User {
 
 	@Column(name = "last_name")
 	private String last_name;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	List<Bill> bills = new ArrayList<>();
 
 	public User() {
 	}
@@ -46,5 +49,14 @@ public class User {
 
 	public void setLast_name(String last_name) {
 		this.last_name = last_name;
+	}
+
+	@JsonIgnore
+	public List<Bill> getBills() {
+		return bills;
+	}
+
+	public void setBills(List<Bill> bills) {
+		this.bills = bills;
 	}
 }
