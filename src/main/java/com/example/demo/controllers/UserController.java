@@ -3,6 +3,8 @@ package com.example.demo.controllers;
 import java.util.List;
 
 
+import com.example.demo.entities.UserMean;
+import com.example.demo.entities.UserStd;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,12 @@ public class UserController {
 	@PostMapping("/users")
 	public void add(@RequestBody User user)
 	{
+		UserMean userMean = new UserMean();
+		UserStd userStd = new UserStd();
+		user.setUserMean(userMean);
+		user.setUserStd(userStd);
+		userMean.setUser(user);
+		userStd.setUser(user);
 		userRepository.save(user);
 	}
 
