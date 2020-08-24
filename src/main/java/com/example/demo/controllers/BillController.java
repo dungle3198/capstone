@@ -108,17 +108,12 @@ public class BillController {
                     amounts.add(bill.getAmount());
                 }
             }
-            System.out.println("amount" + amounts.size());
-            if (!amounts.isEmpty()) {
-                UserMean userMean = userMeanRepository.findById(userId).get();
-                UserStd userStd = userStdRepository.findById(userId).get();
-                Double mean = userMean.calculateMean(amounts, newBill.getType().toLowerCase());
-                Double std = userStd.calculateStd(amounts, mean, newBill.getType().toLowerCase());
-                System.out.println(mean);
-                System.out.println(userMean.getGas());
-                editMean(userMean, userId);
-                editStd(userStd, userId);
-            }
+            UserMean userMean = userMeanRepository.findById(1).get();
+            UserStd userStd = userStdRepository.findById(1).get();
+            Double mean = userMean.calculateMean(newBill);
+            Double std = userStd.calculateStd(amounts, mean, newBill.getType().toLowerCase());
+            editMean(userMean, 1);
+            editStd(userStd, 1);
         }
     }
 
