@@ -21,6 +21,30 @@ public class UserMean {
 
     @Column(name = "gas")
     private double gas;
+
+    @Column(name = "totalElectricity")
+    private double totalElectricity;
+
+    @Column(name = "totalInternet")
+    private double totalInternet;
+
+    @Column(name = "totalWater")
+    private double totalWater;
+
+    @Column(name = "totalyGas")
+    private double totalGas;
+
+    @Column(name = "amountElectricity")
+    private double amountElectricity;
+
+    @Column(name = "amountInternet")
+    private double amountInternet;
+
+    @Column(name = "amountWater")
+    private double amountWater;
+
+    @Column(name = "amountGas")
+    private double amountGas;
     public UserMean()
     {
 
@@ -31,6 +55,14 @@ public class UserMean {
         this.internet = 0;
         this.water = 0;
         this.gas = 0;
+        this.amountElectricity = 0;
+        this.amountInternet = 0;
+        this.amountGas = 0;
+        this.amountWater = 0;
+        this.totalInternet =0;
+        this.totalElectricity =0;
+        this.totalGas = 0;
+        this.totalWater = 0;
     }
     public int getId() {
         return id;
@@ -71,30 +103,31 @@ public class UserMean {
     public void setGas(double gas) {
         this.gas = gas;
     }
-
-    public double calculateMean(List<Double> arrays, String billType)
-    {
-        double sum = 0;
-        for(double value : arrays)
-        {
-            sum += value;
-        }
-        double mean = sum/ arrays.size();
-        switch (billType)
+    public void addBill(Bill bill) {
+        double Mean = 0;
+        switch (bill.getType())
         {
             case "internet":
-                setInternet(mean);
+                totalInternet += bill.getAmount();
+                amountInternet ++;
+                setElectricity(totalInternet/amountInternet);
                 break;
             case "water":
-                setWater(mean);
+                totalWater += bill.getAmount();
+                amountWater ++;
+                setElectricity(totalWater/amountWater);
                 break;
             case "gas":
-                setGas(mean);
+                totalGas += bill.getAmount();
+                amountGas ++;
+                setElectricity(totalGas/amountGas);
                 break;
             case "electricity":
-                setElectricity(mean);
+                totalElectricity += bill.getAmount();
+                amountElectricity ++;
+                setElectricity(totalElectricity/amountElectricity);
                 break;
         }
-        return mean;
     }
+
 }

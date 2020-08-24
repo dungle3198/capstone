@@ -83,7 +83,7 @@ public class UserStd{
         {
             sum += (value-mean) * (value - mean);
         }
-        result = Math.sqrt(sum/n);
+        result = Math.sqrt(sum/(n-1));
         switch (billType)
         {
             case "internet":
