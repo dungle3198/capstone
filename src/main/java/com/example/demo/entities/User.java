@@ -15,6 +15,12 @@ public class User {
 	@Column(name = "id")
 	private Integer id;
 
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	private UserMean userMean;
+
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	private UserStd userStd;
+
 	@Column(name = "first_name")
 	private String first_name;
 
@@ -33,6 +39,24 @@ public class User {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	@JsonIgnore
+	public UserMean getUserMean() {
+		return userMean;
+	}
+
+	public void setUserMean(UserMean userMean) {
+		this.userMean = userMean;
+	}
+
+	@JsonIgnore
+	public UserStd getUserStd() {
+		return userStd;
+	}
+
+	public void setUserStd(UserStd userStd) {
+		this.userStd = userStd;
 	}
 
 	public String getFirst_name() {

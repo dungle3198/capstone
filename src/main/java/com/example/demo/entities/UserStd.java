@@ -1,4 +1,6 @@
 package com.example.demo.entities;
+import com.fasterxml.jackson.annotation.JacksonInject;
+
 import javax.persistence.*;
 import java.lang.Math;
 import java.util.List;
@@ -23,13 +25,10 @@ public class UserStd{
     @Column(name = "gas")
     private double gas;
 
-    public UserStd(int id) {
-        this.id = id;
-        this.electricity = 0;
-        this.internet = 0;
-        this.water = 0;
-        this.gas = 0;
-    }
+    @OneToOne (optional = false)
+    @JoinColumn (name = "user_id", nullable = false)
+    private User user;
+
     public UserStd()
     {
 
@@ -42,12 +41,20 @@ public class UserStd{
         this.id = id;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public double getElectricity() {
         return electricity;
     }
 
     public void setElectricity(double electricity) {
-        this.electricity = electricity;
+        this.electricity = 0;
     }
 
     public double getInternet() {
@@ -55,7 +62,7 @@ public class UserStd{
     }
 
     public void setInternet(double internet) {
-        this.internet = internet;
+        this.internet = 0;
     }
 
     public double getWater() {
@@ -63,7 +70,7 @@ public class UserStd{
     }
 
     public void setWater(double water) {
-        this.water = water;
+        this.water = 0;
     }
 
     public double getGas() {
@@ -71,7 +78,7 @@ public class UserStd{
     }
 
     public void setGas(double gas) {
-        this.gas = gas;
+        this.gas = 0;
     }
 
     public double calculateStd(List<Double> arrays, double mean , String billType)
