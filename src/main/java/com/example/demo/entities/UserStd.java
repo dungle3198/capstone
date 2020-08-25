@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.lang.Math;
@@ -33,6 +34,38 @@ public class UserStd{
     {
 
     }
+
+    public UserStd (int id){
+        this.electricity = 0;
+        this.internet = 0;
+        this.water = 0;
+        this.gas = 0;
+    }
+
+    public void calculateStd(List<Double> amounts, double mean , String type)
+    {
+        double variance = amounts.stream()
+                .map(i -> i - mean)
+                .map(i -> i*i)
+                .mapToDouble(i -> i).average().orElse(0.0);
+        double std = Math.sqrt(variance);
+        switch (type.toLowerCase())
+        {
+            case "internet":
+                setInternet(std);
+                break;
+            case "water":
+                setWater(std);
+                break;
+            case "gas":
+                setGas(std);
+                break;
+            case "electricity":
+                setElectricity(std);
+                break;
+        }
+    }
+
     public int getId() {
         return id;
     }
@@ -41,6 +74,7 @@ public class UserStd{
         this.id = id;
     }
 
+    @JsonIgnore
     public User getUser() {
         return user;
     }
@@ -54,7 +88,7 @@ public class UserStd{
     }
 
     public void setElectricity(double electricity) {
-        this.electricity = 0;
+        this.electricity = electricity;
     }
 
     public double getInternet() {
@@ -62,7 +96,7 @@ public class UserStd{
     }
 
     public void setInternet(double internet) {
-        this.internet = 0;
+        this.internet = internet;
     }
 
     public double getWater() {
@@ -70,7 +104,7 @@ public class UserStd{
     }
 
     public void setWater(double water) {
-        this.water = 0;
+        this.water = water;
     }
 
     public double getGas() {
@@ -78,34 +112,7 @@ public class UserStd{
     }
 
     public void setGas(double gas) {
-        this.gas = 0;
+        this.gas = gas;
     }
 
-    public double calculateStd(List<Double> arrays, double mean , String billType)
-    {
-        double result = 0;
-        double sum = 0;
-        int n = arrays.size() - 1;
-        for(double value : arrays)
-        {
-            sum += (value-mean) * (value - mean);
-        }
-        result = Math.sqrt(sum/(n-1));
-        switch (billType)
-        {
-            case "internet":
-                setInternet(result);
-                break;
-            case "water":
-                setWater(result);
-                break;
-            case "gas":
-                setGas(result);
-                break;
-            case "electricity":
-                setElectricity(result);
-                break;
-        }
-        return result;
-    }
 }

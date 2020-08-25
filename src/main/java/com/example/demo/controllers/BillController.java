@@ -67,26 +67,26 @@ public class BillController {
     @PutMapping("/usermeans/{id}")
     public void editMean(@RequestBody UserMean userMean, @PathVariable("id") final Integer id)
     {
-        UserMean existedUser = userMeanRepository.findById(id).get();
-        existedUser.setId(userMean.getId());
-        existedUser.setElectricity(userMean.getElectricity());
-        existedUser.setGas(userMean.getGas());
-        existedUser.setInternet(userMean.getInternet());
-        existedUser.setWater(userMean.getWater());
-        userMeanRepository.save(existedUser);
+        UserMean existedMean = userMeanRepository.findById(id).get();
+        existedMean.setId(userMean.getId());
+        existedMean.setElectricity(userMean.getElectricity());
+        existedMean.setGas(userMean.getGas());
+        existedMean.setInternet(userMean.getInternet());
+        existedMean.setWater(userMean.getWater());
+        userMeanRepository.save(existedMean);
     }
 
     @CrossOrigin
     @PutMapping("/userstds/{id}")
     public void editStd(@RequestBody UserStd userStd, @PathVariable("id") final Integer id)
     {
-        UserStd existedUser = userStdRepository.findById(id).get();
-        existedUser.setId(userStd.getId());
-        existedUser.setElectricity(userStd.getElectricity());
-        existedUser.setGas(userStd.getGas());
-        existedUser.setInternet(userStd.getInternet());
-        existedUser.setWater(userStd.getWater());
-        userStdRepository.save(existedUser);
+        UserStd existedStd = userStdRepository.findById(id).get();
+        existedStd.setId(userStd.getId());
+        existedStd.setElectricity(userStd.getElectricity());
+        existedStd.setGas(userStd.getGas());
+        existedStd.setInternet(userStd.getInternet());
+        existedStd.setWater(userStd.getWater());
+        userStdRepository.save(existedStd);
     }
 
     @CrossOrigin
@@ -97,23 +97,13 @@ public class BillController {
             throw new IndexOutOfBoundsException();
         }
         else {
+            User user = userRepository.findById(newBill.getUser().getId()).get();
+            newBill.setUser(user);
             billRepository.save(newBill);
-            Integer userId = newBill.getUser().getId();
-            List<Bill> bills = getBillByUserId(userId);
-            System.out.println(bills.toString());
-            List<Double> amounts = new ArrayList<>();
-            System.out.println("id" + userId);
-            for (Bill bill : bills) {
-                if (bill.getType().equalsIgnoreCase(newBill.getType())) {
-                    amounts.add(bill.getAmount());
-                }
-            }
-            UserMean userMean = userMeanRepository.findById(1).get();
-            UserStd userStd = userStdRepository.findById(1).get();
-            Double mean = userMean.calculateMean(newBill);
-            Double std = userStd.calculateStd(amounts, mean, newBill.getType().toLowerCase());
-            editMean(userMean, 1);
-            editStd(userStd, 1);
+            UserMean userMean = (UserMean) newBill.extract().get(0);
+            UserStd userStd = (UserStd) newBill.extract().get(1);
+            editMean(userMean, userMean.getId());
+            editStd(userStd, userStd.getId());
         }
     }
 
@@ -124,14 +114,19 @@ public class BillController {
             throw new IndexOutOfBoundsException();
         } else {
             Bill existedBill = billRepository.findById(id).get();
+            User user = userRepository.findById(bill.getUser().getId()).get();
             existedBill.setId(bill.getId());
-            existedBill.setUser(bill.getUser());
+            existedBill.setUser(user);
             existedBill.setDate(bill.getDate());
             existedBill.setAmount(bill.getAmount());
             existedBill.setNumber(bill.getNumber());
             existedBill.setLocation(bill.getLocation());
             existedBill.setType(bill.getType());
             billRepository.save(existedBill);
+            UserMean userMean = (UserMean) existedBill.extract().get(0);
+            UserStd userStd = (UserStd) existedBill.extract().get(1);
+            editMean(userMean, userMean.getId());
+            editStd(userStd, userStd.getId());
         }
     }
 

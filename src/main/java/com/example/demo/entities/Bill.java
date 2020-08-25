@@ -2,6 +2,7 @@ package com.example.demo.entities;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,27 @@ public class Bill{
     private String location;
 
     public Bill() {
+    }
+
+    public List<Object> extract (){
+        List<Object> results = new ArrayList<>();
+        List<Bill> bills = getUser().getBills();
+        List<Double> amounts = new ArrayList<>();
+        if (!bills.isEmpty()){
+            for (Bill bill : bills) {
+                if (bill.getType().equalsIgnoreCase(getType())) {
+                    amounts.add(bill.getAmount());
+             }
+            }
+        }
+        else {amounts.add(getAmount());}
+        UserMean userMean = getUser().getUserMean();
+        UserStd userStd = getUser().getUserStd();
+        double mean = userMean.calculateMean(amounts, getType());
+        userStd.calculateStd(amounts, mean, getType());
+        results.add(userMean);
+        results.add(userStd);
+        return results;
     }
 
     public int getId() {

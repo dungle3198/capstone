@@ -23,6 +23,7 @@ public class ClusterMean {
 
     @Column(name = "gas")
     private double gas;
+
     public ClusterMean()
     {
 
@@ -160,7 +161,7 @@ public class ClusterMean {
             for(int j = 0; j < users.size(); j++)
             {
                 UserMean user = users.get(j);
-                if(bill.getUserId() == user.getId())
+                if(bill.getUser().getId() == user.getId())
                 {
                     if(bill.getType() == "electricity")
                     {

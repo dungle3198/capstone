@@ -1,6 +1,8 @@
 package com.example.demo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -13,7 +15,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private Integer id;
+	private int id;
 
 	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
 	private UserMean userMean;
@@ -33,15 +35,14 @@ public class User {
 	public User() {
 	}
 
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	@JsonIgnore
 	public UserMean getUserMean() {
 		return userMean;
 	}
@@ -50,7 +51,6 @@ public class User {
 		this.userMean = userMean;
 	}
 
-	@JsonIgnore
 	public UserStd getUserStd() {
 		return userStd;
 	}

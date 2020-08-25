@@ -47,6 +47,7 @@ public class UserController {
 		userMean.setUser(user);
 		userStd.setUser(user);
 		userRepository.save(user);
+		System.out.println(user.getUserMean().getId());
 	}
 
 	@CrossOrigin
@@ -54,9 +55,15 @@ public class UserController {
 	public void edit(@RequestBody User user, @PathVariable("id") final Integer id)
 	{
 		User existedUser = userRepository.findById(id).get();
+		UserMean userMean = user.getUserMean();
+		UserStd userStd = user.getUserStd();
 		existedUser.setId(user.getId());
 		existedUser.setFirst_name(user.getFirst_name());
 		existedUser.setLast_name(user.getLast_name());
+		existedUser.setUserMean(userMean);
+		existedUser.setUserStd(userStd);
+		userMean.setUser(existedUser);
+		userStd.setUser(existedUser);
 		userRepository.save(existedUser);
 	}
 
