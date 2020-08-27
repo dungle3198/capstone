@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.entities.ClusterMean;
 @Repository
 public interface ClusterMeanRepository extends JpaRepository<ClusterMean, Integer>{
+
 }
