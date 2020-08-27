@@ -44,6 +44,22 @@ public class BillController {
         return user_ids;
     }
 
+    public List<Object> extract (Bill bill){
+        List<Object> results = new ArrayList<>();
+        User user = bill.getUser();
+        List<Double> amounts = billRepository.getBillAmountByUserIdAndType(user.getId(), bill.getType());
+        if (amounts.isEmpty()){
+            amounts.add(bill.getAmount());
+        }
+        UserMean userMean = user.getUserMean();
+        UserStd userStd = user.getUserStd();
+        double mean = userMean.calculateMean(amounts, bill.getType());
+        userStd.calculateStd(amounts, mean, bill.getType());
+        results.add(userMean);
+        results.add(userStd);
+        return results;
+    }
+
     @CrossOrigin
     @GetMapping("/bills")
     public List<Bill> bills(){
@@ -52,17 +68,16 @@ public class BillController {
 
     @CrossOrigin
     @GetMapping("/bills/{id}")
-    public ResponseEntity<Bill> getBillById(@PathVariable("id") final int billId)
+    public ResponseEntity<Bill> getBillById(@PathVariable("id") final int id)
     {
-        Bill bill = billRepository.findById(billId).get();
+        Bill bill = billRepository.findById(id).get();
         return ResponseEntity.ok().body(bill);
     }
 
     @CrossOrigin
     @GetMapping("/bills/user/{id}")
-    public List<Bill> getBillsByUserId(@PathVariable("id") final int userId){
-        User user = userRepository.findById(userId).get();
-        return user.getBills();
+    public List<Bill> getBillsByUserId(@PathVariable("id") final int user_id){
+        return billRepository.getBillsByUserId(user_id);
     }
 
     @CrossOrigin
@@ -102,8 +117,8 @@ public class BillController {
             User user = userRepository.findById(newBill.getUser().getId()).get();
             newBill.setUser(user);
             billRepository.save(newBill);
-            UserMean userMean = (UserMean) newBill.extract().get(0);
-            UserStd userStd = (UserStd) newBill.extract().get(1);
+            UserMean userMean = (UserMean) extract(newBill).get(0);
+            UserStd userStd = (UserStd) extract(newBill).get(1);
             editMean(userMean, userMean.getId());
             editStd(userStd, userStd.getId());
         }
@@ -114,19 +129,20 @@ public class BillController {
     public void edit(@RequestBody Bill bill, @PathVariable ("id") final Integer id) throws ParseException {
         if (!getUserIdList().contains(bill.getUser().getId())) {
             throw new IndexOutOfBoundsException();
-        } else {
+        }
+        else {
             Bill existedBill = billRepository.findById(id).get();
             User user = existedBill.getUser();
             existedBill.setId(bill.getId());
             existedBill.setUser(user);
             existedBill.setDate(bill.getDate());
             existedBill.setAmount(bill.getAmount());
+            existedBill.setType(bill.getType());
             existedBill.setNumber(bill.getNumber());
             existedBill.setLocation(bill.getLocation());
-            existedBill.setType(bill.getType());
             billRepository.save(existedBill);
-            UserMean userMean = (UserMean) existedBill.extract().get(0);
-            UserStd userStd = (UserStd) existedBill.extract().get(1);
+            UserMean userMean = (UserMean) extract(existedBill).get(0);
+            UserStd userStd = (UserStd) extract(existedBill).get(1);
             editMean(userMean, userMean.getId());
             editStd(userStd, userStd.getId());
         }

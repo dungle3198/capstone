@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public interface BillRepository  extends JpaRepository<Bill, Integer>{
-    @Query("select b from bill e where e.user_id = ?1")
-    List<Bill> getBillByUserId(String user_id);
-    @Query("select b from bill e where e.user_id = :user_id and e.type = :type")
-    List<Bill> getBillByUserIdAndType(@Param("user_id")String user_id,@Param("type")String type);
+    @Query("select e from Bill e where e.user.id = ?1")
+    List<Bill> getBillsByUserId(int user_id);
+    @Query("select amount from Bill e where e.user.id = :user_id and e.type = :type")
+    List<Double> getBillAmountByUserIdAndType(@Param("user_id")int user_id,@Param("type")String type);
 }

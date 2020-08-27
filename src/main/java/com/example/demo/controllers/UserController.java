@@ -30,9 +30,9 @@ public class UserController {
 
 	@CrossOrigin
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable("id") final int userId)
+	public ResponseEntity<User> getUserById(@PathVariable("id") final int user_id)
 	{
-		User user = userRepository.findById(userId).get();
+		User user = userRepository.findById(user_id).get();
 		return ResponseEntity.ok().body(user);
 	}
 

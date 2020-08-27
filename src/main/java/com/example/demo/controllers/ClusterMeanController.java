@@ -20,42 +20,41 @@ public class ClusterMeanController {
     }
 
     @CrossOrigin
-    @GetMapping("/ClusterMeans")
+    @GetMapping("/clustermeans")
     public List<ClusterMean> ClusterMeans(){
         return clusterMeanRepository.findAll();
     }
 
     @CrossOrigin
-    @GetMapping("/ClusterMeans/{id}")
-    public ResponseEntity<ClusterMean> getClusterMeanById(@PathVariable("id") final int ClusterMeanId)
+    @GetMapping("/clustermeans/{id}")
+    public ResponseEntity<ClusterMean> getClusterMeanById(@PathVariable("id") final int id)
     {
-        ClusterMean ClusterMean = clusterMeanRepository.findById(ClusterMeanId).get();
-        return ResponseEntity.ok().body(ClusterMean);
+        ClusterMean clusterMean = clusterMeanRepository.findById(id).get();
+        return ResponseEntity.ok().body(clusterMean);
     }
 
     @CrossOrigin
-    @PostMapping("/ClusterMeans")
-    public void add(@RequestBody ClusterMean ClusterMean)
+    @PostMapping("/clustermeans")
+    public void add(@RequestBody ClusterMean clusterMean)
     {
-        clusterMeanRepository.save(ClusterMean);
+        clusterMeanRepository.save(clusterMean);
     }
 
     @CrossOrigin
-    @PutMapping("/ClusterMeans/{id}")
-    public void edit(@RequestBody ClusterMean ClusterMean, @PathVariable("id") final Integer id)
+    @PutMapping("/clustermeans/{id}")
+    public void edit(@RequestBody ClusterMean clusterMean, @PathVariable("id") final Integer id)
     {
         ClusterMean existedClusterMean = clusterMeanRepository.findById(id).get();
-        existedClusterMean.setId(ClusterMean.getId());
-        existedClusterMean.setId(ClusterMean.getId());
-        existedClusterMean.setElectricity(ClusterMean.getElectricity());
-        existedClusterMean.setGas(ClusterMean.getGas());
-        existedClusterMean.setInternet(ClusterMean.getInternet());
-        existedClusterMean.setWater(ClusterMean.getWater());
+        existedClusterMean.setId(clusterMean.getId());
+        existedClusterMean.setElectricity(clusterMean.getElectricity());
+        existedClusterMean.setGas(clusterMean.getGas());
+        existedClusterMean.setInternet(clusterMean.getInternet());
+        existedClusterMean.setWater(clusterMean.getWater());
         clusterMeanRepository.save(existedClusterMean);
     }
 
     @CrossOrigin
-    @DeleteMapping("/ClusterMeans/{id}")
+    @DeleteMapping("/clustermeans/{id}")
     public void delete (@PathVariable("id") final Integer id)
     {
         clusterMeanRepository.deleteById(id);

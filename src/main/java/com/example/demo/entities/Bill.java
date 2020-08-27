@@ -40,27 +40,6 @@ public class Bill{
     public Bill() {
     }
 
-    public List<Object> extract (){
-        List<Object> results = new ArrayList<>();
-        List<Bill> bills = getUser().getBills();
-        List<Double> amounts = new ArrayList<>();
-        if (!bills.isEmpty()){
-            for (Bill bill : bills) {
-                if (bill.getType().equalsIgnoreCase(getType())) {
-                    amounts.add(bill.getAmount());
-             }
-            }
-        }
-        else {amounts.add(getAmount());}
-        UserMean userMean = getUser().getUserMean();
-        UserStd userStd = getUser().getUserStd();
-        double mean = userMean.calculateMean(amounts, getType());
-        userStd.calculateStd(amounts, mean, getType());
-        results.add(userMean);
-        results.add(userStd);
-        return results;
-    }
-
     public int getId() {
         return id;
     }
@@ -109,9 +88,8 @@ public class Bill{
         this.location = location;
     }
 
-    public Date getDate() throws ParseException {
-        DateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-        return formatter.parse(formatter.format(date));
+    public Date getDate()  {
+        return date;
     }
 
     public void setDate(Date date) throws ParseException {

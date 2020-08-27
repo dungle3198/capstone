@@ -29,10 +29,10 @@ public class UserStdController {
 
     @CrossOrigin
     @GetMapping("/userstds/{id}")
-    public ResponseEntity<UserStd> getUserStdById(@PathVariable("id") final int userId)
+    public ResponseEntity<UserStd> getUserStdById(@PathVariable("id") final int user_id)
     {
-        UserStd user = userStdRepository.findById(userId).get();
-        return ResponseEntity.ok().body(user);
+        UserStd userStd = userStdRepository.findById(user_id).get();
+        return ResponseEntity.ok().body(userStd);
     }
 
     @CrossOrigin
@@ -48,5 +48,4 @@ public class UserStdController {
     {
         userStdRepository.deleteById(id);
     }
-
 }

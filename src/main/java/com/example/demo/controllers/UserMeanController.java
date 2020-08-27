@@ -29,10 +29,10 @@ public class UserMeanController {
 
     @CrossOrigin
     @GetMapping("/usermeans/{id}")
-    public ResponseEntity<UserMean> getUserMeanById(@PathVariable("id") final int userId)
+    public ResponseEntity<UserMean> getUserMeanById(@PathVariable("id") final int id)
     {
-        UserMean user = userMeanRepository.findById(userId).get();
-        return ResponseEntity.ok().body(user);
+        UserMean userMean = userMeanRepository.findById(id).get();
+        return ResponseEntity.ok().body(userMean);
     }
 
     @CrossOrigin
@@ -48,5 +48,4 @@ public class UserMeanController {
     {
         userMeanRepository.deleteById(id);
     }
-
 }
