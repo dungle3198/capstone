@@ -2,6 +2,9 @@ package com.example.demo.entities;
 
 
 import javax.persistence.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -106,12 +109,14 @@ public class Bill{
         this.location = location;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getDate() throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        return formatter.parse(formatter.format(date));
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDate(Date date) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        this.date = formatter.parse(formatter.format(date));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,10 +60,11 @@ public class BillController {
 
     @CrossOrigin
     @GetMapping("/bills/user/{id}")
-    public List<Bill> getBillByUserId(@PathVariable("id") final int userId){
+    public List<Bill> getBillsByUserId(@PathVariable("id") final int userId){
         User user = userRepository.findById(userId).get();
         return user.getBills();
     }
+
     @CrossOrigin
     @PutMapping("/usermeans/{id}")
     public void editMean(@RequestBody UserMean userMean, @PathVariable("id") final Integer id)
@@ -109,12 +111,12 @@ public class BillController {
 
     @CrossOrigin
     @PutMapping("/bills/{id}")
-    public void edit(@RequestBody Bill bill, @PathVariable ("id") final Integer id) {
+    public void edit(@RequestBody Bill bill, @PathVariable ("id") final Integer id) throws ParseException {
         if (!getUserIdList().contains(bill.getUser().getId())) {
             throw new IndexOutOfBoundsException();
         } else {
             Bill existedBill = billRepository.findById(id).get();
-            User user = userRepository.findById(bill.getUser().getId()).get();
+            User user = existedBill.getUser();
             existedBill.setId(bill.getId());
             existedBill.setUser(user);
             existedBill.setDate(bill.getDate());
