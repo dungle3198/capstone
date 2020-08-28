@@ -1,7 +1,8 @@
 package com.example.demo.repositories;
+import com.example.demo.entities.WaterMeanMonth;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.example.demo.entities.UserMean;
+
 @Repository
-public interface UserMeanRepository  extends JpaRepository<UserMean, Integer>{
+public interface WaterMeanMonthRepository extends JpaRepository<WaterMeanMonth, Integer> {
 }

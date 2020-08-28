@@ -1,22 +1,15 @@
 package com.example.demo.controllers;
 
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import com.example.demo.entities.*;
+import com.example.demo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.entities.Bill;
-import com.example.demo.entities.User;
-import com.example.demo.entities.UserMean;
-import com.example.demo.entities.UserStd;
-import com.example.demo.repositories.BillRepository;
-import com.example.demo.repositories.UserMeanRepository;
-import com.example.demo.repositories.UserRepository;
-import com.example.demo.repositories.UserStdRepository;
-
 
 
 @RestController
@@ -26,38 +19,61 @@ public class BillController {
     private final UserRepository userRepository;
     private final UserMeanRepository userMeanRepository;
     private final UserStdRepository userStdRepository;
+    private final GasMeanMonthRepository gasMeanMonthRepository;
+    private final InternetMeanMonthRepository internetMeanMonthRepository;
+    private final ElectricityMeanMonthRepository electricityMeanMonthRepository;
+    private final WaterMeanMonthRepository waterMeanMonthRepository;
 
 
     @Autowired
-    public BillController(BillRepository billRepository, UserRepository userRepository, UserMeanRepository userMeanRepository, UserStdRepository userStdRepository) {
+    public BillController(BillRepository billRepository, UserRepository userRepository, UserMeanRepository userMeanRepository, UserStdRepository userStdRepository, GasMeanMonthRepository gasMeanMonthRepository, InternetMeanMonthRepository internetMeanMonthRepository, ElectricityMeanMonthRepository electricityMeanMonthRepository, WaterMeanMonthRepository waterMeanMonthRepository) {
         this.billRepository = billRepository;
         this.userRepository = userRepository;
         this.userMeanRepository = userMeanRepository;
         this.userStdRepository = userStdRepository;
+        this.gasMeanMonthRepository = gasMeanMonthRepository;
+        this.internetMeanMonthRepository = internetMeanMonthRepository;
+        this.electricityMeanMonthRepository = electricityMeanMonthRepository;
+        this.waterMeanMonthRepository = waterMeanMonthRepository;
     }
 
-    public List<Integer> getUserIdList(){
-        List<Integer> user_ids = new ArrayList<>();
-        for (User user: userRepository.findAll()){
-            user_ids.add(user.getId());
-        }
-        return user_ids;
+    public List<Integer> getListOfUserId(){
+        return userRepository.getListOfUserId();
     }
 
-    public List<Object> extract (Bill bill){
-        List<Object> results = new ArrayList<>();
+    public void extract (Bill bill){
         User user = bill.getUser();
-        List<Double> amounts = billRepository.getBillAmountByUserIdAndType(user.getId(), bill.getType());
-        if (amounts.isEmpty()){
-            amounts.add(bill.getAmount());
+        List<Double> amounts_list1 = billRepository.getBillAmountByUserIdAndType(user.getId(), bill.getType());
+        List<Double> amounts_List2 = billRepository.getBillAmountByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
+        if (amounts_list1.isEmpty()){
+            amounts_list1.add(bill.getAmount());
+            amounts_List2.add((bill.getAmount()));
         }
         UserMean userMean = user.getUserMean();
         UserStd userStd = user.getUserStd();
-        double mean = userMean.calculateMean(amounts, bill.getType());
-        userStd.calculateStd(amounts, mean, bill.getType());
-        results.add(userMean);
-        results.add(userStd);
-        return results;
+        double mean = userMean.calculateMean(amounts_list1, bill.getType());
+        userStd.calculateStd(amounts_list1, mean, bill.getType());
+        GasMeanMonth gasMeanMonth = user.getGasMeanMonth();
+        InternetMeanMonth internetMeanMonth = user.getInternetMeanMonth();
+        ElectricityMeanMonth electricityMeanMonth = user.getElectricityMeanMonth();
+        WaterMeanMonth waterMeanMonth = user.getWaterMeanMonth();
+        user.setMeanMonthType(amounts_List2, bill.getType(), bill.getMonth());
+        System.out.println(bill.getMonth());
+        editMean(userMean, userMean.getId());
+        editStd(userStd, userStd.getId());
+        switch (bill.getType()){
+            case "internet":
+                editInternetMeanMonth(internetMeanMonth, internetMeanMonth.getId());
+                break;
+            case "gas":
+                editGasMeanMonth(gasMeanMonth, gasMeanMonth.getId());
+                break;
+            case "electricity":
+                editElectricityMeanMonth(electricityMeanMonth, electricityMeanMonth.getId());
+                break;
+            case "water":
+                editWaterMeanMonth(waterMeanMonth, waterMeanMonth.getId());
+        }
     }
 
     @CrossOrigin
@@ -78,6 +94,49 @@ public class BillController {
     @GetMapping("/bills/user/{id}")
     public List<Bill> getBillsByUserId(@PathVariable("id") final int user_id){
         return billRepository.getBillsByUserId(user_id);
+    }
+
+    @CrossOrigin
+    @PostMapping("/bills")
+    public void add(@RequestBody Bill newBill)
+    {
+        if (!getListOfUserId().contains(newBill.getUser().getId())){
+            throw new IndexOutOfBoundsException();
+        }
+        else {
+            User user = userRepository.findById(newBill.getUser().getId()).get();
+            newBill.setUser(user);
+            newBill.setMonth();
+            billRepository.save(newBill);
+            extract(newBill);
+        }
+    }
+
+    @CrossOrigin
+    @PutMapping("/bills/{id}")
+    public void edit(@RequestBody Bill bill, @PathVariable ("id") final Integer id) throws ParseException {
+        if (!getListOfUserId().contains(bill.getUser().getId())) {
+            throw new IndexOutOfBoundsException();
+        }
+        else {
+            Bill existedBill = billRepository.findById(id).get();
+            User user = existedBill.getUser();
+            existedBill.setId(bill.getId());
+            existedBill.setUser(user);
+            existedBill.setDate(bill.getDate());
+            existedBill.setAmount(bill.getAmount());
+            existedBill.setType(bill.getType());
+            existedBill.setNumber(bill.getNumber());
+            existedBill.setLocation(bill.getLocation());
+            billRepository.save(existedBill);
+        }
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/bills/{id}")
+    public void delete (@PathVariable ("id") final Integer id)
+    {
+        billRepository.deleteById(id);
     }
 
     @CrossOrigin
@@ -107,52 +166,86 @@ public class BillController {
     }
 
     @CrossOrigin
-    @PostMapping("/bills")
-    public void add(@RequestBody Bill newBill)
+    @PutMapping("/gasmm/{id}")
+    public void editGasMeanMonth(@RequestBody GasMeanMonth gasMeanMonth, @PathVariable("id") Integer id)
     {
-        if (!getUserIdList().contains(newBill.getUser().getId())){
-            throw new IndexOutOfBoundsException();
-        }
-        else {
-            User user = userRepository.findById(newBill.getUser().getId()).get();
-            newBill.setUser(user);
-            billRepository.save(newBill);
-            UserMean userMean = (UserMean) extract(newBill).get(0);
-            UserStd userStd = (UserStd) extract(newBill).get(1);
-            editMean(userMean, userMean.getId());
-            editStd(userStd, userStd.getId());
-        }
+        GasMeanMonth existedGasMeanMonth = gasMeanMonthRepository.findById(id).get();
+        existedGasMeanMonth.setId(gasMeanMonth.getId());
+        existedGasMeanMonth.setGas_mm1(gasMeanMonth.getGas_mm1());
+        existedGasMeanMonth.setGas_mm2(gasMeanMonth.getGas_mm2());
+        existedGasMeanMonth.setGas_mm3(gasMeanMonth.getGas_mm3());
+        existedGasMeanMonth.setGas_mm4(gasMeanMonth.getGas_mm4());
+        existedGasMeanMonth.setGas_mm5(gasMeanMonth.getGas_mm5());
+        existedGasMeanMonth.setGas_mm6(gasMeanMonth.getGas_mm6());
+        existedGasMeanMonth.setGas_mm7(gasMeanMonth.getGas_mm7());
+        existedGasMeanMonth.setGas_mm8(gasMeanMonth.getGas_mm8());
+        existedGasMeanMonth.setGas_mm9(gasMeanMonth.getGas_mm9());
+        existedGasMeanMonth.setGas_mm10(gasMeanMonth.getGas_mm10());
+        existedGasMeanMonth.setGas_mm11(gasMeanMonth.getGas_mm11());
+        existedGasMeanMonth.setGas_mm12(gasMeanMonth.getGas_mm12());
+        gasMeanMonthRepository.save(existedGasMeanMonth);
     }
 
     @CrossOrigin
-    @PutMapping("/bills/{id}")
-    public void edit(@RequestBody Bill bill, @PathVariable ("id") final Integer id) throws ParseException {
-        if (!getUserIdList().contains(bill.getUser().getId())) {
-            throw new IndexOutOfBoundsException();
-        }
-        else {
-            Bill existedBill = billRepository.findById(id).get();
-            User user = existedBill.getUser();
-            existedBill.setId(bill.getId());
-            existedBill.setUser(user);
-            existedBill.setDate(bill.getDate());
-            existedBill.setAmount(bill.getAmount());
-            existedBill.setType(bill.getType());
-            existedBill.setNumber(bill.getNumber());
-            existedBill.setLocation(bill.getLocation());
-            billRepository.save(existedBill);
-            UserMean userMean = (UserMean) extract(existedBill).get(0);
-            UserStd userStd = (UserStd) extract(existedBill).get(1);
-            editMean(userMean, userMean.getId());
-            editStd(userStd, userStd.getId());
-        }
+    @PutMapping("/internetmm/{id}")
+    public void editInternetMeanMonth(@RequestBody InternetMeanMonth internetMeanMonth, @PathVariable("id") Integer id)
+    {
+        InternetMeanMonth existedInternetMeanMonth = internetMeanMonthRepository.findById(id).get();
+        existedInternetMeanMonth.setId(internetMeanMonth.getId());
+        existedInternetMeanMonth.setInternet_mm1(internetMeanMonth.getInternet_mm1());
+        existedInternetMeanMonth.setInternet_mm2(internetMeanMonth.getInternet_mm2());
+        existedInternetMeanMonth.setInternet_mm3(internetMeanMonth.getInternet_mm3());
+        existedInternetMeanMonth.setInternet_mm4(internetMeanMonth.getInternet_mm4());
+        existedInternetMeanMonth.setInternet_mm5(internetMeanMonth.getInternet_mm5());
+        existedInternetMeanMonth.setInternet_mm6(internetMeanMonth.getInternet_mm6());
+        existedInternetMeanMonth.setInternet_mm7(internetMeanMonth.getInternet_mm7());
+        existedInternetMeanMonth.setInternet_mm8(internetMeanMonth.getInternet_mm8());
+        existedInternetMeanMonth.setInternet_mm9(internetMeanMonth.getInternet_mm9());
+        existedInternetMeanMonth.setInternet_mm10(internetMeanMonth.getInternet_mm10());
+        existedInternetMeanMonth.setInternet_mm11(internetMeanMonth.getInternet_mm11());
+        existedInternetMeanMonth.setInternet_mm12(internetMeanMonth.getInternet_mm12());
+        internetMeanMonthRepository.save(existedInternetMeanMonth);
     }
 
     @CrossOrigin
-    @DeleteMapping("/bills/{id}")
-    public void delete (@PathVariable ("id") final Integer id)
+    @PutMapping("/electricitymm/{id}")
+    public void editElectricityMeanMonth(@RequestBody ElectricityMeanMonth electricityMeanMonth, @PathVariable("id") Integer id)
     {
-        billRepository.deleteById(id);
+        ElectricityMeanMonth existedElectricityMeanMonth = electricityMeanMonthRepository.findById(id).get();
+        existedElectricityMeanMonth.setId(electricityMeanMonth.getId());
+        existedElectricityMeanMonth.setElectricity_mm1(electricityMeanMonth.getElectricity_mm1());
+        existedElectricityMeanMonth.setElectricity_mm2(electricityMeanMonth.getElectricity_mm2());
+        existedElectricityMeanMonth.setElectricity_mm3(electricityMeanMonth.getElectricity_mm3());
+        existedElectricityMeanMonth.setElectricity_mm4(electricityMeanMonth.getElectricity_mm4());
+        existedElectricityMeanMonth.setElectricity_mm5(electricityMeanMonth.getElectricity_mm5());
+        existedElectricityMeanMonth.setElectricity_mm6(electricityMeanMonth.getElectricity_mm6());
+        existedElectricityMeanMonth.setElectricity_mm7(electricityMeanMonth.getElectricity_mm7());
+        existedElectricityMeanMonth.setElectricity_mm8(electricityMeanMonth.getElectricity_mm8());
+        existedElectricityMeanMonth.setElectricity_mm9(electricityMeanMonth.getElectricity_mm9());
+        existedElectricityMeanMonth.setElectricity_mm10(electricityMeanMonth.getElectricity_mm10());
+        existedElectricityMeanMonth.setElectricity_mm11(electricityMeanMonth.getElectricity_mm11());
+        existedElectricityMeanMonth.setElectricity_mm12(electricityMeanMonth.getElectricity_mm12());
+        electricityMeanMonthRepository.save(existedElectricityMeanMonth);
     }
 
+    @CrossOrigin
+    @PutMapping("/watermm/{id}")
+    public void editWaterMeanMonth(@RequestBody WaterMeanMonth waterMeanMonth, @PathVariable("id") Integer id)
+    {
+        WaterMeanMonth existedWaterMeanMonth = waterMeanMonthRepository.findById(id).get();
+        existedWaterMeanMonth.setId(waterMeanMonth.getId());
+        existedWaterMeanMonth.setWater_mm1(waterMeanMonth.getWater_mm1());
+        existedWaterMeanMonth.setWater_mm2(waterMeanMonth.getWater_mm2());
+        existedWaterMeanMonth.setWater_mm3(waterMeanMonth.getWater_mm3());
+        existedWaterMeanMonth.setWater_mm4(waterMeanMonth.getWater_mm4());
+        existedWaterMeanMonth.setWater_mm5(waterMeanMonth.getWater_mm5());
+        existedWaterMeanMonth.setWater_mm6(waterMeanMonth.getWater_mm6());
+        existedWaterMeanMonth.setWater_mm7(waterMeanMonth.getWater_mm7());
+        existedWaterMeanMonth.setWater_mm8(waterMeanMonth.getWater_mm8());
+        existedWaterMeanMonth.setWater_mm9(waterMeanMonth.getWater_mm9());
+        existedWaterMeanMonth.setWater_mm10(waterMeanMonth.getWater_mm10());
+        existedWaterMeanMonth.setWater_mm11(waterMeanMonth.getWater_mm11());
+        existedWaterMeanMonth.setWater_mm12(waterMeanMonth.getWater_mm12());
+        waterMeanMonthRepository.save(existedWaterMeanMonth);
+    }
 }

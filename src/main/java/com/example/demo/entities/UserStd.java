@@ -1,5 +1,4 @@
 package com.example.demo.entities;
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;

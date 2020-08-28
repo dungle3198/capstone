@@ -1,11 +1,14 @@
 package com.example.demo.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +39,9 @@ public class Bill{
 
     @Column(name = "location")
     private String location;
+
+    @Column(name = "month")
+    private int month;
 
     public Bill() {
     }
@@ -97,4 +103,14 @@ public class Bill{
         this.date = formatter.parse(formatter.format(date));
     }
 
+    @JsonIgnore
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        this.month = calendar.get(Calendar.MONTH) + 1;
+    }
 }

@@ -3,13 +3,11 @@ package com.example.demo.controllers;
 import java.util.List;
 
 
-import com.example.demo.entities.UserMean;
-import com.example.demo.entities.UserStd;
+import com.example.demo.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepository;
 
 @RestController
@@ -36,16 +34,35 @@ public class UserController {
 		return ResponseEntity.ok().body(user);
 	}
 
+
+	public void setUserRelation(User user, UserMean userMean, UserStd userStd, GasMeanMonth gasMeanMonth,
+								InternetMeanMonth internetMeanMonth, ElectricityMeanMonth electricityMeanMonth,
+								WaterMeanMonth waterMeanMonth){
+		user.setUserMean(userMean);
+		user.setUserStd(userStd);
+		user.setGasMeanMonth(gasMeanMonth);
+		user.setInternetMeanMonth(internetMeanMonth);
+		user.setElectricityMeanMonth(electricityMeanMonth);
+		user.setWaterMeanMonth(waterMeanMonth);
+		userMean.setUser(user);
+		userStd.setUser(user);
+		gasMeanMonth.setUser(user);
+		internetMeanMonth.setUser(user);
+		electricityMeanMonth.setUser(user);
+		waterMeanMonth.setUser(user);
+	}
+
 	@CrossOrigin
 	@PostMapping("/users")
 	public void add(@RequestBody User user)
 	{
 		UserMean userMean = new UserMean();
 		UserStd userStd = new UserStd();
-		user.setUserMean(userMean);
-		user.setUserStd(userStd);
-		userMean.setUser(user);
-		userStd.setUser(user);
+		GasMeanMonth gasMeanMonth = new GasMeanMonth();
+		InternetMeanMonth internetMeanMonth = new InternetMeanMonth();
+		ElectricityMeanMonth electricityMeanMonth = new ElectricityMeanMonth();
+		WaterMeanMonth waterMeanMonth = new WaterMeanMonth();
+		setUserRelation(user, userMean, userStd, gasMeanMonth, internetMeanMonth, electricityMeanMonth, waterMeanMonth);
 		userRepository.save(user);
 	}
 
@@ -56,13 +73,14 @@ public class UserController {
 		User existedUser = userRepository.findById(id).get();
 		UserMean userMean = existedUser.getUserMean();
 		UserStd userStd = existedUser.getUserStd();
+		GasMeanMonth gasMeanMonth = existedUser.getGasMeanMonth();
+		InternetMeanMonth internetMeanMonth = existedUser.getInternetMeanMonth();
+		ElectricityMeanMonth electricityMeanMonth = existedUser.getElectricityMeanMonth();
+		WaterMeanMonth waterMeanMonth = existedUser.getWaterMeanMonth();
 		existedUser.setId(user.getId());
 		existedUser.setFirst_name(user.getFirst_name());
 		existedUser.setLast_name(user.getLast_name());
-		existedUser.setUserMean(userMean);
-		existedUser.setUserStd(userStd);
-		userMean.setUser(existedUser);
-		userStd.setUser(existedUser);
+		setUserRelation(existedUser, userMean, userStd, gasMeanMonth, internetMeanMonth, electricityMeanMonth, waterMeanMonth);
 		userRepository.save(existedUser);
 	}
 
@@ -72,5 +90,4 @@ public class UserController {
 	{
 		userRepository.deleteById(id);
 	}
-
 }

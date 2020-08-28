@@ -1,9 +1,7 @@
 package com.example.demo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,6 +21,18 @@ public class User {
 	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
 	private UserStd userStd;
 
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	private GasMeanMonth gasMeanMonth;
+
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	private ElectricityMeanMonth electricityMeanMonth;
+
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	private InternetMeanMonth internetMeanMonth;
+
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	private WaterMeanMonth waterMeanMonth;
+
 	@Column(name = "first_name")
 	private String first_name;
 
@@ -33,6 +43,23 @@ public class User {
 	List<Bill> bills = new ArrayList<>();
 
 	public User() {
+	}
+
+	public void setMeanMonthType(List<Double> amounts, String type, int month){
+		switch (type.toLowerCase()){
+			case "internet":
+				internetMeanMonth.calculateInternetMeanMonth(amounts, month);
+				break;
+			case "electricity":
+				electricityMeanMonth.calculateElectricityMeanMonth(amounts, month);
+				break;
+			case "gas":
+				gasMeanMonth.calculateGasMeanMonth(amounts, month);
+				break;
+			case "water":
+				waterMeanMonth.calculateWaterMeanMonth(amounts, month);
+				break;
+		}
 	}
 
 	public int getId() {
@@ -82,5 +109,41 @@ public class User {
 
 	public void setBills(List<Bill> bills) {
 		this.bills = bills;
+	}
+
+	@JsonIgnore
+	public GasMeanMonth getGasMeanMonth() {
+		return gasMeanMonth;
+	}
+
+	public void setGasMeanMonth(GasMeanMonth gasMeanMonth) {
+		this.gasMeanMonth = gasMeanMonth;
+	}
+
+	@JsonIgnore
+	public ElectricityMeanMonth getElectricityMeanMonth() {
+		return electricityMeanMonth;
+	}
+
+	public void setElectricityMeanMonth(ElectricityMeanMonth electricityMeanMonth) {
+		this.electricityMeanMonth = electricityMeanMonth;
+	}
+
+	@JsonIgnore
+	public InternetMeanMonth getInternetMeanMonth() {
+		return internetMeanMonth;
+	}
+
+	public void setInternetMeanMonth(InternetMeanMonth internetMeanMonth) {
+		this.internetMeanMonth = internetMeanMonth;
+	}
+
+	@JsonIgnore
+	public WaterMeanMonth getWaterMeanMonth() {
+		return waterMeanMonth;
+	}
+
+	public void setWaterMeanMonth(WaterMeanMonth waterMeanMonth) {
+		this.waterMeanMonth = waterMeanMonth;
 	}
 }
