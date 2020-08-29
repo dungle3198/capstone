@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.io.DataOutput;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
@@ -41,27 +42,26 @@ public class BillController {
         return userRepository.getListOfUserId();
     }
 
-    public void extract (Bill bill){
+    public List<Double> getBillAmountByUserIdAndType(int user_id, String type){
+        return billRepository.getBillAmountByUserIdAndType(user_id, type);
+    }
+
+    public List<Double> getBillAmountByUserIdAndTypeAndMonth(int user_id, String type, int month){
+        return billRepository.getBillAmountByUserIdAndTypeAndMonth(user_id, type, month);
+    }
+
+    public List<Integer> getBillIdByUserIdAndType(int user_id, String type){
+        return billRepository.getBillIdByUserIdAndType(user_id, type);
+    }
+
+    public void extractMeanMonth (Bill bill, List<Double> amounts){
         User user = bill.getUser();
-        List<Double> amounts_list1 = billRepository.getBillAmountByUserIdAndType(user.getId(), bill.getType());
-        List<Double> amounts_List2 = billRepository.getBillAmountByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
-        if (amounts_list1.isEmpty()){
-            amounts_list1.add(bill.getAmount());
-            amounts_List2.add((bill.getAmount()));
-        }
-        UserMean userMean = user.getUserMean();
-        UserStd userStd = user.getUserStd();
-        double mean = userMean.calculateMean(amounts_list1, bill.getType());
-        userStd.calculateStd(amounts_list1, mean, bill.getType());
         GasMeanMonth gasMeanMonth = user.getGasMeanMonth();
         InternetMeanMonth internetMeanMonth = user.getInternetMeanMonth();
         ElectricityMeanMonth electricityMeanMonth = user.getElectricityMeanMonth();
         WaterMeanMonth waterMeanMonth = user.getWaterMeanMonth();
-        user.setMeanMonthType(amounts_List2, bill.getType(), bill.getMonth());
-        System.out.println(bill.getMonth());
-        editMean(userMean, userMean.getId());
-        editStd(userStd, userStd.getId());
-        switch (bill.getType()){
+        user.setMeanMonthType(amounts, bill.getType(), bill.getMonth());
+        switch (bill.getType().toLowerCase()){
             case "internet":
                 editInternetMeanMonth(internetMeanMonth, internetMeanMonth.getId());
                 break;
@@ -73,7 +73,25 @@ public class BillController {
                 break;
             case "water":
                 editWaterMeanMonth(waterMeanMonth, waterMeanMonth.getId());
+                break;
         }
+    }
+
+    public void extract (Bill bill, List<Double> amounts){
+        User user = bill.getUser();
+        UserMean userMean = user.getUserMean();
+        UserStd userStd = user.getUserStd();
+        double mean = userMean.calculateMean(amounts, bill.getType());
+        userStd.calculateStd(amounts, mean, bill.getType());
+        editMean(userMean, userMean.getId());
+        editStd(userStd, userStd.getId());
+    }
+
+    public void extractAll(Bill bill){
+        List<Double> amount_list1 = getBillAmountByUserIdAndType(bill.getUser().getId(), bill.getType());
+        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(bill.getUser().getId(), bill.getType(), bill.getMonth());
+        extract(bill, amount_list1);
+        extractMeanMonth(bill, amount_list2);
     }
 
     @CrossOrigin
@@ -108,7 +126,31 @@ public class BillController {
             newBill.setUser(user);
             newBill.setMonth();
             billRepository.save(newBill);
-            extract(newBill);
+            extractAll(newBill);
+        }
+    }
+
+    public void compareAndExtract(Bill oldBill, Bill newBill){
+        User user = oldBill.getUser();
+        newBill.setMonth();
+        oldBill.setMonth();
+        List<Integer> bill_ids = getBillIdByUserIdAndType(user.getId(), oldBill.getType());
+        int index = bill_ids.indexOf(newBill.getId());
+        if (!newBill.getType().equalsIgnoreCase(oldBill.getType()) ||
+                newBill.getAmount() != oldBill.getAmount() ||
+                newBill.getUser().getId() != oldBill.getUser().getId())
+        {
+            List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), oldBill.getType());
+            List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), oldBill.getType(), oldBill.getMonth());
+            amount_list1.remove(index);
+            amount_list2.remove(index);
+            extract(oldBill, amount_list1);
+            extractMeanMonth(oldBill, amount_list2);
+        }
+        else if (newBill.getMonth() != oldBill.getMonth()){
+            List<Double> amount_list = getBillAmountByUserIdAndTypeAndMonth(user.getId(), oldBill.getType(), oldBill.getMonth());
+            amount_list.remove(index);
+            extractMeanMonth(oldBill, amount_list);
         }
     }
 
@@ -121,6 +163,7 @@ public class BillController {
         else {
             Bill existedBill = billRepository.findById(id).get();
             User user = existedBill.getUser();
+            compareAndExtract(existedBill, bill);
             existedBill.setId(bill.getId());
             existedBill.setUser(user);
             existedBill.setDate(bill.getDate());
@@ -128,7 +171,9 @@ public class BillController {
             existedBill.setType(bill.getType());
             existedBill.setNumber(bill.getNumber());
             existedBill.setLocation(bill.getLocation());
+            existedBill.setMonth();
             billRepository.save(existedBill);
+            extractAll(existedBill);
         }
     }
 
@@ -140,7 +185,7 @@ public class BillController {
     }
 
     @CrossOrigin
-    @PutMapping("/usermeans/{id}")
+    @PutMapping("/user_means/{id}")
     public void editMean(@RequestBody UserMean userMean, @PathVariable("id") final Integer id)
     {
         UserMean existedMean = userMeanRepository.findById(id).get();
@@ -153,7 +198,7 @@ public class BillController {
     }
 
     @CrossOrigin
-    @PutMapping("/userstds/{id}")
+    @PutMapping("/user_stds/{id}")
     public void editStd(@RequestBody UserStd userStd, @PathVariable("id") final Integer id)
     {
         UserStd existedStd = userStdRepository.findById(id).get();
@@ -166,7 +211,7 @@ public class BillController {
     }
 
     @CrossOrigin
-    @PutMapping("/gasmm/{id}")
+    @PutMapping("/gas_mean_month/{id}")
     public void editGasMeanMonth(@RequestBody GasMeanMonth gasMeanMonth, @PathVariable("id") Integer id)
     {
         GasMeanMonth existedGasMeanMonth = gasMeanMonthRepository.findById(id).get();
@@ -187,7 +232,7 @@ public class BillController {
     }
 
     @CrossOrigin
-    @PutMapping("/internetmm/{id}")
+    @PutMapping("/internet_mean_month/{id}")
     public void editInternetMeanMonth(@RequestBody InternetMeanMonth internetMeanMonth, @PathVariable("id") Integer id)
     {
         InternetMeanMonth existedInternetMeanMonth = internetMeanMonthRepository.findById(id).get();
@@ -208,7 +253,7 @@ public class BillController {
     }
 
     @CrossOrigin
-    @PutMapping("/electricitymm/{id}")
+    @PutMapping("/electricity_mean_month/{id}")
     public void editElectricityMeanMonth(@RequestBody ElectricityMeanMonth electricityMeanMonth, @PathVariable("id") Integer id)
     {
         ElectricityMeanMonth existedElectricityMeanMonth = electricityMeanMonthRepository.findById(id).get();
@@ -229,7 +274,7 @@ public class BillController {
     }
 
     @CrossOrigin
-    @PutMapping("/watermm/{id}")
+    @PutMapping("/water_mean_month/{id}")
     public void editWaterMeanMonth(@RequestBody WaterMeanMonth waterMeanMonth, @PathVariable("id") Integer id)
     {
         WaterMeanMonth existedWaterMeanMonth = waterMeanMonthRepository.findById(id).get();

@@ -103,7 +103,6 @@ public class Bill{
         this.date = formatter.parse(formatter.format(date));
     }
 
-    @JsonIgnore
     public int getMonth() {
         return month;
     }

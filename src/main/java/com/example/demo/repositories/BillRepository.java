@@ -23,4 +23,8 @@ public interface BillRepository  extends JpaRepository<Bill, Integer>{
     List<Double> getBillAmountByUserIdAndTypeAndMonth(@Param("user_id")int user_id,
                                                       @Param("type")String type,
                                                       @Param("month")int month);
+
+    @Query("select id from Bill e where e.user.id = :user_id and e.type = :type")
+    List<Integer> getBillIdByUserIdAndType(@Param("user_id")int user_id,
+                                              @Param("type")String type);
 }

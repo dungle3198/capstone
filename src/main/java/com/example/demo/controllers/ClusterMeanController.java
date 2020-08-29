@@ -20,13 +20,13 @@ public class ClusterMeanController {
     }
 
     @CrossOrigin
-    @GetMapping("/clustermeans")
+    @GetMapping("/cluster_means")
     public List<ClusterMean> ClusterMeans(){
         return clusterMeanRepository.findAll();
     }
 
     @CrossOrigin
-    @GetMapping("/clustermeans/{id}")
+    @GetMapping("/cluster_means/{id}")
     public ResponseEntity<ClusterMean> getClusterMeanById(@PathVariable("id") final int id)
     {
         ClusterMean clusterMean = clusterMeanRepository.findById(id).get();
@@ -34,14 +34,14 @@ public class ClusterMeanController {
     }
 
     @CrossOrigin
-    @PostMapping("/clustermeans")
+    @PostMapping("/cluster_means")
     public void add(@RequestBody ClusterMean clusterMean)
     {
         clusterMeanRepository.save(clusterMean);
     }
 
     @CrossOrigin
-    @PutMapping("/clustermeans/{id}")
+    @PutMapping("/cluster_means/{id}")
     public void edit(@RequestBody ClusterMean clusterMean, @PathVariable("id") final Integer id)
     {
         ClusterMean existedClusterMean = clusterMeanRepository.findById(id).get();
@@ -54,7 +54,7 @@ public class ClusterMeanController {
     }
 
     @CrossOrigin
-    @DeleteMapping("/clustermeans/{id}")
+    @DeleteMapping("/cluster_means/{id}")
     public void delete (@PathVariable("id") final Integer id)
     {
         clusterMeanRepository.deleteById(id);

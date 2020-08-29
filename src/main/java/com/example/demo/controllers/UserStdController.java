@@ -22,13 +22,13 @@ public class UserStdController {
     }
 
     @CrossOrigin
-    @GetMapping("/userstds")
+    @GetMapping("/user_stds")
     public List<UserStd> userStds(){
         return userStdRepository.findAll();
     }
 
     @CrossOrigin
-    @GetMapping("/userstds/{id}")
+    @GetMapping("/user_stds/{id}")
     public ResponseEntity<UserStd> getUserStdById(@PathVariable("id") final int user_id)
     {
         UserStd userStd = userStdRepository.findById(user_id).get();
@@ -36,14 +36,14 @@ public class UserStdController {
     }
 
     @CrossOrigin
-    @PostMapping("/userstds")
+    @PostMapping("/user_stds")
     public void add(@RequestBody UserStd userStd)
     {
         userStdRepository.save(userStd);
     }
 
     @CrossOrigin
-    @DeleteMapping("/userstds/{id}")
+    @DeleteMapping("/user_stds/{id}")
     public void delete (@PathVariable("id") final Integer id)
     {
         userStdRepository.deleteById(id);
