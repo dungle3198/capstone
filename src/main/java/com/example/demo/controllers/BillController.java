@@ -180,6 +180,16 @@ public class BillController {
     @DeleteMapping("/bills/{id}")
     public void delete (@PathVariable ("id") final Integer id)
     {
+        Bill bill = billRepository.findById(id).get();
+        User user = bill.getUser();
+        List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), bill.getType());
+        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
+        List<Integer> bill_ids = getBillIdByUserIdAndType(user.getId(), bill.getType());
+        int index = bill_ids.indexOf(bill.getId());
+        amount_list1.remove(index);
+        amount_list2.remove(index);
+        extract(bill, amount_list1);
+        extractMeanMonth(bill, amount_list2);
         billRepository.deleteById(id);
     }
 
