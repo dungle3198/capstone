@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
 import java.util.List;
@@ -42,7 +43,16 @@ public class UserMean {
     }
 
     public double calculateMean(List<Double> amounts, String type) {
-        double mean = amounts.stream().mapToDouble(val -> val).average().orElse(0.0);
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        // Add the data from the array
+        for( int i = 0; i < amounts.size(); i++) {
+            stats.addValue(amounts.get(i));
+        }
+        //mean
+        double mean = stats.getMean();
+        double std = stats.getStandardDeviation();
+        //double mean = amounts.stream().mapToDouble(val -> val).average().orElse(0.0);
         switch (type.toLowerCase())
         {
             case "internet":
