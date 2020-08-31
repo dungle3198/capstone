@@ -54,6 +54,10 @@ public class BillController {
         return billRepository.getBillIdByUserIdAndType(user_id, type);
     }
 
+    public List<Integer> getBillIdByUserIdAndTypeAndMonth(int user_id, String type, int month){
+        return billRepository.getBillIdByUserIdAndTypeAndMonth(user_id, type, month);
+    }
+
     public void extractMeanMonth (Bill bill, List<Double> amounts){
         User user = bill.getUser();
         GasMeanMonth gasMeanMonth = user.getGasMeanMonth();
@@ -100,19 +104,27 @@ public class BillController {
         oldBill.setMonth();
         List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), oldBill.getType());
         List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), oldBill.getType(), oldBill.getMonth());
-        List<Integer> bill_ids = getBillIdByUserIdAndType(user.getId(), oldBill.getType());
-        int index = bill_ids.indexOf(newBill.getId());
+        List<Integer> bill_ids1 = getBillIdByUserIdAndType(user.getId(), oldBill.getType());
+        List<Integer> bill_ids2 = getBillIdByUserIdAndTypeAndMonth(user.getId(), oldBill.getType(), oldBill.getMonth());
+        int index1 = bill_ids1.indexOf(oldBill.getId());
+        int index2 = bill_ids2.indexOf(oldBill.getId());
         if (!newBill.getType().equalsIgnoreCase(oldBill.getType()) ||
                 newBill.getAmount() != oldBill.getAmount() ||
                 newBill.getUser().getId() != oldBill.getUser().getId())
         {
-            amount_list1.remove(index);
-            amount_list2.remove(index);
+            amount_list1.remove(index1);
+            amount_list2.remove(index2);
+            if (amount_list1.isEmpty()){
+                amount_list1.add(0.0);
+            }
+            if (amount_list2.isEmpty()){
+                amount_list2.add(0.0);
+            }
             extract(oldBill, amount_list1);
             extractMeanMonth(oldBill, amount_list2);
         }
         else if (newBill.getMonth() != oldBill.getMonth()){
-            amount_list2.remove(index);
+            amount_list2.remove(index2);
             extractMeanMonth(oldBill, amount_list2);
         }
     }
@@ -184,10 +196,18 @@ public class BillController {
         User user = bill.getUser();
         List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), bill.getType());
         List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
-        List<Integer> bill_ids = getBillIdByUserIdAndType(user.getId(), bill.getType());
-        int index = bill_ids.indexOf(bill.getId());
-        amount_list1.remove(index);
-        amount_list2.remove(index);
+        List<Integer> bill_ids1 = getBillIdByUserIdAndType(user.getId(), bill.getType());
+        List<Integer> bill_ids2 = getBillIdByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
+        int index1 = bill_ids1.indexOf(bill.getId());
+        int index2 = bill_ids2.indexOf(bill.getId());
+        amount_list1.remove(index1);
+        amount_list2.remove(index2);
+        if (amount_list1.isEmpty()){
+            amount_list1.add(0.0);
+        }
+        if (amount_list2.isEmpty()){
+            amount_list2.add(0.0);
+        }
         extract(bill, amount_list1);
         extractMeanMonth(bill, amount_list2);
         billRepository.deleteById(id);
