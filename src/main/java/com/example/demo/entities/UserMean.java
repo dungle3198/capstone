@@ -46,12 +46,11 @@ public class UserMean {
         DescriptiveStatistics stats = new DescriptiveStatistics();
 
         // Add the data from the array
-        for( int i = 0; i < amounts.size(); i++) {
-            stats.addValue(amounts.get(i));
+        for (Double amount : amounts) {
+            stats.addValue(amount);
         }
         //mean
         double mean = stats.getMean();
-        double std = stats.getStandardDeviation();
         //double mean = amounts.stream().mapToDouble(val -> val).average().orElse(0.0);
         switch (type.toLowerCase())
         {

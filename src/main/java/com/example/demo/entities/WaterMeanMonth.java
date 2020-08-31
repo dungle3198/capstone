@@ -1,6 +1,7 @@
 package com.example.demo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
 import java.util.List;
@@ -73,7 +74,14 @@ public class WaterMeanMonth {
     }
 
     public void calculateWaterMeanMonth (List<Double> amounts, int month){
-        double mean = amounts.stream().mapToDouble(val -> val).average().orElse(0.0);
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        // Add the data from the array
+        for (Double amount : amounts) {
+            stats.addValue(amount);
+        }
+        //mean
+        double mean = stats.getMean();
         switch (month) {
             case 1:
                 setWater_mm1(mean);

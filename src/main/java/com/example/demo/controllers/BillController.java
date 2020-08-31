@@ -81,8 +81,8 @@ public class BillController {
         User user = bill.getUser();
         UserMean userMean = user.getUserMean();
         UserStd userStd = user.getUserStd();
-        double mean = userMean.calculateMean(amounts, bill.getType());
-        userStd.calculateStd(amounts, mean, bill.getType());
+        userMean.calculateMean(amounts, bill.getType());
+        userStd.calculateStd(amounts, bill.getType());
         editMean(userMean, userMean.getId());
         editStd(userStd, userStd.getId());
     }
@@ -92,6 +92,29 @@ public class BillController {
         List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(bill.getUser().getId(), bill.getType(), bill.getMonth());
         extract(bill, amount_list1);
         extractMeanMonth(bill, amount_list2);
+    }
+
+    public void compareAndExtract(Bill oldBill, Bill newBill){
+        User user = oldBill.getUser();
+        newBill.setMonth();
+        oldBill.setMonth();
+        List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), oldBill.getType());
+        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), oldBill.getType(), oldBill.getMonth());
+        List<Integer> bill_ids = getBillIdByUserIdAndType(user.getId(), oldBill.getType());
+        int index = bill_ids.indexOf(newBill.getId());
+        if (!newBill.getType().equalsIgnoreCase(oldBill.getType()) ||
+                newBill.getAmount() != oldBill.getAmount() ||
+                newBill.getUser().getId() != oldBill.getUser().getId())
+        {
+            amount_list1.remove(index);
+            amount_list2.remove(index);
+            extract(oldBill, amount_list1);
+            extractMeanMonth(oldBill, amount_list2);
+        }
+        else if (newBill.getMonth() != oldBill.getMonth()){
+            amount_list2.remove(index);
+            extractMeanMonth(oldBill, amount_list2);
+        }
     }
 
     @CrossOrigin
@@ -127,29 +150,6 @@ public class BillController {
             newBill.setMonth();
             billRepository.save(newBill);
             extractAll(newBill);
-        }
-    }
-
-    public void compareAndExtract(Bill oldBill, Bill newBill){
-        User user = oldBill.getUser();
-        newBill.setMonth();
-        oldBill.setMonth();
-        List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), oldBill.getType());
-        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), oldBill.getType(), oldBill.getMonth());
-        List<Integer> bill_ids = getBillIdByUserIdAndType(user.getId(), oldBill.getType());
-        int index = bill_ids.indexOf(newBill.getId());
-        if (!newBill.getType().equalsIgnoreCase(oldBill.getType()) ||
-                newBill.getAmount() != oldBill.getAmount() ||
-                newBill.getUser().getId() != oldBill.getUser().getId())
-        {
-            amount_list1.remove(index);
-            amount_list2.remove(index);
-            extract(oldBill, amount_list1);
-            extractMeanMonth(oldBill, amount_list2);
-        }
-        else if (newBill.getMonth() != oldBill.getMonth()){
-            amount_list2.remove(index);
-            extractMeanMonth(oldBill, amount_list2);
         }
     }
 

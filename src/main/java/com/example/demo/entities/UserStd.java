@@ -1,8 +1,8 @@
 package com.example.demo.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
-import java.lang.Math;
 import java.util.List;
 
 @Entity
@@ -41,13 +41,16 @@ public class UserStd{
         this.gas = 0;
     }
 
-    public void calculateStd(List<Double> amounts, double mean , String type)
+    public void calculateStd(List<Double> amounts, String type)
     {
-        double variance = amounts.stream()
-                .map(i -> i - mean)
-                .map(i -> i*i)
-                .mapToDouble(i -> i).average().orElse(0.0);
-        double std = Math.sqrt(variance);
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        // Add the data from the array
+        for (Double amount : amounts) {
+            stats.addValue(amount);
+        }
+        //std
+        double std = stats.getStandardDeviation();
         switch (type.toLowerCase())
         {
             case "internet":
