@@ -43,7 +43,11 @@ public class Bill{
     @Column(name = "month")
     private int month;
 
+    @Column(name = "isLabel")
+    private int isLabel;
+
     public Bill() {
+        isLabel = 0;
     }
 
     public int getId() {
@@ -111,5 +115,17 @@ public class Bill{
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         this.month = calendar.get(Calendar.MONTH) + 1;
+    }
+    public boolean checkLabel(double meanMonth, double clusterStd)
+    {
+        double a = Math.abs(amount-meanMonth);
+        double b = clusterStd*2;
+        if(a < b)
+        {
+            isLabel = 1;
+            return true;
+        }
+        isLabel = 0;
+        return false;
     }
 }
