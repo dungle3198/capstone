@@ -23,7 +23,7 @@ public class UserController {
 	@CrossOrigin
 	@GetMapping("/users")
 	public List<User> users(){
-		return userRepository.findAll();
+		 return userRepository.findAll();
 	}
 
 	@CrossOrigin
@@ -31,6 +31,7 @@ public class UserController {
 	public ResponseEntity<User> getUserById(@PathVariable("id") final int user_id)
 	{
 		User user = userRepository.findById(user_id).get();
+		System.out.println(user.getBills().size());
 		return ResponseEntity.ok().body(user);
 	}
 

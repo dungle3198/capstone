@@ -161,6 +161,7 @@ public class BillController {
             newBill.setUser(user);
             newBill.setMonth();
             billRepository.save(newBill);
+            user.setTotal_bill();
             extractAll(newBill);
         }
     }
@@ -211,6 +212,7 @@ public class BillController {
         extract(bill, amount_list1);
         extractMeanMonth(bill, amount_list2);
         billRepository.deleteById(id);
+        user.setTotal_bill();
     }
 
     @CrossOrigin

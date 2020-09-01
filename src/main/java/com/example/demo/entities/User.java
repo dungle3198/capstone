@@ -42,6 +42,13 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	List<Bill> bills = new ArrayList<>();
 
+	@Column(name = "total_bill")
+	private Integer total_bill;
+
+	public User(Integer total_bill) {
+		this.total_bill = 0;
+	}
+
 	public User() {
 	}
 
@@ -145,5 +152,13 @@ public class User {
 
 	public void setWaterMeanMonth(WaterMeanMonth waterMeanMonth) {
 		this.waterMeanMonth = waterMeanMonth;
+	}
+
+	public Integer getTotal_bill() {
+		return total_bill;
+	}
+
+	public void setTotal_bill() {
+		this.total_bill = getBills().size();
 	}
 }

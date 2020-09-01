@@ -1,4 +1,6 @@
 package com.example.demo.entities;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,15 +74,17 @@ public class ClusterMean {
         this.gas = gas;
     }
 
-    public double calculateMean(double [] arrays, String billType)
+    public double calculateMean(double [] amounts, String type)
     {
-        double sum = 0;
-        for(double value : arrays)
-        {
-            sum += value;
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        // Add the data from the array
+        for (Double amount : amounts) {
+            stats.addValue(amount);
         }
-        double mean = sum/ arrays.length;
-        switch (billType)
+        //mean
+        double mean = stats.getMean();
+        switch (type.toLowerCase())
         {
             case "internet":
                 setInternet(mean);
@@ -97,49 +101,50 @@ public class ClusterMean {
         }
         return mean;
     }
-    public void getDistance(UserMean usermeanA, List<UserMean> listOfUserMeans)
+
+    public void getDistance(UserMean userMeanA, List<UserMean> listOfUserMeans)
     {
-        if(usermeanA == null)
+        if(userMeanA == null)
         {
-            System.out.println("the usermean does not exist");
             return;
         }
-        List<UserMean> selectedUsers = new ArrayList<UserMean>();
-        selectedUsers.add(usermeanA);
+        List<UserMean> selectedUserMeans = new ArrayList<>();
+        selectedUserMeans.add(userMeanA);
         double shortestDist = 999999;
         UserMean userMeanB = null;
         UserMean userMeanC = null;
-        for (UserMean usermean : listOfUserMeans) {
-            if (usermean.getId() == usermeanA.getId()) {
+        for (UserMean userMean : listOfUserMeans) {
+            if (userMean.getId() == userMeanA.getId()) {
                 continue;
             }
-            double electricityDist = Math.pow(usermeanA.getElectricity() - usermean.getElectricity(), 2);
-            double waterDist = Math.pow(usermeanA.getWater() - usermean.getWater(), 2);
-            double gasDis = Math.pow(usermeanA.getGas() - usermean.getGas(), 2);
-            double internetDis = Math.pow(usermeanA.getInternet() - usermean.getInternet(), 2);
-            double square = electricityDist + waterDist + gasDis + internetDis;
+            double electricityDist = Math.pow(userMeanA.getElectricity() - userMean.getElectricity(), 2);
+            double waterDist = Math.pow(userMeanA.getWater() - userMean.getWater(), 2);
+            double gasDist = Math.pow(userMeanA.getGas() - userMean.getGas(), 2);
+            double internetDist = Math.pow(userMeanA.getInternet() - userMean.getInternet(), 2);
+            double square = electricityDist + waterDist + gasDist + internetDist;
             double distance = Math.sqrt(square);
 
             if (shortestDist > distance) {
                 if (userMeanB != null) {
                     userMeanC = userMeanB;
                 }
-                userMeanB = usermean;
+                userMeanB = userMean;
                 shortestDist = distance;
             }
         }
 
         if(userMeanB != null)
         {
-            selectedUsers.add(userMeanB);
+            selectedUserMeans.add(userMeanB);
         }
         if(userMeanC != null)
         {
-            selectedUsers.add(userMeanC);
+            selectedUserMeans.add(userMeanC);
         }
-        calculateBill(selectedUsers);
+        calculateBill(selectedUserMeans);
     }
-    void calculateBill(List<UserMean> users)
+
+    void calculateBill(List<UserMean> userMeans)
     {
 
         double sum_electricity= 0;
@@ -155,30 +160,30 @@ public class ClusterMean {
         int count_internet = 0;
 
         List<Bill> listOfBills = new ArrayList<>();
-        for (UserMean user : users) {
-            User new_user = new User();
-            new_user.setId(user.getId());
-            listOfBills.addAll(new_user.getBills());
+        for (UserMean userMean : userMeans) {
+            listOfBills.addAll(userMean.getUser().getBills());
         }
 
         for (Bill bill : listOfBills) {
-            for (int j = 0; j < users.size(); j++) {
-
-                if (bill.getType().equals("electricity")) {
-                    sum_electricity += bill.getAmount();
-                    count_electricity++;
-                } else if (bill.getType().equals("gas")) {
-                    sum_gas += bill.getAmount();
-                    count_gas++;
-                } else if (bill.getType().equals("water")) {
-                    sum_water += bill.getAmount();
-                    count_water++;
-                } else if (bill.getType().equals("internet")) {
-                    sum_internet += bill.getAmount();
-                    count_internet++;
+            for (int j = 0; j < userMeans.size(); j++) {
+                switch (bill.getType().toLowerCase()) {
+                    case "electricity":
+                        sum_electricity += bill.getAmount();
+                        count_electricity++;
+                        break;
+                    case "gas":
+                        sum_gas += bill.getAmount();
+                        count_gas++;
+                        break;
+                    case "water":
+                        sum_water += bill.getAmount();
+                        count_water++;
+                        break;
+                    case "internet":
+                        sum_internet += bill.getAmount();
+                        count_internet++;
+                        break;
                 }
-
-
             }
         }
         double clusterMeanElectricity = sum_electricity/count_electricity;
