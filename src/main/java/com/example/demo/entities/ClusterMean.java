@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
 @Entity
 @Table(name = "cluster_mean")
 public class ClusterMean {
@@ -26,6 +27,18 @@ public class ClusterMean {
 
     @Column(name = "gas")
     private double gas;
+
+    @Column(name = "electricitystd")
+    private double electricitystd;
+
+    @Column(name = "internetstd")
+    private double internetstd;
+
+    @Column(name = "waterstd")
+    private double waterstd;
+
+    @Column(name = "gasstd")
+    private double gasstd;
 
     public ClusterMean()
     {
@@ -74,6 +87,24 @@ public class ClusterMean {
         this.gas = gas;
     }
 
+    public void setStd(String type,double amount)
+    {
+        switch (type.toLowerCase())
+        {
+            case "internet":
+                internetstd = amount;
+                break;
+            case "water":
+                waterstd = amount;
+                break;
+            case "gas":
+                gasstd = amount;
+                break;
+            case "electricity":
+                electricitystd = amount;
+                break;
+        }
+    }
     public double calculateMean(double [] amounts, String type)
     {
         DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -146,18 +177,11 @@ public class ClusterMean {
 
     void calculateBill(List<UserMean> userMeans)
     {
+        DescriptiveStatistics electricityStat = new DescriptiveStatistics();
+        DescriptiveStatistics waterStat = new DescriptiveStatistics();
+        DescriptiveStatistics gasStat = new DescriptiveStatistics();
+        DescriptiveStatistics internetStat = new DescriptiveStatistics();
 
-        double sum_electricity= 0;
-        int count_electricity = 0;
-
-        double sum_water= 0;
-        int count_water = 0;
-
-        double sum_gas= 0;
-        int count_gas = 0;
-
-        double sum_internet= 0;
-        int count_internet = 0;
 
         List<Bill> listOfBills = new ArrayList<>();
         for (UserMean userMean : userMeans) {
@@ -168,31 +192,34 @@ public class ClusterMean {
             for (int j = 0; j < userMeans.size(); j++) {
                 switch (bill.getType().toLowerCase()) {
                     case "electricity":
-                        sum_electricity += bill.getAmount();
-                        count_electricity++;
+                        electricityStat.addValue(bill.getAmount());
                         break;
                     case "gas":
-                        sum_gas += bill.getAmount();
-                        count_gas++;
+                        gasStat.addValue(bill.getAmount());
                         break;
                     case "water":
-                        sum_water += bill.getAmount();
-                        count_water++;
+                        waterStat.addValue(bill.getAmount());
                         break;
                     case "internet":
-                        sum_internet += bill.getAmount();
-                        count_internet++;
+                        internetStat.addValue(bill.getAmount());
                         break;
                 }
             }
         }
-        double clusterMeanElectricity = sum_electricity/count_electricity;
-        double clusterMeanGas = sum_gas/count_gas;
-        double clusterMeanWater = sum_water/count_water;
-        double clusterMeanInternet = sum_internet/count_internet;
+        double clusterMeanElectricity = electricityStat.getMean();
+        double clusterMeanGas = gasStat.getMean();
+        double clusterMeanWater = waterStat.getMean();
+        double clusterMeanInternet = internetStat.getMean();
+
+
         setElectricity(clusterMeanElectricity);
         setGas(clusterMeanGas);
         setWater(clusterMeanWater);
         setInternet(clusterMeanInternet);
+
+        setStd("electricity",electricityStat.getStandardDeviation());
+        setStd("gas",gasStat.getStandardDeviation());
+        setStd("internet",internetStat.getStandardDeviation());
+        setStd("water",waterStat.getStandardDeviation());
     }
 }
