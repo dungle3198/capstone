@@ -43,9 +43,9 @@ public class User {
 	List<Bill> bills = new ArrayList<>();
 
 	@Column(name = "total_bill")
-	private Integer total_bill;
+	private int total_bill;
 
-	public User(Integer total_bill) {
+	public User(int total_bill) {
 		this.total_bill = 0;
 	}
 
@@ -154,11 +154,11 @@ public class User {
 		this.waterMeanMonth = waterMeanMonth;
 	}
 
-	public Integer getTotal_bill() {
+	public int getTotal_bill() {
 		return total_bill;
 	}
 
-	public void setTotal_bill() {
-		this.total_bill = getBills().size();
+	public void setTotal_bill(int total_bill) {
+		this.total_bill = total_bill;
 	}
 }

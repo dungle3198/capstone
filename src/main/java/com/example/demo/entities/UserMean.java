@@ -42,7 +42,7 @@ public class UserMean {
         this.gas = 0;
     }
 
-    public double calculateMean(List<Double> amounts, String type) {
+    public void calculateMean(List<Double> amounts, String type) {
         DescriptiveStatistics stats = new DescriptiveStatistics();
 
         // Add the data from the array
@@ -52,8 +52,7 @@ public class UserMean {
         //mean
         double mean = stats.getMean();
         //double mean = amounts.stream().mapToDouble(val -> val).average().orElse(0.0);
-        switch (type.toLowerCase())
-        {
+        switch (type.toLowerCase()) {
             case "internet":
                 setInternet(mean);
                 break;
@@ -67,7 +66,6 @@ public class UserMean {
                 setElectricity(mean);
                 break;
         }
-        return mean;
     }
 
     public int getId() {

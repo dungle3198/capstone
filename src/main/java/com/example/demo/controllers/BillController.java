@@ -98,19 +98,15 @@ public class BillController {
         extractMeanMonth(bill, amount_list2);
     }
 
-    public void compareAndExtract(Bill oldBill, Bill newBill){
-        User user = oldBill.getUser();
-        newBill.setMonth();
-        oldBill.setMonth();
-        List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), oldBill.getType());
-        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), oldBill.getType(), oldBill.getMonth());
-        List<Integer> bill_ids1 = getBillIdByUserIdAndType(user.getId(), oldBill.getType());
-        List<Integer> bill_ids2 = getBillIdByUserIdAndTypeAndMonth(user.getId(), oldBill.getType(), oldBill.getMonth());
-        int index1 = bill_ids1.indexOf(oldBill.getId());
-        int index2 = bill_ids2.indexOf(oldBill.getId());
-        if (!newBill.getType().equalsIgnoreCase(oldBill.getType()) ||
-                newBill.getAmount() != oldBill.getAmount() ||
-                newBill.getUser().getId() != oldBill.getUser().getId())
+    public void update(Bill bill, boolean option){
+        User user = bill.getUser();
+        List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), bill.getType());
+        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
+        List<Integer> bill_ids1 = getBillIdByUserIdAndType(user.getId(), bill.getType());
+        List<Integer> bill_ids2 = getBillIdByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
+        int index1 = bill_ids1.indexOf(bill.getId());
+        int index2 = bill_ids2.indexOf(bill.getId());
+        if (option)
         {
             amount_list1.remove(index1);
             amount_list2.remove(index2);
@@ -120,13 +116,12 @@ public class BillController {
             if (amount_list2.isEmpty()){
                 amount_list2.add(0.0);
             }
-            extract(oldBill, amount_list1);
-            extractMeanMonth(oldBill, amount_list2);
+            extract(bill, amount_list1);
         }
-        else if (newBill.getMonth() != oldBill.getMonth()){
+        else {
             amount_list2.remove(index2);
-            extractMeanMonth(oldBill, amount_list2);
         }
+        extractMeanMonth(bill, amount_list2);
     }
 
     @CrossOrigin
@@ -161,7 +156,7 @@ public class BillController {
             newBill.setUser(user);
             newBill.setMonth();
             billRepository.save(newBill);
-            user.setTotal_bill();
+            user.setTotal_bill(user.getBills().size());
             extractAll(newBill);
         }
     }
@@ -174,8 +169,18 @@ public class BillController {
         }
         else {
             Bill existedBill = billRepository.findById(id).get();
-            User user = existedBill.getUser();
-            compareAndExtract(existedBill, bill);
+            User user = userRepository.findById(bill.getUser().getId()).get();
+            bill.setMonth();
+            if (!bill.getType().equalsIgnoreCase(existedBill.getType()) ||
+                    bill.getAmount() != existedBill.getAmount() ||
+                    bill.getUser().getId() != existedBill.getUser().getId())
+            {
+                update(existedBill, true);
+            }
+            else if (bill.getMonth() != existedBill.getMonth())
+            {
+                update(existedBill, false);
+            }
             existedBill.setId(bill.getId());
             existedBill.setUser(user);
             existedBill.setDate(bill.getDate());
@@ -195,24 +200,10 @@ public class BillController {
     {
         Bill bill = billRepository.findById(id).get();
         User user = bill.getUser();
-        List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), bill.getType());
-        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
-        List<Integer> bill_ids1 = getBillIdByUserIdAndType(user.getId(), bill.getType());
-        List<Integer> bill_ids2 = getBillIdByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
-        int index1 = bill_ids1.indexOf(bill.getId());
-        int index2 = bill_ids2.indexOf(bill.getId());
-        amount_list1.remove(index1);
-        amount_list2.remove(index2);
-        if (amount_list1.isEmpty()){
-            amount_list1.add(0.0);
-        }
-        if (amount_list2.isEmpty()){
-            amount_list2.add(0.0);
-        }
-        extract(bill, amount_list1);
-        extractMeanMonth(bill, amount_list2);
+        update(bill, true);
         billRepository.deleteById(id);
-        user.setTotal_bill();
+        user.setTotal_bill(user.getBills().size());
+        userRepository.save(user);
     }
 
     @CrossOrigin
