@@ -45,6 +45,10 @@ public class User {
 	@Column(name = "total_bill")
 	private int total_bill;
 
+	@ManyToOne
+	@JoinColumn(name = "cluster_id")
+	private Cluster cluster;
+
 	public User(int total_bill) {
 		this.total_bill = 0;
 	}
@@ -160,5 +164,13 @@ public class User {
 
 	public void setTotal_bill(int total_bill) {
 		this.total_bill = total_bill;
+	}
+
+	public Cluster getCluster() {
+		return cluster;
+	}
+
+	public void setCluster(Cluster cluster) {
+		this.cluster = cluster;
 	}
 }

@@ -116,6 +116,7 @@ public class Bill{
         calendar.setTime(date);
         this.month = calendar.get(Calendar.MONTH) + 1;
     }
+
     public boolean checkLabel(double meanMonth, double clusterStd)
     {
         double a = Math.abs(amount-meanMonth);
