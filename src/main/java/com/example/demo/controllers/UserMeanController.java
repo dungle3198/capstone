@@ -43,6 +43,19 @@ public class UserMeanController {
     }
 
     @CrossOrigin
+    @PutMapping("/user_means/{id}")
+    public void editMean(@RequestBody UserMean userMean, @PathVariable("id") final Integer id)
+    {
+        UserMean existedMean = userMeanRepository.findById(id).get();
+        existedMean.setId(userMean.getId());
+        existedMean.setElectricity(userMean.getElectricity());
+        existedMean.setGas(userMean.getGas());
+        existedMean.setInternet(userMean.getInternet());
+        existedMean.setWater(userMean.getWater());
+        userMeanRepository.save(existedMean);
+    }
+
+    @CrossOrigin
     @DeleteMapping("/user_means/{id}")
     public void delete (@PathVariable("id") final Integer id)
     {

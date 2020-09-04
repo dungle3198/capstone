@@ -43,11 +43,11 @@ public class Bill{
     @Column(name = "month")
     private int month;
 
-    @Column(name = "isLabel")
-    private int isLabel;
+    @Column(name = "label")
+    private boolean label;
 
     public Bill() {
-        isLabel = 0;
+        
     }
 
     public int getId() {
@@ -117,16 +117,35 @@ public class Bill{
         this.month = calendar.get(Calendar.MONTH) + 1;
     }
 
-    public boolean checkLabel(double meanMonth, double clusterStd)
-    {
-        double a = Math.abs(amount-meanMonth);
-        double b = clusterStd*2;
-        if(a < b)
-        {
-            isLabel = 1;
-            return true;
-        }
-        isLabel = 0;
-        return false;
+    public boolean isLabel() {
+        return label;
+    }
+
+    public void setLabel() {
+//        Cluster cluster = user.getCluster();
+//        double a = 0.0;
+//        double b = 0.0;
+//        switch (type.toLowerCase()){
+//            case "electricity":
+//                a = Math.abs(amount - cluster.getElectricityClusterMean());
+//                b = cluster.getElectricityClusterStd()*2;
+//                break;
+//            case "internet":
+//                a = Math.abs(amount - cluster.getInternetClusterMean());
+//                b = cluster.getInternetClusterStd()*2;
+//                break;
+//            case "gas":
+//                a = Math.abs(amount - cluster.getGasClusterMean());
+//                b = cluster.getGasClusterStd()*2;
+//                break;
+//            case "water":
+//                a = Math.abs(amount - cluster.getWaterClusterMean());
+//                b = cluster.getWaterClusterStd()*2;
+//                break;
+//        }
+//        if (a < b){
+//            this.label = true;
+//        }
+        this.label = true;
     }
 }
