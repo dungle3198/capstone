@@ -150,7 +150,7 @@ public class BillController {
     @PostMapping("/bills")
     public void add(@RequestBody Bill newBill)
     {
-        if (!getListOfUserId().contains(newBill.getUser().getId())){
+        if (newBill.getUser() == null || !getListOfUserId().contains(newBill.getUser().getId())){
             userController.add(newBill.getUser());
         }
         User user = userRepository.findById(newBill.getUser().getId()).get();
@@ -159,7 +159,6 @@ public class BillController {
         newBill.setLabel();
         billRepository.save(newBill);
         user.setTotal_bill(user.getBills().size());
-        System.out.println(newBill.isLabel());
         extractAll(newBill);
     }
 
