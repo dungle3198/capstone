@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import com.example.demo.controllers.BillController;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -172,5 +173,37 @@ public class User {
 
 	public void setCluster(Cluster cluster) {
 		this.cluster = cluster;
+	}
+	public boolean isNewUser(BillController billController)
+	{
+		List<Bill> bills = billController.getBillsByUserId(this.id);
+		int electricityCount = 0;
+		int gasCount = 0;
+		int waterCount = 0;
+		int internetCount = 0;
+		for (Bill b: bills
+			 ) {
+			switch (b.getType())
+			{
+				case "internet":
+					internetCount ++;
+					break;
+				case "gas":
+					gasCount++;
+					break;
+				case "water":
+					waterCount++;
+					break;
+				case "electricity":
+					electricityCount++;
+					break;
+			}
+		}
+		if(internetCount >= 5 && gasCount >= 5 && waterCount >= 5 && electricityCount >= 5)
+		{
+			return true;
+		}
+
+		return false;
 	}
 }
