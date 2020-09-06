@@ -1,6 +1,5 @@
 package com.example.demo.entities;
 
-import com.example.demo.controllers.BillController;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -59,7 +58,7 @@ public class User {
 
 	public void setMeanMonthType(List<Double> amounts, String type, int month){
 		switch (type.toLowerCase()){
-			case "internet":
+			case "phone and internet":
 				internetMeanMonth.calculateInternetMeanMonth(amounts, month);
 				break;
 			case "electricity":
@@ -174,18 +173,18 @@ public class User {
 	public void setCluster(Cluster cluster) {
 		this.cluster = cluster;
 	}
-	public boolean isNewUser(BillController billController)
+
+	public boolean isNewUser()
 	{
-		List<Bill> bills = billController.getBillsByUserId(this.id);
+		List<Bill> bills = getBills();
 		int electricityCount = 0;
 		int gasCount = 0;
 		int waterCount = 0;
 		int internetCount = 0;
-		for (Bill b: bills
-			 ) {
-			switch (b.getType())
+		for (Bill bill: bills) {
+			switch (bill.getType())
 			{
-				case "internet":
+				case "phone and internet":
 					internetCount ++;
 					break;
 				case "gas":
@@ -199,11 +198,6 @@ public class User {
 					break;
 			}
 		}
-		if(internetCount >= 5 && gasCount >= 5 && waterCount >= 5 && electricityCount >= 5)
-		{
-			return true;
-		}
-
-		return false;
+		return internetCount < 5 && gasCount < 5 && waterCount < 5 && electricityCount < 5;
 	}
 }

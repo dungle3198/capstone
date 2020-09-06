@@ -53,7 +53,7 @@ public class UserMean {
         double mean = stats.getMean();
         //double mean = amounts.stream().mapToDouble(val -> val).average().orElse(0.0);
         switch (type.toLowerCase()) {
-            case "internet":
+            case "phone and internet":
                 setInternet(mean);
                 break;
             case "water":

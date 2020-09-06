@@ -53,7 +53,7 @@ public class UserStd{
         double std = stats.getStandardDeviation();
         switch (type.toLowerCase())
         {
-            case "internet":
+            case "phone and internet":
                 setInternet(std);
                 break;
             case "water":

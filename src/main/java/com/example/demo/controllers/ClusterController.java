@@ -1,8 +1,13 @@
 package com.example.demo.controllers;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
+import com.example.demo.entities.User;
+import com.example.demo.entities.UserMean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +22,47 @@ public class ClusterController {
     @Autowired
     public ClusterController(ClusterRepository clusterRepository) {
         this.clusterRepository = clusterRepository;
+    }
+
+    public List<User> createCluster(User userA, List<User> users){
+        List<User> listOfUsers = new ArrayList<>();
+        List<Double> distances = new ArrayList<>();
+        Cluster cluster = new Cluster();
+        User userB = null;
+        User userC = null;
+        for (User user : users) {
+            if (user != userA || !user.isNewUser()) {
+                UserMean userMean = user.getUserMean();
+                UserMean userMeanA = userA.getUserMean();
+                double electricityDistance = Math.pow(userMean.getElectricity() - userMeanA.getElectricity(), 2);
+                double waterDistance = Math.pow(userMean.getWater() - userMeanA.getWater(), 2);
+                double gasDistance = Math.pow(userMean.getGas() - userMeanA.getGas(), 2);
+                double internetDistance = Math.pow(userMean.getInternet() - userMeanA.getInternet(), 2);
+                double distance = Math.sqrt(electricityDistance + waterDistance + gasDistance + internetDistance);
+                distances.add(distance);
+            }
+        }
+        cluster.getUsers().add(userA);
+        userA.setCluster(cluster);
+        listOfUsers.add(userA);
+
+        int index1 = distances.indexOf(Collections.min(distances));
+        userB = users.get(index1);
+        cluster.getUsers().add(userB);
+        userB.setCluster(cluster);
+        listOfUsers.add(userB);
+        distances.remove(index1);
+        users.remove(index1);
+
+        int index2 = distances.indexOf(Collections.min(distances));
+        userC = users.get(index2);
+        cluster.getUsers().add(userC);
+        userC.setCluster(cluster);
+        listOfUsers.add(userC);
+
+        cluster.calculateCluster();
+        add(cluster);
+        return listOfUsers;
     }
 
     @CrossOrigin

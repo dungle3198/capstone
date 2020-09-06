@@ -1,16 +1,12 @@
 package com.example.demo.entities;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 
 @Entity
@@ -121,31 +117,63 @@ public class Bill{
         return label;
     }
 
-    public void setLabel() {
-//        Cluster cluster = user.getCluster();
-//        double a = 0.0;
-//        double b = 0.0;
-//        switch (type.toLowerCase()){
-//            case "electricity":
-//                a = Math.abs(amount - cluster.getElectricityClusterMean());
-//                b = cluster.getElectricityClusterStd()*2;
-//                break;
-//            case "internet":
-//                a = Math.abs(amount - cluster.getInternetClusterMean());
-//                b = cluster.getInternetClusterStd()*2;
-//                break;
-//            case "gas":
-//                a = Math.abs(amount - cluster.getGasClusterMean());
-//                b = cluster.getGasClusterStd()*2;
-//                break;
-//            case "water":
-//                a = Math.abs(amount - cluster.getWaterClusterMean());
-//                b = cluster.getWaterClusterStd()*2;
-//                break;
-//        }
-//        if (a < b){
-//            this.label = true;
-//        }
+    public void setLabel(){
         this.label = true;
+    }
+
+    public void setNewUserBillLabel(Cluster cluster) {
+        double a = 0.0;
+        double b = 0.0;
+        switch (type.toLowerCase()){
+            case "electricity":
+                a = Math.abs(amount - cluster.getElectricityClusterMean());
+                b = cluster.getElectricityClusterStd()*2;
+                break;
+            case "phone and internet":
+                a = Math.abs(amount - cluster.getInternetClusterMean());
+                b = cluster.getInternetClusterStd()*2;
+                break;
+            case "gas":
+                a = Math.abs(amount - cluster.getGasClusterMean());
+                b = cluster.getGasClusterStd()*2;
+                break;
+            case "water":
+                a = Math.abs(amount - cluster.getWaterClusterMean());
+                b = cluster.getWaterClusterStd()*2;
+                break;
+        }
+        if (a < b){
+            this.label = true;
+        }
+        this.label = false;
+    }
+
+    public void setOldUserBillLabel(){
+        UserMean userMean = user.getUserMean();
+        UserStd userStd = user.getUserStd();
+        double a = 0;
+        double b = 0;
+        switch (type.toLowerCase()){
+            case "electricity":
+                a = Math.abs(amount - userMean.getElectricity());
+                b = userStd.getElectricity()*2;
+                break;
+            case "phone and internet":
+                a = Math.abs(amount - userMean.getInternet());
+                b = userStd.getInternet()*2;
+                break;
+            case "gas":
+                a = Math.abs(amount - userMean.getGas());
+                b = userStd.getGas()*2;
+                break;
+            case "water":
+                a = Math.abs(amount - userMean.getWater());
+                b = userStd.getWater()*2;
+                break;
+        }
+        if (a < b){
+            this.label = true;
+        }
+        this.label = false;
     }
 }

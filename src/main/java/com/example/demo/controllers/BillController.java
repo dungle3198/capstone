@@ -22,10 +22,11 @@ public class BillController {
     private final InternetMeanMonthController internetMeanMonthController;
     private final GasMeanMonthController gasMeanMonthController;
     private final WaterMeanMonthController waterMeanMonthController;
+    private final ClusterController clusterController;
 
 
     @Autowired
-    public BillController(BillRepository billRepository, UserRepository userRepository, UserController userController, UserMeanController userMeanController, UserStdController userStdController, ElectricityMeanMonthController electricityMeanMonthController, InternetMeanMonthController internetMeanMonthController, GasMeanMonthController gasMeanMonthController, WaterMeanMonthController waterMeanMonthController) {
+    public BillController(BillRepository billRepository, UserRepository userRepository, UserController userController, UserMeanController userMeanController, UserStdController userStdController, ElectricityMeanMonthController electricityMeanMonthController, InternetMeanMonthController internetMeanMonthController, GasMeanMonthController gasMeanMonthController, WaterMeanMonthController waterMeanMonthController, ClusterController clusterController) {
         this.billRepository = billRepository;
         this.userRepository = userRepository;
         this.userController = userController;
@@ -35,6 +36,7 @@ public class BillController {
         this.internetMeanMonthController = internetMeanMonthController;
         this.gasMeanMonthController = gasMeanMonthController;
         this.waterMeanMonthController = waterMeanMonthController;
+        this.clusterController = clusterController;
     }
 
     public List<Integer> getListOfUserId(){
@@ -65,7 +67,7 @@ public class BillController {
         WaterMeanMonth waterMeanMonth = user.getWaterMeanMonth();
         user.setMeanMonthType(amounts, bill.getType(), bill.getMonth());
         switch (bill.getType().toLowerCase()){
-            case "internet":
+            case "phone and internet":
                 internetMeanMonthController.editInternetMeanMonth(internetMeanMonth, internetMeanMonth.getId());
                 break;
             case "gas":
@@ -126,6 +128,21 @@ public class BillController {
         extractMeanMonth(bill, amount_list2);
     }
 
+
+    public void labelNewUserBill (Bill bill){
+        List<Cluster> clusters = clusterController.clusters();
+        double shortestDistance = 99999;
+        Cluster chosenCluster = null;
+        for (Cluster cluster: clusters){
+            double distance = cluster.getDistance(bill.getUser().getUserMean());
+            if (distance < shortestDistance){
+                shortestDistance = distance;
+                chosenCluster = cluster;
+            }
+        }
+        bill.setNewUserBillLabel(chosenCluster);
+    }
+
     @CrossOrigin
     @GetMapping("/bills")
     public List<Bill> bills(){
@@ -156,7 +173,10 @@ public class BillController {
         User user = userRepository.findById(newBill.getUser().getId()).get();
         newBill.setUser(user);
         newBill.setMonth();
-        newBill.setLabel();
+        if (user.isNewUser()){
+            labelNewUserBill(newBill);
+        }
+        else {newBill.setOldUserBillLabel();}
         billRepository.save(newBill);
         user.setTotal_bill(user.getBills().size());
         extractAll(newBill);
@@ -197,7 +217,6 @@ public class BillController {
             existedBill.setNumber(bill.getNumber());
             existedBill.setLocation(bill.getLocation());
             existedBill.setMonth();
-            existedBill.setLabel();
             billRepository.save(existedBill);
             extractAll(existedBill);
         }

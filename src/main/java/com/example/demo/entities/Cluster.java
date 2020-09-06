@@ -3,7 +3,6 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -139,80 +138,46 @@ public class Cluster {
         this.users = users;
     }
 
-    public void getDistance(UserMean userMeanA, List<UserMean> listOfUserMeans)
+    public double getDistance(UserMean userMean)
     {
-        if(userMeanA == null)
-        {
-            return;
-        }
-        List<UserMean> selectedUserMeans = new ArrayList<>();
-        selectedUserMeans.add(userMeanA);
-        double shortestDist = 999999;
-        UserMean userMeanB = null;
-        UserMean userMeanC = null;
-        for (UserMean userMean : listOfUserMeans) {
-            if (userMean.getId() == userMeanA.getId()) {
-                continue;
-            }
-            double electricityDist = Math.pow(userMeanA.getElectricity() - userMean.getElectricity(), 2);
-            double waterDist = Math.pow(userMeanA.getWater() - userMean.getWater(), 2);
-            double gasDist = Math.pow(userMeanA.getGas() - userMean.getGas(), 2);
-            double internetDist = Math.pow(userMeanA.getInternet() - userMean.getInternet(), 2);
-            double square = electricityDist + waterDist + gasDist + internetDist;
-            double distance = Math.sqrt(square);
-
-            if (shortestDist > distance) {
-                if (userMeanB != null) {
-                    userMeanC = userMeanB;
-                }
-                userMeanB = userMean;
-                shortestDist = distance;
-            }
-        }
-
-        if(userMeanB != null)
-        {
-            selectedUserMeans.add(userMeanB);
-        }
-        if(userMeanC != null)
-        {
-            selectedUserMeans.add(userMeanC);
-        }
-        calculateCluster();
+        double electricityDistance = Math.pow(userMean.getElectricity() - getElectricityClusterMean(), 2);
+        double waterDistance = Math.pow(userMean.getWater() - getWaterClusterMean(), 2);
+        double gasDistance = Math.pow(userMean.getGas() - getGasClusterMean(), 2);
+        double internetDistance = Math.pow(userMean.getInternet() - getInternetClusterMean(), 2);
+        return Math.sqrt(electricityDistance + waterDistance + gasDistance + internetDistance);
     }
 
-    void calculateCluster()
+    public void calculateCluster()
     {
-        DescriptiveStatistics electricityStat = new DescriptiveStatistics();
-        DescriptiveStatistics waterStat = new DescriptiveStatistics();
-        DescriptiveStatistics gasStat = new DescriptiveStatistics();
-        DescriptiveStatistics internetStat = new DescriptiveStatistics();
+        List<Double> electricityMeans = new ArrayList<>();
+        List<Double> internetMeans = new ArrayList<>();
+        List<Double> waterMeans = new ArrayList<>();
+        List<Double> gasMeans = new ArrayList<>();
+        List<Double> electricityStds = new ArrayList<>();
+        List<Double> internetStds = new ArrayList<>();
+        List<Double> waterStds = new ArrayList<>();
+        List<Double> gasStds = new ArrayList<>();
 
-        for (User user: users) {
-            for (Bill bill: user.getBills()) {
-                switch (bill.getType().toLowerCase()) {
-                    case "electricity":
-                        electricityStat.addValue(bill.getAmount());
-                        break;
-                    case "gas":
-                        gasStat.addValue(bill.getAmount());
-                        break;
-                    case "water":
-                        waterStat.addValue(bill.getAmount());
-                        break;
-                    case "internet":
-                        internetStat.addValue(bill.getAmount());
-                        break;
-                }
-            }
+        for (User user: users){
+            UserMean userMean = user.getUserMean();
+            UserStd userStd = user.getUserStd();
+            electricityMeans.add(userMean.getElectricity());
+            internetMeans.add(userMean.getInternet());
+            waterMeans.add(userMean.getWater());
+            gasMeans.add(userMean.getGas());
+            electricityStds.add(userStd.getElectricity());
+            internetStds.add(userStd.getInternet());
+            waterStds.add(userStd.getWater());
+            gasStds.add(userStd.getGas());
         }
-        setElectricityClusterMean(electricityStat.getMean());
-        setInternetClusterMean(internetStat.getMean());
-        setGasClusterMean(gasStat.getMean());
-        setWaterClusterMean(waterStat.getMean());
-        setElectricityClusterStd(electricityStat.getStandardDeviation());
-        setInternetClusterStd(internetStat.getStandardDeviation());
-        setGasClusterStd(gasStat.getStandardDeviation());
-        setWaterClusterStd(waterStat.getStandardDeviation());
+
+        setElectricityClusterMean(electricityMeans.stream().mapToDouble(val -> val).average().orElse(0.0));
+        setInternetClusterMean(internetMeans.stream().mapToDouble(val -> val).average().orElse(0.0));
+        setWaterClusterMean(waterMeans.stream().mapToDouble(val -> val).average().orElse(0.0));
+        setGasClusterMean(gasMeans.stream().mapToDouble(val -> val).average().orElse(0.0));
+        setElectricityClusterStd(electricityStds.stream().mapToDouble(val -> val).average().orElse(0.0));
+        setInternetClusterStd(internetStds.stream().mapToDouble(val -> val).average().orElse(0.0));
+        setWaterClusterStd(waterStds.stream().mapToDouble(val -> val).average().orElse(0.0));
+        setGasClusterStd(gasStds.stream().mapToDouble(val -> val).average().orElse(0.0));
     }
 }
