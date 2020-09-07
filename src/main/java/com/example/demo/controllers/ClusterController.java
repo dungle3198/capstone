@@ -31,8 +31,9 @@ public class ClusterController {
         Cluster cluster = new Cluster();
         User userB;
         User userC;
+        users.remove(userA);
         for (User user : users) {
-            if (user != userA || !user.isNewUser()) {
+            if (!user.isNewUser()) {
                 UserMean userMean = user.getUserMean();
                 UserMean userMeanA = userA.getUserMean();
                 double electricityDistance = Math.pow(userMean.getElectricity() - userMeanA.getElectricity(), 2);
@@ -45,21 +46,30 @@ public class ClusterController {
         }
         userA.setCluster(cluster);
         listOfUsers.add(userA);
+        cluster.getUsers().add(userA);
 
         int index1 = distances.indexOf(Collections.min(distances));
         userB = users.get(index1);
         userB.setCluster(cluster);
         listOfUsers.add(userB);
+        cluster.getUsers().add(userB);
+        System.out.println(users);
+        System.out.println(distances);
         distances.remove(index1);
         users.remove(index1);
 
         int index2 = distances.indexOf(Collections.min(distances));
+        System.out.println(index2);
+        System.out.println(users);
+        System.out.println(distances);
         userC = users.get(index2);
         userC.setCluster(cluster);
         listOfUsers.add(userC);
+        cluster.getUsers().add(userC);
 
-        cluster.calculateCluster();
         add(cluster);
+        cluster.calculateCluster();
+        edit(cluster, cluster.getId());
         return listOfUsers;
     }
 
@@ -68,6 +78,7 @@ public class ClusterController {
     public List<Cluster> clusters() {
 //        if (clusterRepository.findAll().isEmpty()) {
 //            List<User> users = userController.users();
+//            System.out.println(users);
 //            for (User user : users) {
 //                List<User> listOfUsers = createCluster(user, users);
 //                users.removeAll(listOfUsers);
@@ -92,6 +103,25 @@ public class ClusterController {
     public void add(@RequestBody Cluster cluster)
     {
         clusterRepository.save(cluster);
+    }
+
+    @CrossOrigin
+    @PutMapping("/clusters/{id}")
+    public void edit(@RequestBody Cluster cluster, @PathVariable("id") final int id)
+    {
+        Cluster existedCluster = clusterRepository.findById(id).get();
+        System.out.println(existedCluster);
+        existedCluster.setId(cluster.getId());
+        existedCluster.setElectricityClusterMean(cluster.getElectricityClusterMean());
+        existedCluster.setInternetClusterMean(cluster.getInternetClusterMean());
+        existedCluster.setWaterClusterMean(cluster.getWaterClusterMean());
+        existedCluster.setGasClusterMean(cluster.getGasClusterMean());
+        existedCluster.setElectricityClusterStd(cluster.getElectricityClusterStd());
+        existedCluster.setInternetClusterStd(cluster.getInternetClusterStd());
+        existedCluster.setWaterClusterStd(cluster.getWaterClusterStd());
+        existedCluster.setGasClusterStd(cluster.getGasClusterStd());
+        System.out.println("hello");
+        clusterRepository.save(existedCluster);
     }
 
     @CrossOrigin

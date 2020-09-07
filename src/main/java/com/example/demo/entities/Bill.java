@@ -142,10 +142,7 @@ public class Bill{
                 b = cluster.getWaterClusterStd()*2;
                 break;
         }
-        if (a < b){
-            this.label = true;
-        }
-        this.label = false;
+        this.label = a < b;
     }
 
     public void setOldUserBillLabel(){
@@ -171,9 +168,6 @@ public class Bill{
                 b = userStd.getWater()*2;
                 break;
         }
-        if (a < b){
-            this.label = true;
-        }
-        this.label = false;
+        this.label = a < b;
     }
 }
