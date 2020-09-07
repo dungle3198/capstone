@@ -29,8 +29,8 @@ public class ClusterController {
         List<User> listOfUsers = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
         Cluster cluster = new Cluster();
-        User userB = null;
-        User userC = null;
+        User userB;
+        User userC;
         for (User user : users) {
             if (user != userA || !user.isNewUser()) {
                 UserMean userMean = user.getUserMean();
@@ -43,13 +43,11 @@ public class ClusterController {
                 distances.add(distance);
             }
         }
-        cluster.getUsers().add(userA);
         userA.setCluster(cluster);
         listOfUsers.add(userA);
 
         int index1 = distances.indexOf(Collections.min(distances));
         userB = users.get(index1);
-        cluster.getUsers().add(userB);
         userB.setCluster(cluster);
         listOfUsers.add(userB);
         distances.remove(index1);
@@ -57,7 +55,6 @@ public class ClusterController {
 
         int index2 = distances.indexOf(Collections.min(distances));
         userC = users.get(index2);
-        cluster.getUsers().add(userC);
         userC.setCluster(cluster);
         listOfUsers.add(userC);
 

@@ -182,7 +182,7 @@ public class User {
 		int waterCount = 0;
 		int internetCount = 0;
 		for (Bill bill: bills) {
-			switch (bill.getType())
+			switch (bill.getType().toLowerCase())
 			{
 				case "phone and internet":
 					internetCount ++;
