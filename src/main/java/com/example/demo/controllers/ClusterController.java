@@ -2,7 +2,6 @@ package com.example.demo.controllers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -18,10 +17,12 @@ import com.example.demo.repositories.ClusterRepository;
 public class ClusterController {
 
     private final ClusterRepository clusterRepository;
+    private final UserController userController;
 
     @Autowired
-    public ClusterController(ClusterRepository clusterRepository) {
+    public ClusterController(ClusterRepository clusterRepository, UserController userController) {
         this.clusterRepository = clusterRepository;
+        this.userController = userController;
     }
 
     public List<User> createCluster(User userA, List<User> users){
@@ -67,7 +68,17 @@ public class ClusterController {
 
     @CrossOrigin
     @GetMapping("/clusters")
-    public List<Cluster> clusters(){
+    public List<Cluster> clusters() {
+//        if (clusterRepository.findAll().isEmpty()) {
+//            List<User> users = userController.users();
+//            for (User user : users) {
+//                List<User> listOfUsers = createCluster(user, users);
+//                users.removeAll(listOfUsers);
+//                if (users.isEmpty()) {
+//                    break;
+//                }
+//            }
+//        }
         return clusterRepository.findAll();
     }
 

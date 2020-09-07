@@ -173,10 +173,11 @@ public class BillController {
         User user = userRepository.findById(newBill.getUser().getId()).get();
         newBill.setUser(user);
         newBill.setMonth();
-        if (user.isNewUser()){
-            labelNewUserBill(newBill);
-        }
-        else {newBill.setOldUserBillLabel();}
+//        if (user.isNewUser()){
+//            labelNewUserBill(newBill);
+//        }
+//        else {newBill.setOldUserBillLabel();}
+        newBill.setLabel();
         billRepository.save(newBill);
         user.setTotal_bill(user.getBills().size());
         extractAll(newBill);
