@@ -53,15 +53,10 @@ public class ClusterController {
         userB.setCluster(cluster);
         listOfUsers.add(userB);
         cluster.getUsers().add(userB);
-        System.out.println(users);
-        System.out.println(distances);
         distances.remove(index1);
         users.remove(index1);
 
         int index2 = distances.indexOf(Collections.min(distances));
-        System.out.println(index2);
-        System.out.println(users);
-        System.out.println(distances);
         userC = users.get(index2);
         userC.setCluster(cluster);
         listOfUsers.add(userC);
@@ -78,7 +73,6 @@ public class ClusterController {
     public List<Cluster> clusters() {
 //        if (clusterRepository.findAll().isEmpty()) {
 //            List<User> users = userController.users();
-//            System.out.println(users);
 //            for (User user : users) {
 //                List<User> listOfUsers = createCluster(user, users);
 //                users.removeAll(listOfUsers);
@@ -110,7 +104,6 @@ public class ClusterController {
     public void edit(@RequestBody Cluster cluster, @PathVariable("id") final int id)
     {
         Cluster existedCluster = clusterRepository.findById(id).get();
-        System.out.println(existedCluster);
         existedCluster.setId(cluster.getId());
         existedCluster.setElectricityClusterMean(cluster.getElectricityClusterMean());
         existedCluster.setInternetClusterMean(cluster.getInternetClusterMean());
@@ -120,7 +113,6 @@ public class ClusterController {
         existedCluster.setInternetClusterStd(cluster.getInternetClusterStd());
         existedCluster.setWaterClusterStd(cluster.getWaterClusterStd());
         existedCluster.setGasClusterStd(cluster.getGasClusterStd());
-        System.out.println("hello");
         clusterRepository.save(existedCluster);
     }
 

@@ -15,20 +15,20 @@ public interface BillRepository  extends JpaRepository<Bill, Integer>{
     @Query("select e from Bill e where e.user.id = ?1")
     List<Bill> getBillsByUserId(int user_id);
 
-    @Query("select amount from Bill e where e.user.id = :user_id and e.type = :type")
+    @Query("select amount from Bill e where e.user.id = :user_id and e.type = :type and e.label = true")
     List<Double> getBillAmountByUserIdAndType(@Param("user_id")int user_id,
                                               @Param("type")String type);
 
-    @Query("select amount from Bill e where e.user.id = :user_id and e.type = :type and e.month = :month")
+    @Query("select amount from Bill e where e.user.id = :user_id and e.type = :type and e.month = :month and e.label = true")
     List<Double> getBillAmountByUserIdAndTypeAndMonth(@Param("user_id")int user_id,
                                                       @Param("type")String type,
                                                       @Param("month")int month);
 
-    @Query("select id from Bill e where e.user.id = :user_id and e.type = :type")
+    @Query("select id from Bill e where e.user.id = :user_id and e.type = :type and e.label = true")
     List<Integer> getBillIdByUserIdAndType(@Param("user_id")int user_id,
                                            @Param("type")String type);
 
-    @Query("select id from Bill e where e.user.id = :user_id and e.type = :type and e.month = :month")
+    @Query("select id from Bill e where e.user.id = :user_id and e.type = :type and e.month = :month and e.label = true")
     List<Integer> getBillIdByUserIdAndTypeAndMonth(@Param("user_id")int user_id,
                                                    @Param("type")String type,
                                                    @Param("month")int month);

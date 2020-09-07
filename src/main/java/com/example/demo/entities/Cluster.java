@@ -171,8 +171,6 @@ public class Cluster {
             gasStds.add(userStd.getGas());
         }
 
-        System.out.println(electricityMeans);
-        System.out.println(electricityMeans.stream().mapToDouble(val -> val).average().orElse(0.0));
         setElectricityClusterMean(electricityMeans.stream().mapToDouble(val -> val).average().orElse(0.0));
         setInternetClusterMean(internetMeans.stream().mapToDouble(val -> val).average().orElse(0.0));
         setWaterClusterMean(waterMeans.stream().mapToDouble(val -> val).average().orElse(0.0));
@@ -181,13 +179,5 @@ public class Cluster {
         setInternetClusterStd(internetStds.stream().mapToDouble(val -> val).average().orElse(0.0));
         setWaterClusterStd(waterStds.stream().mapToDouble(val -> val).average().orElse(0.0));
         setGasClusterStd(gasStds.stream().mapToDouble(val -> val).average().orElse(0.0));
-        System.out.println(getElectricityClusterMean());
-        System.out.println(getElectricityClusterStd());
-        System.out.println(getGasClusterMean());
-        System.out.println(getGasClusterStd());
-        System.out.println(getWaterClusterMean());
-        System.out.println(getWaterClusterStd());
-        System.out.println(getInternetClusterMean());
-        System.out.println(getInternetClusterStd());
     }
 }
