@@ -166,7 +166,6 @@ public class User {
 		this.total_bill = total_bill;
 	}
 
-	@JsonIgnore
 	public Cluster getCluster() {
 		return cluster;
 	}

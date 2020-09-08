@@ -1,4 +1,5 @@
 package com.example.demo.entities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
@@ -130,6 +131,7 @@ public class Cluster {
         this.gasClusterStd = gasClusterStd;
     }
 
+    @JsonIgnore
     public List<User> getUsers() {
         return users;
     }

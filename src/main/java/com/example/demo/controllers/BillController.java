@@ -234,4 +234,14 @@ public class BillController {
         user.setTotal_bill(user.getBills().size());
         userRepository.save(user);
     }
+
+    @CrossOrigin
+    @GetMapping("/bills/confirm/{id}")
+    public Bill confirmBill(@PathVariable("id") final int bill_id){
+        Bill bill = billRepository.findById(bill_id).get();
+        bill.setLabel();
+        billRepository.save(bill);
+        extractAll(bill);
+        return bill;
+    }
 }
