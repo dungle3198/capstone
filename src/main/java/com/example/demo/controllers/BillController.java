@@ -97,8 +97,10 @@ public class BillController {
         List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(bill.getUser().getId(), bill.getType(), bill.getMonth());
         extract(bill, amount_list1);
         extractMeanMonth(bill, amount_list2);
-        if (bill.getUser().getCluster() != null){
-            bill.getUser().getCluster().calculateCluster();
+        Cluster cluster = bill.getUser().getCluster();
+        if (cluster != null){
+            cluster.calculateCluster();
+            clusterController.edit(cluster, cluster.getId());
         }
     }
 
