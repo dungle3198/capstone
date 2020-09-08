@@ -123,6 +123,11 @@ public class BillController {
                 amount_list2.add(0.0);
             }
             extract(bill, amount_list1);
+            Cluster cluster = bill.getUser().getCluster();
+            if (cluster != null){
+                cluster.calculateCluster();
+                clusterController.edit(cluster, cluster.getId());
+            }
         }
         else {
             amount_list2.remove(index2);
