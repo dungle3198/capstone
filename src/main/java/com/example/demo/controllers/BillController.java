@@ -97,6 +97,9 @@ public class BillController {
         List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(bill.getUser().getId(), bill.getType(), bill.getMonth());
         extract(bill, amount_list1);
         extractMeanMonth(bill, amount_list2);
+        if (bill.getUser().getCluster() != null){
+            bill.getUser().getCluster().calculateCluster();
+        }
     }
 
     public void update(Bill bill, boolean option){
@@ -177,7 +180,7 @@ public class BillController {
             labelNewUserBill(newBill);
         }
         else {newBill.setOldUserBillLabel();}
-        //newBill.setLabel();
+        //newBill.setLabel(true);
         billRepository.save(newBill);
         user.setTotal_bill(user.getBills().size());
         extractAll(newBill);
@@ -239,7 +242,7 @@ public class BillController {
     @GetMapping("/bills/confirm/{id}")
     public Bill confirmBill(@PathVariable("id") final int bill_id){
         Bill bill = billRepository.findById(bill_id).get();
-        bill.setLabel();
+        bill.setLabel(!bill.isLabel());
         billRepository.save(bill);
         extractAll(bill);
         return bill;
