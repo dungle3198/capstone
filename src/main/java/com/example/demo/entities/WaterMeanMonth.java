@@ -15,40 +15,40 @@ public class WaterMeanMonth {
     private int id;
 
     @Column (name = "water_mm1")
-    private double water_mm1;
+    private double waterMeanMonth1;
 
     @Column (name = "water_mm2")
-    private double water_mm2;
+    private double waterMeanMonth2;
 
     @Column (name = "water_mm3")
-    private double water_mm3;
+    private double waterMeanMonth3;
 
     @Column (name = "water_mm4")
-    private double water_mm4;
+    private double waterMeanMonth4;
 
     @Column (name = "water_mm5")
-    private double water_mm5;
+    private double waterMeanMonth5;
 
     @Column (name = "water_mm6")
-    private double water_mm6;
+    private double waterMeanMonth6;
 
     @Column (name = "water_mm7")
-    private double water_mm7;
+    private double waterMeanMonth7;
 
     @Column (name = "water_mm8")
-    private double water_mm8;
+    private double waterMeanMonth8;
 
     @Column (name = "water_mm9")
-    private double water_mm9;
+    private double waterMeanMonth9;
 
     @Column (name = "water_mm10")
-    private double water_mm10;
+    private double waterMeanMonth10;
 
     @Column (name = "water_mm11")
-    private double water_mm11;
+    private double waterMeanMonth11;
 
     @Column (name = "water_mm12")
-    private double water_mm12;
+    private double waterMeanMonth12;
 
     @OneToOne(optional = false)
     @JoinColumn (name = "user_id", nullable = false)
@@ -59,18 +59,18 @@ public class WaterMeanMonth {
     }
 
     public WaterMeanMonth(int id) {
-        this.water_mm1 = 0;
-        this.water_mm2 = 0;
-        this.water_mm3 = 0;
-        this.water_mm4 = 0;
-        this.water_mm5 = 0;
-        this.water_mm6 = 0;
-        this.water_mm7 = 0;
-        this.water_mm8 = 0;
-        this.water_mm9 = 0;
-        this.water_mm10 = 0;
-        this.water_mm11 = 0;
-        this.water_mm12 = 0;
+        this.waterMeanMonth1 = 0;
+        this.waterMeanMonth2 = 0;
+        this.waterMeanMonth3 = 0;
+        this.waterMeanMonth4 = 0;
+        this.waterMeanMonth5 = 0;
+        this.waterMeanMonth6 = 0;
+        this.waterMeanMonth7 = 0;
+        this.waterMeanMonth8 = 0;
+        this.waterMeanMonth9 = 0;
+        this.waterMeanMonth10 = 0;
+        this.waterMeanMonth11 = 0;
+        this.waterMeanMonth12 = 0;
     }
 
     public void calculateWaterMeanMonth (List<Double> amounts, int month){
@@ -84,40 +84,40 @@ public class WaterMeanMonth {
         double mean = stats.getMean();
         switch (month) {
             case 1:
-                setWater_mm1(mean);
+                setWaterMeanMonth1(mean);
                 break;
             case 2:
-                setWater_mm2(mean);
+                setWaterMeanMonth2(mean);
                 break;
             case 3:
-                setWater_mm3(mean);
+                setWaterMeanMonth3(mean);
                 break;
             case 4:
-                setWater_mm4(mean);
+                setWaterMeanMonth4(mean);
                 break;
             case 5:
-                setWater_mm5(mean);
+                setWaterMeanMonth5(mean);
                 break;
             case 6:
-                setWater_mm6(mean);
+                setWaterMeanMonth6(mean);
                 break;
             case 7:
-                setWater_mm7(mean);
+                setWaterMeanMonth7(mean);
                 break;
             case 8:
-                setWater_mm8(mean);
+                setWaterMeanMonth8(mean);
                 break;
             case 9:
-                setWater_mm9(mean);
+                setWaterMeanMonth9(mean);
                 break;
             case 10:
-                setWater_mm10(mean);
+                setWaterMeanMonth10(mean);
                 break;
             case 11:
-                setWater_mm11(mean);
+                setWaterMeanMonth11(mean);
                 break;
             case 12:
-                setWater_mm12(mean);
+                setWaterMeanMonth12(mean);
                 break;
         }
     }
@@ -130,100 +130,100 @@ public class WaterMeanMonth {
         this.id = id;
     }
 
-    public double getWater_mm1() {
-        return water_mm1;
+    public double getWaterMeanMonth1() {
+        return waterMeanMonth1;
     }
 
-    public void setWater_mm1(double water_mm1) {
-        this.water_mm1 = water_mm1;
+    public void setWaterMeanMonth1(double waterMeanMonth1) {
+        this.waterMeanMonth1 = waterMeanMonth1;
     }
 
-    public double getWater_mm2() {
-        return water_mm2;
+    public double getWaterMeanMonth2() {
+        return waterMeanMonth2;
     }
 
-    public void setWater_mm2(double water_mm2) {
-        this.water_mm2 = water_mm2;
+    public void setWaterMeanMonth2(double waterMeanMonth2) {
+        this.waterMeanMonth2 = waterMeanMonth2;
     }
 
-    public double getWater_mm3() {
-        return water_mm3;
+    public double getWaterMeanMonth3() {
+        return waterMeanMonth3;
     }
 
-    public void setWater_mm3(double water_mm3) {
-        this.water_mm3 = water_mm3;
+    public void setWaterMeanMonth3(double waterMeanMonth3) {
+        this.waterMeanMonth3 = waterMeanMonth3;
     }
 
-    public double getWater_mm4() {
-        return water_mm4;
+    public double getWaterMeanMonth4() {
+        return waterMeanMonth4;
     }
 
-    public void setWater_mm4(double water_mm4) {
-        this.water_mm4 = water_mm4;
+    public void setWaterMeanMonth4(double waterMeanMonth4) {
+        this.waterMeanMonth4 = waterMeanMonth4;
     }
 
-    public double getWater_mm5() {
-        return water_mm5;
+    public double getWaterMeanMonth5() {
+        return waterMeanMonth5;
     }
 
-    public void setWater_mm5(double water_mm5) {
-        this.water_mm5 = water_mm5;
+    public void setWaterMeanMonth5(double waterMeanMonth5) {
+        this.waterMeanMonth5 = waterMeanMonth5;
     }
 
-    public double getWater_mm6() {
-        return water_mm6;
+    public double getWaterMeanMonth6() {
+        return waterMeanMonth6;
     }
 
-    public void setWater_mm6(double water_mm6) {
-        this.water_mm6 = water_mm6;
+    public void setWaterMeanMonth6(double waterMeanMonth6) {
+        this.waterMeanMonth6 = waterMeanMonth6;
     }
 
-    public double getWater_mm7() {
-        return water_mm7;
+    public double getWaterMeanMonth7() {
+        return waterMeanMonth7;
     }
 
-    public void setWater_mm7(double water_mm7) {
-        this.water_mm7 = water_mm7;
+    public void setWaterMeanMonth7(double waterMeanMonth7) {
+        this.waterMeanMonth7 = waterMeanMonth7;
     }
 
-    public double getWater_mm8() {
-        return water_mm8;
+    public double getWaterMeanMonth8() {
+        return waterMeanMonth8;
     }
 
-    public void setWater_mm8(double water_mm8) {
-        this.water_mm8 = water_mm8;
+    public void setWaterMeanMonth8(double waterMeanMonth8) {
+        this.waterMeanMonth8 = waterMeanMonth8;
     }
 
-    public double getWater_mm9() {
-        return water_mm9;
+    public double getWaterMeanMonth9() {
+        return waterMeanMonth9;
     }
 
-    public void setWater_mm9(double water_mm9) {
-        this.water_mm9 = water_mm9;
+    public void setWaterMeanMonth9(double waterMeanMonth9) {
+        this.waterMeanMonth9 = waterMeanMonth9;
     }
 
-    public double getWater_mm10() {
-        return water_mm10;
+    public double getWaterMeanMonth10() {
+        return waterMeanMonth10;
     }
 
-    public void setWater_mm10(double water_mm10) {
-        this.water_mm10 = water_mm10;
+    public void setWaterMeanMonth10(double waterMeanMonth10) {
+        this.waterMeanMonth10 = waterMeanMonth10;
     }
 
-    public double getWater_mm11() {
-        return water_mm11;
+    public double getWaterMeanMonth11() {
+        return waterMeanMonth11;
     }
 
-    public void setWater_mm11(double water_mm11) {
-        this.water_mm11 = water_mm11;
+    public void setWaterMeanMonth11(double waterMeanMonth11) {
+        this.waterMeanMonth11 = waterMeanMonth11;
     }
 
-    public double getWater_mm12() {
-        return water_mm12;
+    public double getWaterMeanMonth12() {
+        return waterMeanMonth12;
     }
 
-    public void setWater_mm12(double water_mm12) {
-        this.water_mm12 = water_mm12;
+    public void setWaterMeanMonth12(double waterMeanMonth12) {
+        this.waterMeanMonth12 = waterMeanMonth12;
     }
 
     @JsonIgnore

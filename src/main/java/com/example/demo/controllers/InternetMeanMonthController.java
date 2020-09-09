@@ -29,18 +29,18 @@ public class InternetMeanMonthController {
     {
         InternetMeanMonth existedInternetMeanMonth = internetMeanMonthRepository.findById(id).get();
         existedInternetMeanMonth.setId(internetMeanMonth.getId());
-        existedInternetMeanMonth.setInternet_mm1(internetMeanMonth.getInternet_mm1());
-        existedInternetMeanMonth.setInternet_mm2(internetMeanMonth.getInternet_mm2());
-        existedInternetMeanMonth.setInternet_mm3(internetMeanMonth.getInternet_mm3());
-        existedInternetMeanMonth.setInternet_mm4(internetMeanMonth.getInternet_mm4());
-        existedInternetMeanMonth.setInternet_mm5(internetMeanMonth.getInternet_mm5());
-        existedInternetMeanMonth.setInternet_mm6(internetMeanMonth.getInternet_mm6());
-        existedInternetMeanMonth.setInternet_mm7(internetMeanMonth.getInternet_mm7());
-        existedInternetMeanMonth.setInternet_mm8(internetMeanMonth.getInternet_mm8());
-        existedInternetMeanMonth.setInternet_mm9(internetMeanMonth.getInternet_mm9());
-        existedInternetMeanMonth.setInternet_mm10(internetMeanMonth.getInternet_mm10());
-        existedInternetMeanMonth.setInternet_mm11(internetMeanMonth.getInternet_mm11());
-        existedInternetMeanMonth.setInternet_mm12(internetMeanMonth.getInternet_mm12());
+        existedInternetMeanMonth.setInternetMeanMonth1(internetMeanMonth.getInternetMeanMonth1());
+        existedInternetMeanMonth.setInternetMeanMonth2(internetMeanMonth.getInternetMeanMonth2());
+        existedInternetMeanMonth.setInternetMeanMonth3(internetMeanMonth.getInternetMeanMonth3());
+        existedInternetMeanMonth.setInternetMeanMonth4(internetMeanMonth.getInternetMeanMonth4());
+        existedInternetMeanMonth.setInternetMeanMonth5(internetMeanMonth.getInternetMeanMonth5());
+        existedInternetMeanMonth.setInternetMeanMonth6(internetMeanMonth.getInternetMeanMonth6());
+        existedInternetMeanMonth.setInternetMeanMonth7(internetMeanMonth.getInternetMeanMonth7());
+        existedInternetMeanMonth.setInternetMeanMonth8(internetMeanMonth.getInternetMeanMonth8());
+        existedInternetMeanMonth.setInternetMeanMonth9(internetMeanMonth.getInternetMeanMonth9());
+        existedInternetMeanMonth.setInternetMeanMonth10(internetMeanMonth.getInternetMeanMonth10());
+        existedInternetMeanMonth.setInternetMeanMonth11(internetMeanMonth.getInternetMeanMonth11());
+        existedInternetMeanMonth.setInternetMeanMonth12(internetMeanMonth.getInternetMeanMonth12());
         internetMeanMonthRepository.save(existedInternetMeanMonth);
     }
 }

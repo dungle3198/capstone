@@ -27,18 +27,18 @@ public class GasMeanMonthController {
     {
         GasMeanMonth existedGasMeanMonth = gasMeanMonthRepository.findById(id).get();
         existedGasMeanMonth.setId(gasMeanMonth.getId());
-        existedGasMeanMonth.setGas_mm1(gasMeanMonth.getGas_mm1());
-        existedGasMeanMonth.setGas_mm2(gasMeanMonth.getGas_mm2());
-        existedGasMeanMonth.setGas_mm3(gasMeanMonth.getGas_mm3());
-        existedGasMeanMonth.setGas_mm4(gasMeanMonth.getGas_mm4());
-        existedGasMeanMonth.setGas_mm5(gasMeanMonth.getGas_mm5());
-        existedGasMeanMonth.setGas_mm6(gasMeanMonth.getGas_mm6());
-        existedGasMeanMonth.setGas_mm7(gasMeanMonth.getGas_mm7());
-        existedGasMeanMonth.setGas_mm8(gasMeanMonth.getGas_mm8());
-        existedGasMeanMonth.setGas_mm9(gasMeanMonth.getGas_mm9());
-        existedGasMeanMonth.setGas_mm10(gasMeanMonth.getGas_mm10());
-        existedGasMeanMonth.setGas_mm11(gasMeanMonth.getGas_mm11());
-        existedGasMeanMonth.setGas_mm12(gasMeanMonth.getGas_mm12());
+        existedGasMeanMonth.setGasMeanMonth1(gasMeanMonth.getGasMeanMonth1());
+        existedGasMeanMonth.setGasMeanMonth2(gasMeanMonth.getGasMeanMonth2());
+        existedGasMeanMonth.setGasMeanMonth3(gasMeanMonth.getGasMeanMonth3());
+        existedGasMeanMonth.setGasMeanMonth4(gasMeanMonth.getGasMeanMonth4());
+        existedGasMeanMonth.setGasMeanMonth5(gasMeanMonth.getGasMeanMonth5());
+        existedGasMeanMonth.setGasMeanMonth6(gasMeanMonth.getGasMeanMonth6());
+        existedGasMeanMonth.setGasMeanMonth7(gasMeanMonth.getGasMeanMonth7());
+        existedGasMeanMonth.setGasMeanMonth8(gasMeanMonth.getGasMeanMonth8());
+        existedGasMeanMonth.setGasMeanMonth9(gasMeanMonth.getGasMeanMonth9());
+        existedGasMeanMonth.setGasMeanMonth10(gasMeanMonth.getGasMeanMonth10());
+        existedGasMeanMonth.setGasMeanMonth11(gasMeanMonth.getGasMeanMonth11());
+        existedGasMeanMonth.setGasMeanMonth12(gasMeanMonth.getGasMeanMonth12());
         gasMeanMonthRepository.save(existedGasMeanMonth);
     }
 }

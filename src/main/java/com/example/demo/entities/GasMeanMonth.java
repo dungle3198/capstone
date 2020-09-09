@@ -16,40 +16,40 @@ public class GasMeanMonth {
     private int id;
 
     @Column (name = "gas_mm1")
-    private double gas_mm1;
+    private double gasMeanMonth1;
 
     @Column (name = "gas_mm2")
-    private double gas_mm2;
+    private double gasMeanMonth2;
 
     @Column (name = "gas_mm3")
-    private double gas_mm3;
+    private double gasMeanMonth3;
 
     @Column (name = "gas_mm4")
-    private double gas_mm4;
+    private double gasMeanMonth4;
 
     @Column (name = "gas_mm5")
-    private double gas_mm5;
+    private double gasMeanMonth5;
 
     @Column (name = "gas_mm6")
-    private double gas_mm6;
+    private double gasMeanMonth6;
 
     @Column (name = "gas_mm7")
-    private double gas_mm7;
+    private double gasMeanMonth7;
 
     @Column (name = "gas_mm8")
-    private double gas_mm8;
+    private double gasMeanMonth8;
 
     @Column (name = "gas_mm9")
-    private double gas_mm9;
+    private double gasMeanMonth9;
 
     @Column (name = "gas_mm10")
-    private double gas_mm10;
+    private double gasMeanMonth10;
 
     @Column (name = "gas_mm11")
-    private double gas_mm11;
+    private double gasMeanMonth11;
 
     @Column (name = "gas_mm12")
-    private double gas_mm12;
+    private double gasMeanMonth12;
 
     @OneToOne (optional = false)
     @JoinColumn (name = "user_id", nullable = false)
@@ -60,18 +60,18 @@ public class GasMeanMonth {
     }
 
     public GasMeanMonth(int id) {
-        this.gas_mm1 = 0;
-        this.gas_mm2 = 0;
-        this.gas_mm3 = 0;
-        this.gas_mm4 = 0;
-        this.gas_mm5 = 0;
-        this.gas_mm6 = 0;
-        this.gas_mm7 = 0;
-        this.gas_mm8 = 0;
-        this.gas_mm9 = 0;
-        this.gas_mm10 = 0;
-        this.gas_mm11 = 0;
-        this.gas_mm12 = 0;
+        this.gasMeanMonth1 = 0;
+        this.gasMeanMonth2 = 0;
+        this.gasMeanMonth3 = 0;
+        this.gasMeanMonth4 = 0;
+        this.gasMeanMonth5 = 0;
+        this.gasMeanMonth6 = 0;
+        this.gasMeanMonth7 = 0;
+        this.gasMeanMonth8 = 0;
+        this.gasMeanMonth9 = 0;
+        this.gasMeanMonth10 = 0;
+        this.gasMeanMonth11 = 0;
+        this.gasMeanMonth12 = 0;
     }
 
     public void calculateGasMeanMonth (List<Double> amounts, int month){
@@ -85,40 +85,40 @@ public class GasMeanMonth {
         double mean = stats.getMean();
         switch (month) {
             case 1:
-                setGas_mm1(mean);
+                setGasMeanMonth1(mean);
                 break;
             case 2:
-                setGas_mm2(mean);
+                setGasMeanMonth2(mean);
                 break;
             case 3:
-                setGas_mm3(mean);
+                setGasMeanMonth3(mean);
                 break;
             case 4:
-                setGas_mm4(mean);
+                setGasMeanMonth4(mean);
                 break;
             case 5:
-                setGas_mm5(mean);
+                setGasMeanMonth5(mean);
                 break;
             case 6:
-                setGas_mm6(mean);
+                setGasMeanMonth6(mean);
                 break;
             case 7:
-                setGas_mm7(mean);
+                setGasMeanMonth7(mean);
                 break;
             case 8:
-                setGas_mm8(mean);
+                setGasMeanMonth8(mean);
                 break;
             case 9:
-                setGas_mm9(mean);
+                setGasMeanMonth9(mean);
                 break;
             case 10:
-                setGas_mm10(mean);
+                setGasMeanMonth10(mean);
                 break;
             case 11:
-                setGas_mm11(mean);
+                setGasMeanMonth11(mean);
                 break;
             case 12:
-                setGas_mm12(mean);
+                setGasMeanMonth12(mean);
                 break;
         }
     }
@@ -131,100 +131,100 @@ public class GasMeanMonth {
         this.id = id;
     }
 
-    public double getGas_mm1() {
-        return gas_mm1;
+    public double getGasMeanMonth1() {
+        return gasMeanMonth1;
     }
 
-    public void setGas_mm1(double gas_mm1) {
-        this.gas_mm1 = gas_mm1;
+    public void setGasMeanMonth1(double gasMeanMonth1) {
+        this.gasMeanMonth1 = gasMeanMonth1;
     }
 
-    public double getGas_mm2() {
-        return gas_mm2;
+    public double getGasMeanMonth2() {
+        return gasMeanMonth2;
     }
 
-    public void setGas_mm2(double gas_mm2) {
-        this.gas_mm2 = gas_mm2;
+    public void setGasMeanMonth2(double gasMeanMonth2) {
+        this.gasMeanMonth2 = gasMeanMonth2;
     }
 
-    public double getGas_mm3() {
-        return gas_mm3;
+    public double getGasMeanMonth3() {
+        return gasMeanMonth3;
     }
 
-    public void setGas_mm3(double gas_mm3) {
-        this.gas_mm3 = gas_mm3;
+    public void setGasMeanMonth3(double gasMeanMonth3) {
+        this.gasMeanMonth3 = gasMeanMonth3;
     }
 
-    public double getGas_mm4() {
-        return gas_mm4;
+    public double getGasMeanMonth4() {
+        return gasMeanMonth4;
     }
 
-    public void setGas_mm4(double gas_mm4) {
-        this.gas_mm4 = gas_mm4;
+    public void setGasMeanMonth4(double gasMeanMonth4) {
+        this.gasMeanMonth4 = gasMeanMonth4;
     }
 
-    public double getGas_mm5() {
-        return gas_mm5;
+    public double getGasMeanMonth5() {
+        return gasMeanMonth5;
     }
 
-    public void setGas_mm5(double gas_mm5) {
-        this.gas_mm5 = gas_mm5;
+    public void setGasMeanMonth5(double gasMeanMonth5) {
+        this.gasMeanMonth5 = gasMeanMonth5;
     }
 
-    public double getGas_mm6() {
-        return gas_mm6;
+    public double getGasMeanMonth6() {
+        return gasMeanMonth6;
     }
 
-    public void setGas_mm6(double gas_mm6) {
-        this.gas_mm6 = gas_mm6;
+    public void setGasMeanMonth6(double gasMeanMonth6) {
+        this.gasMeanMonth6 = gasMeanMonth6;
     }
 
-    public double getGas_mm7() {
-        return gas_mm7;
+    public double getGasMeanMonth7() {
+        return gasMeanMonth7;
     }
 
-    public void setGas_mm7(double gas_mm7) {
-        this.gas_mm7 = gas_mm7;
+    public void setGasMeanMonth7(double gasMeanMonth7) {
+        this.gasMeanMonth7 = gasMeanMonth7;
     }
 
-    public double getGas_mm8() {
-        return gas_mm8;
+    public double getGasMeanMonth8() {
+        return gasMeanMonth8;
     }
 
-    public void setGas_mm8(double gas_mm8) {
-        this.gas_mm8 = gas_mm8;
+    public void setGasMeanMonth8(double gasMeanMonth8) {
+        this.gasMeanMonth8 = gasMeanMonth8;
     }
 
-    public double getGas_mm9() {
-        return gas_mm9;
+    public double getGasMeanMonth9() {
+        return gasMeanMonth9;
     }
 
-    public void setGas_mm9(double gas_mm9) {
-        this.gas_mm9 = gas_mm9;
+    public void setGasMeanMonth9(double gasMeanMonth9) {
+        this.gasMeanMonth9 = gasMeanMonth9;
     }
 
-    public double getGas_mm10() {
-        return gas_mm10;
+    public double getGasMeanMonth10() {
+        return gasMeanMonth10;
     }
 
-    public void setGas_mm10(double gas_mm10) {
-        this.gas_mm10 = gas_mm10;
+    public void setGasMeanMonth10(double gasMeanMonth10) {
+        this.gasMeanMonth10 = gasMeanMonth10;
     }
 
-    public double getGas_mm11() {
-        return gas_mm11;
+    public double getGasMeanMonth11() {
+        return gasMeanMonth11;
     }
 
-    public void setGas_mm11(double gas_mm11) {
-        this.gas_mm11 = gas_mm11;
+    public void setGasMeanMonth11(double gasMeanMonth11) {
+        this.gasMeanMonth11 = gasMeanMonth11;
     }
 
-    public double getGas_mm12() {
-        return gas_mm12;
+    public double getGasMeanMonth12() {
+        return gasMeanMonth12;
     }
 
-    public void setGas_mm12(double gas_mm12) {
-        this.gas_mm12 = gas_mm12;
+    public void setGasMeanMonth12(double gasMeanMonth12) {
+        this.gasMeanMonth12 = gasMeanMonth12;
     }
 
     @JsonIgnore

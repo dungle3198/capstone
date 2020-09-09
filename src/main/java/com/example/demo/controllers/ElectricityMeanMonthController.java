@@ -29,18 +29,18 @@ public class ElectricityMeanMonthController {
     {
         ElectricityMeanMonth existedElectricityMeanMonth = electricityMeanMonthRepository.findById(id).get();
         existedElectricityMeanMonth.setId(electricityMeanMonth.getId());
-        existedElectricityMeanMonth.setElectricity_mm1(electricityMeanMonth.getElectricity_mm1());
-        existedElectricityMeanMonth.setElectricity_mm2(electricityMeanMonth.getElectricity_mm2());
-        existedElectricityMeanMonth.setElectricity_mm3(electricityMeanMonth.getElectricity_mm3());
-        existedElectricityMeanMonth.setElectricity_mm4(electricityMeanMonth.getElectricity_mm4());
-        existedElectricityMeanMonth.setElectricity_mm5(electricityMeanMonth.getElectricity_mm5());
-        existedElectricityMeanMonth.setElectricity_mm6(electricityMeanMonth.getElectricity_mm6());
-        existedElectricityMeanMonth.setElectricity_mm7(electricityMeanMonth.getElectricity_mm7());
-        existedElectricityMeanMonth.setElectricity_mm8(electricityMeanMonth.getElectricity_mm8());
-        existedElectricityMeanMonth.setElectricity_mm9(electricityMeanMonth.getElectricity_mm9());
-        existedElectricityMeanMonth.setElectricity_mm10(electricityMeanMonth.getElectricity_mm10());
-        existedElectricityMeanMonth.setElectricity_mm11(electricityMeanMonth.getElectricity_mm11());
-        existedElectricityMeanMonth.setElectricity_mm12(electricityMeanMonth.getElectricity_mm12());
+        existedElectricityMeanMonth.setElectricityMeanMonth1(electricityMeanMonth.getElectricityMeanMonth1());
+        existedElectricityMeanMonth.setElectricityMeanMonth2(electricityMeanMonth.getElectricityMeanMonth2());
+        existedElectricityMeanMonth.setElectricityMeanMonth3(electricityMeanMonth.getElectricityMeanMonth3());
+        existedElectricityMeanMonth.setElectricityMeanMonth4(electricityMeanMonth.getElectricityMeanMonth4());
+        existedElectricityMeanMonth.setElectricityMeanMonth5(electricityMeanMonth.getElectricityMeanMonth5());
+        existedElectricityMeanMonth.setElectricityMeanMonth6(electricityMeanMonth.getElectricityMeanMonth6());
+        existedElectricityMeanMonth.setElectricityMeanMonth7(electricityMeanMonth.getElectricityMeanMonth7());
+        existedElectricityMeanMonth.setElectricityMeanMonth8(electricityMeanMonth.getElectricityMeanMonth8());
+        existedElectricityMeanMonth.setElectricityMeanMonth9(electricityMeanMonth.getElectricityMeanMonth9());
+        existedElectricityMeanMonth.setElectricityMeanMonth10(electricityMeanMonth.getElectricityMeanMonth10());
+        existedElectricityMeanMonth.setElectricityMeanMonth11(electricityMeanMonth.getElectricityMeanMonth11());
+        existedElectricityMeanMonth.setElectricityMeanMonth12(electricityMeanMonth.getElectricityMeanMonth12());
         electricityMeanMonthRepository.save(existedElectricityMeanMonth);
     }
 }

@@ -15,40 +15,40 @@ public class InternetMeanMonth {
     private int id;
 
     @Column (name = "internet_mm1")
-    private double internet_mm1;
+    private double internetMeanMonth1;
 
     @Column (name = "internet_mm2")
-    private double internet_mm2;
+    private double internetMeanMonth2;
 
     @Column (name = "internet_mm3")
-    private double internet_mm3;
+    private double internetMeanMonth3;
 
     @Column (name = "internet_mm4")
-    private double internet_mm4;
+    private double internetMeanMonth4;
 
     @Column (name = "internet_mm5")
-    private double internet_mm5;
+    private double internetMeanMonth5;
 
     @Column (name = "internet_mm6")
-    private double internet_mm6;
+    private double internetMeanMonth6;
 
     @Column (name = "internet_mm7")
-    private double internet_mm7;
+    private double internetMeanMonth7;
 
     @Column (name = "internet_mm8")
-    private double internet_mm8;
+    private double internetMeanMonth8;
 
     @Column (name = "internet_mm9")
-    private double internet_mm9;
+    private double internetMeanMonth9;
 
     @Column (name = "internet_mm10")
-    private double internet_mm10;
+    private double internetMeanMonth10;
 
     @Column (name = "internet_mm11")
-    private double internet_mm11;
+    private double internetMeanMonth11;
 
     @Column (name = "internet_mm12")
-    private double internet_mm12;
+    private double internetMeanMonth12;
 
     @OneToOne(optional = false)
     @JoinColumn (name = "user_id", nullable = false)
@@ -59,18 +59,18 @@ public class InternetMeanMonth {
     }
 
     public InternetMeanMonth(int id) {
-        this.internet_mm1 = 0;
-        this.internet_mm2 = 0;
-        this.internet_mm3 = 0;
-        this.internet_mm4 = 0;
-        this.internet_mm5 = 0;
-        this.internet_mm6 = 0;
-        this.internet_mm7 = 0;
-        this.internet_mm8 = 0;
-        this.internet_mm9 = 0;
-        this.internet_mm10 = 0;
-        this.internet_mm11 = 0;
-        this.internet_mm12 = 0;
+        this.internetMeanMonth1 = 0;
+        this.internetMeanMonth2 = 0;
+        this.internetMeanMonth3 = 0;
+        this.internetMeanMonth4 = 0;
+        this.internetMeanMonth5 = 0;
+        this.internetMeanMonth6 = 0;
+        this.internetMeanMonth7 = 0;
+        this.internetMeanMonth8 = 0;
+        this.internetMeanMonth9 = 0;
+        this.internetMeanMonth10 = 0;
+        this.internetMeanMonth11 = 0;
+        this.internetMeanMonth12 = 0;
     }
 
     public void calculateInternetMeanMonth (List<Double> amounts, int month){
@@ -84,40 +84,40 @@ public class InternetMeanMonth {
         double mean = stats.getMean();
         switch (month) {
             case 1:
-                setInternet_mm1(mean);
+                setInternetMeanMonth1(mean);
                 break;
             case 2:
-                setInternet_mm2(mean);
+                setInternetMeanMonth2(mean);
                 break;
             case 3:
-                setInternet_mm3(mean);
+                setInternetMeanMonth3(mean);
                 break;
             case 4:
-                setInternet_mm4(mean);
+                setInternetMeanMonth4(mean);
                 break;
             case 5:
-                setInternet_mm5(mean);
+                setInternetMeanMonth5(mean);
                 break;
             case 6:
-                setInternet_mm6(mean);
+                setInternetMeanMonth6(mean);
                 break;
             case 7:
-                setInternet_mm7(mean);
+                setInternetMeanMonth7(mean);
                 break;
             case 8:
-                setInternet_mm8(mean);
+                setInternetMeanMonth8(mean);
                 break;
             case 9:
-                setInternet_mm9(mean);
+                setInternetMeanMonth9(mean);
                 break;
             case 10:
-                setInternet_mm10(mean);
+                setInternetMeanMonth10(mean);
                 break;
             case 11:
-                setInternet_mm11(mean);
+                setInternetMeanMonth11(mean);
                 break;
             case 12:
-                setInternet_mm12(mean);
+                setInternetMeanMonth12(mean);
                 break;
         }
     }
@@ -130,100 +130,100 @@ public class InternetMeanMonth {
         this.id = id;
     }
 
-    public double getInternet_mm1() {
-        return internet_mm1;
+    public double getInternetMeanMonth1() {
+        return internetMeanMonth1;
     }
 
-    public void setInternet_mm1(double internet_mm1) {
-        this.internet_mm1 = internet_mm1;
+    public void setInternetMeanMonth1(double internetMeanMonth1) {
+        this.internetMeanMonth1 = internetMeanMonth1;
     }
 
-    public double getInternet_mm2() {
-        return internet_mm2;
+    public double getInternetMeanMonth2() {
+        return internetMeanMonth2;
     }
 
-    public void setInternet_mm2(double internet_mm2) {
-        this.internet_mm2 = internet_mm2;
+    public void setInternetMeanMonth2(double internetMeanMonth2) {
+        this.internetMeanMonth2 = internetMeanMonth2;
     }
 
-    public double getInternet_mm3() {
-        return internet_mm3;
+    public double getInternetMeanMonth3() {
+        return internetMeanMonth3;
     }
 
-    public void setInternet_mm3(double internet_mm3) {
-        this.internet_mm3 = internet_mm3;
+    public void setInternetMeanMonth3(double internetMeanMonth3) {
+        this.internetMeanMonth3 = internetMeanMonth3;
     }
 
-    public double getInternet_mm4() {
-        return internet_mm4;
+    public double getInternetMeanMonth4() {
+        return internetMeanMonth4;
     }
 
-    public void setInternet_mm4(double internet_mm4) {
-        this.internet_mm4 = internet_mm4;
+    public void setInternetMeanMonth4(double internetMeanMonth4) {
+        this.internetMeanMonth4 = internetMeanMonth4;
     }
 
-    public double getInternet_mm5() {
-        return internet_mm5;
+    public double getInternetMeanMonth5() {
+        return internetMeanMonth5;
     }
 
-    public void setInternet_mm5(double internet_mm5) {
-        this.internet_mm5 = internet_mm5;
+    public void setInternetMeanMonth5(double internetMeanMonth5) {
+        this.internetMeanMonth5 = internetMeanMonth5;
     }
 
-    public double getInternet_mm6() {
-        return internet_mm6;
+    public double getInternetMeanMonth6() {
+        return internetMeanMonth6;
     }
 
-    public void setInternet_mm6(double internet_mm6) {
-        this.internet_mm6 = internet_mm6;
+    public void setInternetMeanMonth6(double internetMeanMonth6) {
+        this.internetMeanMonth6 = internetMeanMonth6;
     }
 
-    public double getInternet_mm7() {
-        return internet_mm7;
+    public double getInternetMeanMonth7() {
+        return internetMeanMonth7;
     }
 
-    public void setInternet_mm7(double internet_mm7) {
-        this.internet_mm7 = internet_mm7;
+    public void setInternetMeanMonth7(double internetMeanMonth7) {
+        this.internetMeanMonth7 = internetMeanMonth7;
     }
 
-    public double getInternet_mm8() {
-        return internet_mm8;
+    public double getInternetMeanMonth8() {
+        return internetMeanMonth8;
     }
 
-    public void setInternet_mm8(double internet_mm8) {
-        this.internet_mm8 = internet_mm8;
+    public void setInternetMeanMonth8(double internetMeanMonth8) {
+        this.internetMeanMonth8 = internetMeanMonth8;
     }
 
-    public double getInternet_mm9() {
-        return internet_mm9;
+    public double getInternetMeanMonth9() {
+        return internetMeanMonth9;
     }
 
-    public void setInternet_mm9(double internet_mm9) {
-        this.internet_mm9 = internet_mm9;
+    public void setInternetMeanMonth9(double internetMeanMonth9) {
+        this.internetMeanMonth9 = internetMeanMonth9;
     }
 
-    public double getInternet_mm10() {
-        return internet_mm10;
+    public double getInternetMeanMonth10() {
+        return internetMeanMonth10;
     }
 
-    public void setInternet_mm10(double internet_mm10) {
-        this.internet_mm10 = internet_mm10;
+    public void setInternetMeanMonth10(double internetMeanMonth10) {
+        this.internetMeanMonth10 = internetMeanMonth10;
     }
 
-    public double getInternet_mm11() {
-        return internet_mm11;
+    public double getInternetMeanMonth11() {
+        return internetMeanMonth11;
     }
 
-    public void setInternet_mm11(double internet_mm11) {
-        this.internet_mm11 = internet_mm11;
+    public void setInternetMeanMonth11(double internetMeanMonth11) {
+        this.internetMeanMonth11 = internetMeanMonth11;
     }
 
-    public double getInternet_mm12() {
-        return internet_mm12;
+    public double getInternetMeanMonth12() {
+        return internetMeanMonth12;
     }
 
-    public void setInternet_mm12(double internet_mm12) {
-        this.internet_mm12 = internet_mm12;
+    public void setInternetMeanMonth12(double internetMeanMonth12) {
+        this.internetMeanMonth12 = internetMeanMonth12;
     }
 
     @JsonIgnore

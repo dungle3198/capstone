@@ -29,18 +29,18 @@ public class WaterMeanMonthController {
     {
         WaterMeanMonth existedWaterMeanMonth = waterMeanMonthRepository.findById(id).get();
         existedWaterMeanMonth.setId(waterMeanMonth.getId());
-        existedWaterMeanMonth.setWater_mm1(waterMeanMonth.getWater_mm1());
-        existedWaterMeanMonth.setWater_mm2(waterMeanMonth.getWater_mm2());
-        existedWaterMeanMonth.setWater_mm3(waterMeanMonth.getWater_mm3());
-        existedWaterMeanMonth.setWater_mm4(waterMeanMonth.getWater_mm4());
-        existedWaterMeanMonth.setWater_mm5(waterMeanMonth.getWater_mm5());
-        existedWaterMeanMonth.setWater_mm6(waterMeanMonth.getWater_mm6());
-        existedWaterMeanMonth.setWater_mm7(waterMeanMonth.getWater_mm7());
-        existedWaterMeanMonth.setWater_mm8(waterMeanMonth.getWater_mm8());
-        existedWaterMeanMonth.setWater_mm9(waterMeanMonth.getWater_mm9());
-        existedWaterMeanMonth.setWater_mm10(waterMeanMonth.getWater_mm10());
-        existedWaterMeanMonth.setWater_mm11(waterMeanMonth.getWater_mm11());
-        existedWaterMeanMonth.setWater_mm12(waterMeanMonth.getWater_mm12());
+        existedWaterMeanMonth.setWaterMeanMonth1(waterMeanMonth.getWaterMeanMonth1());
+        existedWaterMeanMonth.setWaterMeanMonth2(waterMeanMonth.getWaterMeanMonth2());
+        existedWaterMeanMonth.setWaterMeanMonth3(waterMeanMonth.getWaterMeanMonth3());
+        existedWaterMeanMonth.setWaterMeanMonth4(waterMeanMonth.getWaterMeanMonth4());
+        existedWaterMeanMonth.setWaterMeanMonth5(waterMeanMonth.getWaterMeanMonth5());
+        existedWaterMeanMonth.setWaterMeanMonth6(waterMeanMonth.getWaterMeanMonth6());
+        existedWaterMeanMonth.setWaterMeanMonth7(waterMeanMonth.getWaterMeanMonth7());
+        existedWaterMeanMonth.setWaterMeanMonth8(waterMeanMonth.getWaterMeanMonth8());
+        existedWaterMeanMonth.setWaterMeanMonth9(waterMeanMonth.getWaterMeanMonth9());
+        existedWaterMeanMonth.setWaterMeanMonth10(waterMeanMonth.getWaterMeanMonth10());
+        existedWaterMeanMonth.setWaterMeanMonth11(waterMeanMonth.getWaterMeanMonth11());
+        existedWaterMeanMonth.setWaterMeanMonth12(waterMeanMonth.getWaterMeanMonth12());
         waterMeanMonthRepository.save(existedWaterMeanMonth);
     }
 }

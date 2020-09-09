@@ -1,6 +1,9 @@
 package com.example.demo.controllers;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.List;
 
 import com.example.demo.entities.*;
@@ -59,13 +62,29 @@ public class BillController {
         return billRepository.getBillIdByUserIdAndTypeAndMonth(user_id, type, month);
     }
 
+    public List<Double> calculatePercentiles(List<Double> amounts){
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+        Collections.sort(amounts);
+        for (Double amount : amounts){
+            stats.addValue(amount);
+        }
+        double q1 = stats.getPercentile(25);
+        double q3 = stats.getPercentile(75);
+        double iqr = q3 - q1;
+
+        amounts.removeIf(amount -> amount < (q1 - 1.5 * iqr) || amount > (q3 + 1.5 * iqr));
+        return amounts;
+    }
+
     public void extractMeanMonth (Bill bill, List<Double> amounts){
         User user = bill.getUser();
         GasMeanMonth gasMeanMonth = user.getGasMeanMonth();
         InternetMeanMonth internetMeanMonth = user.getInternetMeanMonth();
         ElectricityMeanMonth electricityMeanMonth = user.getElectricityMeanMonth();
         WaterMeanMonth waterMeanMonth = user.getWaterMeanMonth();
-        user.setMeanMonthType(amounts, bill.getType(), bill.getMonth());
+
+        List<Double> sortedList = calculatePercentiles(amounts);
+        user.setMeanMonthType(sortedList, bill.getType(), bill.getMonth());
         switch (bill.getType().toLowerCase()){
             case "phone and internet":
                 internetMeanMonthController.editInternetMeanMonth(internetMeanMonth, internetMeanMonth.getId());
@@ -86,18 +105,18 @@ public class BillController {
         User user = bill.getUser();
         UserMean userMean = user.getUserMean();
         UserStd userStd = user.getUserStd();
-        userMean.calculateMean(amounts, bill.getType());
-        userStd.calculateStd(amounts, bill.getType());
+        List<Double> sortedList = calculatePercentiles(amounts);
+        userMean.calculateMean(sortedList, bill.getType());
+        userStd.calculateStd(sortedList, bill.getType());
         userMeanController.editMean(userMean, userMean.getId());
         userStdController.editStd(userStd, userStd.getId());
     }
 
-
     public void extractAll(Bill bill){
-        List<Double> amount_list1 = getBillAmountByUserIdAndType(bill.getUser().getId(), bill.getType());
-        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(bill.getUser().getId(), bill.getType(), bill.getMonth());
-        extract(bill, amount_list1);
-        extractMeanMonth(bill, amount_list2);
+        List<Double> amountList1 = getBillAmountByUserIdAndType(bill.getUser().getId(), bill.getType());
+        List<Double> amountList2 = getBillAmountByUserIdAndTypeAndMonth(bill.getUser().getId(), bill.getType(), bill.getMonth());
+        extract(bill, amountList1);
+        extractMeanMonth(bill, amountList2);
         Cluster cluster = bill.getUser().getCluster();
         if (cluster != null){
             cluster.calculateCluster();
@@ -107,35 +126,34 @@ public class BillController {
 
     public void update(Bill bill, boolean option){
         User user = bill.getUser();
-        List<Double> amount_list1 = getBillAmountByUserIdAndType(user.getId(), bill.getType());
-        List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
-        List<Integer> bill_ids1 = getBillIdByUserIdAndType(user.getId(), bill.getType());
-        List<Integer> bill_ids2 = getBillIdByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
-        int index1 = bill_ids1.indexOf(bill.getId());
-        int index2 = bill_ids2.indexOf(bill.getId());
+        List<Double> amountList1 = getBillAmountByUserIdAndType(user.getId(), bill.getType());
+        List<Double> amountList2 = getBillAmountByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
+        List<Integer> idList1 = getBillIdByUserIdAndType(user.getId(), bill.getType());
+        List<Integer> idList2 = getBillIdByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
+        int index1 = idList1.indexOf(bill.getId());
+        int index2 = idList2.indexOf(bill.getId());
 
         if (option)
         {
-            amount_list1.remove(index1);
-            amount_list2.remove(index2);
-            if (amount_list1.isEmpty()){
-                amount_list1.add(0.0);
+            amountList1.remove(index1);
+            amountList2.remove(index2);
+            if (amountList1.isEmpty()){
+                amountList1.add(0.0);
             }
-            if (amount_list2.isEmpty()){
-                amount_list2.add(0.0);
+            if (amountList2.isEmpty()){
+                amountList2.add(0.0);
             }
-            extract(bill, amount_list1);
+            extract(bill, amountList1);
         }
         
         else {
-            amount_list2.remove(index2);
-            if (amount_list2.isEmpty()){
-                amount_list2.add(0.0);
+            amountList2.remove(index2);
+            if (amountList2.isEmpty()){
+                amountList2.add(0.0);
             }
         }
-        extractMeanMonth(bill, amount_list2);
+        extractMeanMonth(bill, amountList2);
     }
-
 
     public void labelNewUserBill (Bill bill){
         List<Cluster> clusters = clusterController.clusters();
@@ -201,16 +219,17 @@ public class BillController {
             Bill existedBill = billRepository.findById(id).get();
             User user = userRepository.findById(bill.getUser().getId()).get();
             User existedUser = existedBill.getUser();
+            Cluster cluster = user.getCluster();
+            Cluster existedCluster = existedUser.getCluster();
             bill.setMonth();
 
             if (existedBill.isLabel()) {
                 if (!bill.getType().equalsIgnoreCase(existedBill.getType()) ||
                         bill.getAmount() != existedBill.getAmount() ||
-                        bill.getUser().getId() != existedBill.getUser().getId()) {
+                        user.getId() != existedUser.getId()) {
                     update(existedBill, true);
-                    Cluster cluster = user.getCluster();
-                    Cluster existedCluster = existedUser.getCluster();
-                    if (cluster != null && existedCluster != null && cluster != existedCluster){
+
+                    if (existedCluster != null && cluster != existedCluster){
                         existedCluster.calculateCluster();
                         clusterController.edit(existedCluster, existedCluster.getId());
                     }
