@@ -92,6 +92,7 @@ public class BillController {
         userStdController.editStd(userStd, userStd.getId());
     }
 
+
     public void extractAll(Bill bill){
         List<Double> amount_list1 = getBillAmountByUserIdAndType(bill.getUser().getId(), bill.getType());
         List<Double> amount_list2 = getBillAmountByUserIdAndTypeAndMonth(bill.getUser().getId(), bill.getType(), bill.getMonth());
@@ -112,6 +113,7 @@ public class BillController {
         List<Integer> bill_ids2 = getBillIdByUserIdAndTypeAndMonth(user.getId(), bill.getType(), bill.getMonth());
         int index1 = bill_ids1.indexOf(bill.getId());
         int index2 = bill_ids2.indexOf(bill.getId());
+
         if (option)
         {
             amount_list1.remove(index1);
@@ -123,12 +125,8 @@ public class BillController {
                 amount_list2.add(0.0);
             }
             extract(bill, amount_list1);
-            Cluster cluster = bill.getUser().getCluster();
-            if (cluster != null){
-                cluster.calculateCluster();
-                clusterController.edit(cluster, cluster.getId());
-            }
         }
+        
         else {
             amount_list2.remove(index2);
             if (amount_list2.isEmpty()){
@@ -204,15 +202,21 @@ public class BillController {
             User user = userRepository.findById(bill.getUser().getId()).get();
             User existedUser = existedBill.getUser();
             bill.setMonth();
-            if (!bill.getType().equalsIgnoreCase(existedBill.getType()) ||
-                    bill.getAmount() != existedBill.getAmount() ||
-                    bill.getUser().getId() != existedBill.getUser().getId())
-            {
-                update(existedBill, true);
-            }
-            else if (bill.getMonth() != existedBill.getMonth())
-            {
-                update(existedBill, false);
+
+            if (existedBill.isLabel()) {
+                if (!bill.getType().equalsIgnoreCase(existedBill.getType()) ||
+                        bill.getAmount() != existedBill.getAmount() ||
+                        bill.getUser().getId() != existedBill.getUser().getId()) {
+                    update(existedBill, true);
+                    Cluster cluster = user.getCluster();
+                    Cluster existedCluster = existedUser.getCluster();
+                    if (cluster != null && existedCluster != null && cluster != existedCluster){
+                        existedCluster.calculateCluster();
+                        clusterController.edit(existedCluster, existedCluster.getId());
+                    }
+                } else if (bill.getMonth() != existedBill.getMonth()) {
+                    update(existedBill, false);
+                }
             }
 
             if (user.getId() != existedUser.getId()){
@@ -228,6 +232,12 @@ public class BillController {
             existedBill.setNumber(bill.getNumber());
             existedBill.setLocation(bill.getLocation());
             existedBill.setMonth();
+
+            if (user.isNewUser()){
+                labelNewUserBill(existedBill);
+            }
+            else {existedBill.setOldUserBillLabel();}
+
             billRepository.save(existedBill);
             extractAll(existedBill);
         }
@@ -239,7 +249,14 @@ public class BillController {
     {
         Bill bill = billRepository.findById(id).get();
         User user = bill.getUser();
-        update(bill, true);
+        if (bill.isLabel()) {
+            update(bill, true);
+            Cluster cluster = user.getCluster();
+            if (cluster != null) {
+                cluster.calculateCluster();
+                clusterController.edit(cluster, cluster.getId());
+            }
+        }
         billRepository.deleteById(id);
         user.setTotal_bill(user.getBills().size());
         userRepository.save(user);
