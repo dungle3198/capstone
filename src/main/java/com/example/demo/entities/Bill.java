@@ -158,110 +158,110 @@ public class Bill{
             case "electricity":
                 switch (month) {
                     case 1:
-                        if (electricityMeanMonth.getElectricity_mm1() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth1() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm1());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth1());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 2:
-                        if (electricityMeanMonth.getElectricity_mm2() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth2() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm2());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth2());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 3:
-                        if (electricityMeanMonth.getElectricity_mm3() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth3() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm3());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth3());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 4:
-                        if (electricityMeanMonth.getElectricity_mm4() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth4() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm4());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth4());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 5:
-                        if (electricityMeanMonth.getElectricity_mm5() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth5() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm5());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth5());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 6:
-                        if (electricityMeanMonth.getElectricity_mm6() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth6() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm6());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth6());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 7:
-                        if (electricityMeanMonth.getElectricity_mm7() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth7() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm7());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth7());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 8:
-                        if (electricityMeanMonth.getElectricity_mm8() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth8() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm8());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth8());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 9:
-                        if (electricityMeanMonth.getElectricity_mm9() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth9() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm9());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth9());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 10:
-                        if (electricityMeanMonth.getElectricity_mm10() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth10() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm10());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth10());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 11:
-                        if (electricityMeanMonth.getElectricity_mm11() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth11() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm11());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth11());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
                     case 12:
-                        if (electricityMeanMonth.getElectricity_mm12() == 0) {
+                        if (electricityMeanMonth.getElectricityMeanMonth12() == 0) {
                             a = Math.abs(amount - userMean.getElectricity());
                         }
                         else {
-                            a = Math.abs(amount - electricityMeanMonth.getElectricity_mm12());
+                            a = Math.abs(amount - electricityMeanMonth.getElectricityMeanMonth12());
                         }
                         b = userStd.getElectricity() * 2;
                         break;
@@ -270,110 +270,110 @@ public class Bill{
             case "phone and internet":
                 switch (month) {
                     case 1:
-                        if (internetMeanMonth.getInternet_mm1() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth1() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm1());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth1());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 2:
-                        if (internetMeanMonth.getInternet_mm2() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth2() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm2());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth2());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 3:
-                        if (internetMeanMonth.getInternet_mm3() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth3() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm3());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth3());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 4:
-                        if (internetMeanMonth.getInternet_mm4() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth4() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm4());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth4());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 5:
-                        if (internetMeanMonth.getInternet_mm5() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth5() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm5());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth5());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 6:
-                        if (internetMeanMonth.getInternet_mm6() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth6() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm6());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth6());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 7:
-                        if (internetMeanMonth.getInternet_mm7() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth7() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm7());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth7());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 8:
-                        if (internetMeanMonth.getInternet_mm8() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth8() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm8());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth8());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 9:
-                        if (internetMeanMonth.getInternet_mm9() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth9() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm9());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth9());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 10:
-                        if (internetMeanMonth.getInternet_mm10() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth10() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm10());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth10());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 11:
-                        if (internetMeanMonth.getInternet_mm11() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth11() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm11());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth11());
                         }
                         b = userStd.getInternet() * 2;
                         break;
                     case 12:
-                        if (internetMeanMonth.getInternet_mm12() == 0) {
+                        if (internetMeanMonth.getInternetMeanMonth12() == 0) {
                             a = Math.abs(amount - userMean.getInternet());
                         }
                         else {
-                            a = Math.abs(amount - internetMeanMonth.getInternet_mm12());
+                            a = Math.abs(amount - internetMeanMonth.getInternetMeanMonth12());
                         }
                         b = userStd.getInternet() * 2;
                         break;
@@ -382,110 +382,110 @@ public class Bill{
             case "gas":
                 switch (month) {
                     case 1:
-                        if (gasMeanMonth.getGas_mm1() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth1() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm1());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth1());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 2:
-                        if (gasMeanMonth.getGas_mm2() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth2() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm2());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth2());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 3:
-                        if (gasMeanMonth.getGas_mm3() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth3() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm3());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth3());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 4:
-                        if (gasMeanMonth.getGas_mm4() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth4() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm4());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth4());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 5:
-                        if (gasMeanMonth.getGas_mm5() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth5() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm5());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth5());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 6:
-                        if (gasMeanMonth.getGas_mm6() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth6() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm6());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth6());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 7:
-                        if (gasMeanMonth.getGas_mm7() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth7() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm7());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth7());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 8:
-                        if (gasMeanMonth.getGas_mm8() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth8() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm8());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth8());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 9:
-                        if (gasMeanMonth.getGas_mm9() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth9() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm9());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth9());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 10:
-                        if (gasMeanMonth.getGas_mm10() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth10() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm10());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth10());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 11:
-                        if (gasMeanMonth.getGas_mm11() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth11() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm11());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth11());
                         }
                         b = userStd.getGas() * 2;
                         break;
                     case 12:
-                        if (gasMeanMonth.getGas_mm12() == 0) {
+                        if (gasMeanMonth.getGasMeanMonth12() == 0) {
                             a = Math.abs(amount - userMean.getGas());
                         }
                         else {
-                            a = Math.abs(amount - gasMeanMonth.getGas_mm12());
+                            a = Math.abs(amount - gasMeanMonth.getGasMeanMonth12());
                         }
                         b = userStd.getGas() * 2;
                         break;
@@ -494,110 +494,110 @@ public class Bill{
             case "water":
                 switch (month) {
                     case 1:
-                        if (waterMeanMonth.getWater_mm1() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth1() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm1());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth1());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 2:
-                        if (waterMeanMonth.getWater_mm2() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth2() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm2());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth2());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 3:
-                        if (waterMeanMonth.getWater_mm3() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth3() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm3());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth3());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 4:
-                        if (waterMeanMonth.getWater_mm4() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth4() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm4());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth4());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 5:
-                        if (waterMeanMonth.getWater_mm5() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth5() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm5());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth5());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 6:
-                        if (waterMeanMonth.getWater_mm6() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth6() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm6());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth6());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 7:
-                        if (waterMeanMonth.getWater_mm7() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth7() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm7());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth7());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 8:
-                        if (waterMeanMonth.getWater_mm8() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth8() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm8());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth8());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 9:
-                        if (waterMeanMonth.getWater_mm9() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth9() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm9());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth9());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 10:
-                        if (waterMeanMonth.getWater_mm10() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth10() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm10());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth10());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 11:
-                        if (waterMeanMonth.getWater_mm11() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth11() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm11());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth11());
                         }
                         b = userStd.getWater() * 2;
                         break;
                     case 12:
-                        if (waterMeanMonth.getWater_mm12() == 0) {
+                        if (waterMeanMonth.getWaterMeanMonth12() == 0) {
                             a = Math.abs(amount - userMean.getWater());
                         }
                         else {
-                            a = Math.abs(amount - waterMeanMonth.getWater_mm12());
+                            a = Math.abs(amount - waterMeanMonth.getWaterMeanMonth12());
                         }
                         b = userStd.getWater() * 2;
                         break;
