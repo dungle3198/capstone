@@ -34,6 +34,11 @@ public class UserController {
 		return ResponseEntity.ok().body(user);
 	}
 
+	@CrossOrigin
+	@GetMapping("/users/cluster/{id}")
+	public List<User> getUsersByClusterId(@PathVariable("id") final int cluster_id){
+		return userRepository.getUsersByClusterId(cluster_id);
+	}
 
 	public void setUserRelation(User user, UserMean userMean, UserStd userStd, GasMeanMonth gasMeanMonth,
 								InternetMeanMonth internetMeanMonth, ElectricityMeanMonth electricityMeanMonth,

@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.example.demo.entities.User;
@@ -24,22 +25,21 @@ public class ClusterController {
         this.userController = userController;
     }
 
-    public List<User> createCluster(User userA, List<User> users){
-        List<User> listOfUsers = new ArrayList<>();
+    public void createCluster(User userA, List<User> users){
         List<Double> distances = new ArrayList<>();
         Cluster cluster = new Cluster();
         User userB;
         User userC;
         users.remove(userA);
+        users.removeIf(user -> user.getCluster() != null);
 
         userA.setCluster(cluster);
-        listOfUsers.add(userA);
         cluster.getUsers().add(userA);
         if (users.isEmpty()){
             add(cluster);
             cluster.calculateCluster();
             edit(cluster, cluster.getId());
-            return listOfUsers;
+            return;
         }
 
         for (User user : users) {
@@ -58,7 +58,6 @@ public class ClusterController {
         int index1 = distances.indexOf(Collections.min(distances));
         userB = users.get(index1);
         userB.setCluster(cluster);
-        listOfUsers.add(userB);
         cluster.getUsers().add(userB);
         distances.remove(index1);
         users.remove(index1);
@@ -67,31 +66,29 @@ public class ClusterController {
             add(cluster);
             cluster.calculateCluster();
             edit(cluster, cluster.getId());
-            return listOfUsers;
+            return;
         }
 
         int index2 = distances.indexOf(Collections.min(distances));
         userC = users.get(index2);
         userC.setCluster(cluster);
-        listOfUsers.add(userC);
         cluster.getUsers().add(userC);
 
         add(cluster);
         cluster.calculateCluster();
         edit(cluster, cluster.getId());
-        return listOfUsers;
     }
 
     @CrossOrigin
     @GetMapping("/clusters")
     public List<Cluster> clusters() {
-        if (clusterRepository.findAll().isEmpty()) {
-            List<User> users = userController.users();
+        List<User> users = userController.users();
+        users.removeIf(user -> user.getCluster() != null);
+        if (!users.isEmpty()) {
+            List<User> userList = new ArrayList<>(users);
             for (User user : users) {
-                List<User> listOfUsers = createCluster(user, users);
-                users.removeAll(listOfUsers);
-                if (users.isEmpty()) {
-                    break;
+                if (user.getCluster() == null) {
+                    createCluster(user, userList);
                 }
             }
         }

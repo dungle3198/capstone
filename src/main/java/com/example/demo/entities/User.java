@@ -15,22 +15,22 @@ public class User {
 	@Column(name = "id")
 	private int id;
 
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private UserMean userMean;
 
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private UserStd userStd;
 
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private GasMeanMonth gasMeanMonth;
 
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private ElectricityMeanMonth electricityMeanMonth;
 
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private InternetMeanMonth internetMeanMonth;
 
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private WaterMeanMonth waterMeanMonth;
 
 	@Column(name = "first_name")
