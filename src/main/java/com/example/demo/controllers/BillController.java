@@ -1,5 +1,4 @@
 package com.example.demo.controllers;
-import com.fasterxml.jackson.databind.node.DoubleNode;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.text.ParseException;
@@ -157,7 +156,7 @@ public class BillController {
 
     public void labelNewUserBill (Bill bill){
         List<Cluster> clusters = clusterController.clusters();
-        double shortestDistance = 99999;
+        double shortestDistance = Double.MAX_VALUE;
         Cluster chosenCluster = null;
         for (Cluster cluster: clusters){
             double distance = cluster.getDistance(bill.getUser().getUserMean());
@@ -199,7 +198,10 @@ public class BillController {
         User user = userRepository.findById(newBill.getUser().getId()).get();
         newBill.setUser(user);
         newBill.setMonth();
-        if (user.isNewUser()){
+        if (user.getTotal_bill() == 0){
+            newBill.setLabel(true);
+        }
+        else if (user.isNewUser()){
             labelNewUserBill(newBill);
         }
         else {newBill.setOldUserBillLabel();}

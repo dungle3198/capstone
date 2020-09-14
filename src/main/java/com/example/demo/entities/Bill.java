@@ -117,8 +117,8 @@ public class Bill{
         return label;
     }
 
-    public void setLabel(boolean lable){
-        this.label = lable;
+    public void setLabel(boolean label){
+        this.label = label;
     }
 
     public void setNewUserBillLabel(Cluster cluster) {

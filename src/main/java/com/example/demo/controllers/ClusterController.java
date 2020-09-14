@@ -2,11 +2,11 @@ package com.example.demo.controllers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import com.example.demo.entities.User;
 import com.example.demo.entities.UserMean;
+import com.example.demo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +18,13 @@ public class ClusterController {
 
     private final ClusterRepository clusterRepository;
     private final UserController userController;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ClusterController(ClusterRepository clusterRepository, UserController userController) {
+    public ClusterController(ClusterRepository clusterRepository, UserController userController, UserRepository userRepository) {
         this.clusterRepository = clusterRepository;
         this.userController = userController;
+        this.userRepository = userRepository;
     }
 
     public void createCluster(User userA, List<User> users){
@@ -83,7 +85,7 @@ public class ClusterController {
     @GetMapping("/clusters")
     public List<Cluster> clusters() {
         List<User> users = userController.users();
-        users.removeIf(user -> user.getCluster() != null);
+        users.removeIf(user -> user.getCluster() != null || user.isNewUser());
         if (!users.isEmpty()) {
             List<User> userList = new ArrayList<>(users);
             for (User user : users) {
@@ -128,10 +130,18 @@ public class ClusterController {
     }
 
     @CrossOrigin
-    @DeleteMapping("/clusters/{id}")
-    public void delete (@PathVariable("id") final Integer id)
+    @DeleteMapping("/clusters")
+    public void delete ()
     {
-        clusterRepository.deleteById(id);
+        List<Cluster> clusters = clusterRepository.findAll();
+        List<Cluster> clusterList = new ArrayList<>(clusters);
+        for (Cluster cluster : clusterList){
+            List<User> users = userRepository.getUsersByClusterId(cluster.getId());
+            for (User user : users){
+                user.setCluster(null);
+            }
+            clusterRepository.delete(cluster);
+        }
     }
 
 }
