@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.example.demo.entities.User;
-import com.example.demo.entities.UserMean;
+import com.example.demo.entities.*;
 import com.example.demo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.entities.Cluster;
 import com.example.demo.repositories.ClusterRepository;
 
 @RestController
@@ -27,34 +25,84 @@ public class ClusterController {
         this.userRepository = userRepository;
     }
 
-    public void createCluster(User userA, List<User> users){
+    public List<String> createUtilityList(User user){
+        List<Bill> bills = user.getBills();
+        List<String> utilityList = new ArrayList<>();
+        for (Bill bill : bills){
+            if (!utilityList.contains(bill.getType().toLowerCase())){
+                utilityList.add(bill.getType().toLowerCase());
+            }
+        }
+        System.out.println(utilityList);
+        return utilityList;
+    }
+
+    public List<User> createCluster(User userA, List<User> users){
+        List<User> userList = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
         Cluster cluster = new Cluster();
         User userB;
         User userC;
         users.remove(userA);
-        users.removeIf(user -> user.getCluster() != null);
 
         userA.setCluster(cluster);
         cluster.getUsers().add(userA);
+        userList.add(userA);
         if (users.isEmpty()){
             add(cluster);
             cluster.calculateCluster();
             edit(cluster, cluster.getId());
-            return;
+            return userList;
         }
 
         for (User user : users) {
-            if (!user.isNewUser()) {
-                UserMean userMean = user.getUserMean();
-                UserMean userMeanA = userA.getUserMean();
-                double electricityDistance = Math.pow(userMean.getElectricity() - userMeanA.getElectricity(), 2);
-                double waterDistance = Math.pow(userMean.getWater() - userMeanA.getWater(), 2);
-                double gasDistance = Math.pow(userMean.getGas() - userMeanA.getGas(), 2);
-                double internetDistance = Math.pow(userMean.getInternet() - userMeanA.getInternet(), 2);
-                double distance = Math.sqrt(electricityDistance + waterDistance + gasDistance + internetDistance);
-                distances.add(distance);
+            double distance = Integer.MAX_VALUE;
+            UserMean userMean = user.getUserMean();
+            UserMean userMeanA = userA.getUserMean();
+            UserStd userStd = user.getUserStd();
+            UserStd userStdA = userA.getUserStd();
+            double electricityDistance = Math.pow(userMean.getElectricity() - userMeanA.getElectricity(), 2)
+                    + Math.pow(userStd.getElectricity() - userStdA.getElectricity(), 2);
+            double waterDistance = Math.pow(userMean.getWater() - userMeanA.getWater(), 2)
+                    + Math.pow(userStd.getWater() - userStdA.getWater(), 2);
+            double gasDistance = Math.pow(userMean.getGas() - userMeanA.getGas(), 2)
+                    + Math.pow(userStd.getGas() - userStdA.getGas(), 2);
+            double internetDistance = Math.pow(userMean.getInternet() - userMeanA.getInternet(), 2)
+                    + Math.pow(userStd.getInternet() - userStdA.getInternet(), 2);
+
+            List<String> utilityList = createUtilityList(user);
+            List<String> utilityListA = createUtilityList(userA);
+            utilityList.addAll(utilityListA);
+            System.out.println(utilityList);
+            double sumOfDistance = 0;
+            int numberOfPoints = 0;
+
+            if (Collections.frequency(utilityList, "electricity") == 2) {
+                sumOfDistance += electricityDistance;
+                numberOfPoints += 2;
             }
+
+            if (Collections.frequency(utilityList, "phone and internet") == 2) {
+                sumOfDistance += internetDistance;
+                numberOfPoints += 2;
+            }
+
+            if (Collections.frequency(utilityList, "gas") == 2) {
+                sumOfDistance += gasDistance;
+                numberOfPoints += 2;
+            }
+
+            if (Collections.frequency(utilityList, "water") == 2) {
+                sumOfDistance += waterDistance;
+                numberOfPoints += 2;
+            }
+
+            if (sumOfDistance != 0) {
+                distance = (1 / Math.sqrt(numberOfPoints)) * Math.sqrt(sumOfDistance);
+                System.out.println(numberOfPoints);
+            }
+            distances.add(distance);
+            System.out.println(distance);
         }
 
         int index1 = distances.indexOf(Collections.min(distances));
@@ -63,38 +111,55 @@ public class ClusterController {
         cluster.getUsers().add(userB);
         distances.remove(index1);
         users.remove(index1);
+        userList.add(userB);
 
         if (users.isEmpty()){
             add(cluster);
             cluster.calculateCluster();
             edit(cluster, cluster.getId());
-            return;
+            return userList;
         }
 
         int index2 = distances.indexOf(Collections.min(distances));
         userC = users.get(index2);
         userC.setCluster(cluster);
         cluster.getUsers().add(userC);
+        userList.add(userC);
 
         add(cluster);
         cluster.calculateCluster();
         edit(cluster, cluster.getId());
+        return userList;
     }
 
     @CrossOrigin
     @GetMapping("/clusters")
     public List<Cluster> clusters() {
         List<User> users = userController.users();
-        users.removeIf(user -> user.getCluster() != null || user.isNewUser());
-        if (!users.isEmpty()) {
-            List<User> userList = new ArrayList<>(users);
-            for (User user : users) {
-                if (user.getCluster() == null) {
-                    createCluster(user, userList);
-                }
+        users.removeIf(User::isNewUser);
+        List<User> userList = new ArrayList<>(users);
+        for (User user : users) {
+            if (userList.isEmpty()){
+                break;
+            }
+            else if (user.getCluster() == null){
+                List<User> clusteredUsers = createCluster(user, userList);
+                userList.removeAll(clusteredUsers);
             }
         }
         return clusterRepository.findAll();
+    }
+
+    @CrossOrigin
+    @GetMapping("/clusters/all")
+    public void getUserIdByCluster(){
+        List<Cluster> clusters = clusterRepository.findAll();
+        for (Cluster cluster : clusters){
+            List<User> users = cluster.getUsers();
+            for (User user : users){
+                System.out.println(user.getId());
+            }
+        }
     }
 
     @CrossOrigin

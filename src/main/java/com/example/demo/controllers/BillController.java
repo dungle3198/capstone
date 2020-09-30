@@ -208,7 +208,9 @@ public class BillController {
         //newBill.setLabel(true);
         billRepository.save(newBill);
         user.setTotal_bill(user.getBills().size());
-        extractAll(newBill);
+        if (newBill.isLabel()) {
+            extractAll(newBill);
+        }
     }
 
     @CrossOrigin
@@ -260,7 +262,9 @@ public class BillController {
             else {existedBill.setOldUserBillLabel();}
 
             billRepository.save(existedBill);
-            extractAll(existedBill);
+            if (existedBill.isLabel()) {
+                extractAll(existedBill);
+            }
         }
     }
 
