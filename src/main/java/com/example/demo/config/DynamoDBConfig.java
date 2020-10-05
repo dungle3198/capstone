@@ -16,11 +16,11 @@ public class DynamoDBConfig {
     public static final String ACCESS_KEY = "AKIATZE7GBKOAEUM22EG";
     public static final String SECRET_KEY = "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";
 
-    public DynamoDBMapper mapper() {
+    public static DynamoDBMapper mapper() {
         return new DynamoDBMapper(amazonDynamoDBConfig());
     }
 
-    private AmazonDynamoDB amazonDynamoDBConfig() {
+    private static AmazonDynamoDB amazonDynamoDBConfig() {
         return AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(SERVICE_ENDPOINT, REGION))
                 .withCredentials(new AWSStaticCredentialsProvider( new BasicAWSCredentials(ACCESS_KEY,SECRET_KEY)))

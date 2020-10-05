@@ -3,6 +3,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
+import com.example.demo.config.DynamoDBConfig;
 import  com.example.demo.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,8 +14,11 @@ import java.util.Map;
 @Repository
 public class UserRepositoryV2 {
 
-    private DynamoDBMapper mapper;
+    public UserRepositoryV2() {
+        this.mapper = DynamoDBConfig.mapper();
+    }
 
+    private DynamoDBMapper mapper;
 
     public User addUser(User user) {
         mapper.save(user);
