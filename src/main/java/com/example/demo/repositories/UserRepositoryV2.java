@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.example.demo.config.DynamoDBConfig;
-import  com.example.demo.entities.User;
+import  com.example.demo.entities.UserV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,26 +20,26 @@ public class UserRepositoryV2 {
 
     private DynamoDBMapper mapper;
 
-    public User addUser(User user) {
+    public UserV2 addUser(UserV2 user) {
         mapper.save(user);
         return user;
     }
 
-    public User findUserByUserId(String userId) {
-        return mapper.load(User.class, userId);
+    public UserV2 findUserByUserId(String userId) {
+        return mapper.load(UserV2.class, userId);
     }
 
-    public String deleteUser(User user) {
+    public String deleteUser(UserV2 user) {
         mapper.delete(user);
         return "user removed !!";
     }
 
-    public String editUser(User user) {
-        mapper.save(user, buildExpression(user));
+    public String editUser(UserV2 user) {
+        mapper.save(user, buildExpression(UserV2));
         return "record updated ...";
     }
 
-    private DynamoDBSaveExpression buildExpression(User user) {
+    private DynamoDBSaveExpression buildExpression(UserV2 user) {
         DynamoDBSaveExpression dynamoDBSaveExpression = new DynamoDBSaveExpression();
         Map<String, ExpectedAttributeValue> expectedMap = new HashMap<>();
         expectedMap.put("id", new ExpectedAttributeValue(new AttributeValue().withS(String.valueOf(user.getId()))));

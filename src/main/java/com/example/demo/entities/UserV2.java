@@ -22,6 +22,9 @@ public class UserV2 implements Serializable {
     @DynamoDBAttribute
     private int cluster_id;
 
-
+    public String getId()
+    {
+        return id;
+    }
 
 }
