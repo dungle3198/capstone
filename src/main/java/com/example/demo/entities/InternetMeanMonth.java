@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -233,5 +234,22 @@ public class InternetMeanMonth {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Double> getInternetMeanMonthList(){
+        List<Double> list = new ArrayList<>();
+        list.add(internetMeanMonth1);
+        list.add(internetMeanMonth2);
+        list.add(internetMeanMonth3);
+        list.add(internetMeanMonth4);
+        list.add(internetMeanMonth5);
+        list.add(internetMeanMonth6);
+        list.add(internetMeanMonth7);
+        list.add(internetMeanMonth8);
+        list.add(internetMeanMonth9);
+        list.add(internetMeanMonth10);
+        list.add(internetMeanMonth11);
+        list.add(internetMeanMonth12);
+        return list;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -234,5 +235,22 @@ public class GasMeanMonth {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Double> getGasMeanMonthList(){
+        List<Double> list = new ArrayList<>();
+        list.add(gasMeanMonth1);
+        list.add(gasMeanMonth2);
+        list.add(gasMeanMonth3);
+        list.add(gasMeanMonth4);
+        list.add(gasMeanMonth5);
+        list.add(gasMeanMonth6);
+        list.add(gasMeanMonth7);
+        list.add(gasMeanMonth8);
+        list.add(gasMeanMonth9);
+        list.add(gasMeanMonth10);
+        list.add(gasMeanMonth11);
+        list.add(gasMeanMonth12);
+        return list;
     }
 }

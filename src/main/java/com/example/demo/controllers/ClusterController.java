@@ -56,7 +56,7 @@ public class ClusterController {
         }
 
         for (User user : users) {
-            double distance = Integer.MAX_VALUE;
+            double distance = Double.MAX_VALUE;
             UserMean userMean = user.getUserMean();
             UserMean userMeanA = userA.getUserMean();
             UserStd userStd = user.getUserStd();
@@ -134,7 +134,13 @@ public class ClusterController {
 
     @CrossOrigin
     @GetMapping("/clusters")
-    public List<Cluster> clusters() {
+    public List<Cluster> clusters(){
+        return clusterRepository.findAll();
+    }
+
+    @CrossOrigin
+    @GetMapping("/clusters/create")
+    public void create(){
         List<User> users = userController.users();
         users.removeIf(User::isNewUser);
         List<User> userList = new ArrayList<>(users);
@@ -147,7 +153,6 @@ public class ClusterController {
                 userList.removeAll(clusteredUsers);
             }
         }
-        return clusterRepository.findAll();
     }
 
     @CrossOrigin

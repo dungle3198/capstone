@@ -13,7 +13,6 @@ import java.util.Map;
 @Repository
 public class UserRepositoryV2 {
 
-    @Autowired
     private DynamoDBMapper mapper;
 
 

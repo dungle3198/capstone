@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -233,5 +234,22 @@ public class WaterMeanMonth {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Double> getWaterMeanMonthList(){
+        List<Double> list = new ArrayList<>();
+        list.add(waterMeanMonth1);
+        list.add(waterMeanMonth2);
+        list.add(waterMeanMonth3);
+        list.add(waterMeanMonth4);
+        list.add(waterMeanMonth5);
+        list.add(waterMeanMonth6);
+        list.add(waterMeanMonth7);
+        list.add(waterMeanMonth8);
+        list.add(waterMeanMonth9);
+        list.add(waterMeanMonth10);
+        list.add(waterMeanMonth11);
+        list.add(waterMeanMonth12);
+        return list;
     }
 }

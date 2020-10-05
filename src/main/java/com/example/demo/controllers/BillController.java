@@ -159,7 +159,7 @@ public class BillController {
         double shortestDistance = Double.MAX_VALUE;
         Cluster chosenCluster = null;
         for (Cluster cluster: clusters){
-            double distance = cluster.getDistance(bill.getUser().getUserMean());
+            double distance = cluster.getDistance(bill.getUser().getUserMean(), bill.getUser().getUserStd());
             if (distance < shortestDistance){
                 shortestDistance = distance;
                 chosenCluster = cluster;

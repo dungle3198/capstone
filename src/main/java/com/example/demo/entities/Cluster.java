@@ -140,12 +140,16 @@ public class Cluster {
         this.users = users;
     }
 
-    public double getDistance(UserMean userMean)
+    public double getDistance(UserMean userMean, UserStd userStd)
     {
-        double electricityDistance = Math.pow(userMean.getElectricity() - getElectricityClusterMean(), 2);
-        double waterDistance = Math.pow(userMean.getWater() - getWaterClusterMean(), 2);
-        double gasDistance = Math.pow(userMean.getGas() - getGasClusterMean(), 2);
-        double internetDistance = Math.pow(userMean.getInternet() - getInternetClusterMean(), 2);
+        double electricityDistance = Math.pow(userMean.getElectricity() - getElectricityClusterMean(), 2)
+                                    + Math.pow(userStd.getElectricity() - getElectricityClusterStd(), 2);
+        double waterDistance = Math.pow(userMean.getWater() - getWaterClusterMean(), 2)
+                            + Math.pow(userStd.getWater() - getWaterClusterStd(), 2);
+        double gasDistance = Math.pow(userMean.getGas() - getGasClusterMean(), 2)
+                            + Math.pow(userStd.getGas() - getGasClusterStd(), 2);
+        double internetDistance = Math.pow(userMean.getInternet() - getInternetClusterMean(), 2)
+                                + Math.pow(userStd.getInternet() - getInternetClusterStd(), 2);
         return Math.sqrt(electricityDistance + waterDistance + gasDistance + internetDistance);
     }
 
