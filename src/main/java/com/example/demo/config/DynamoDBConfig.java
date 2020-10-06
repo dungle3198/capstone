@@ -20,7 +20,7 @@ public class DynamoDBConfig {
         return new DynamoDBMapper(amazonDynamoDBConfig());
     }
 
-    private static AmazonDynamoDB amazonDynamoDBConfig() {
+    public static AmazonDynamoDB amazonDynamoDBConfig() {
         return AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(SERVICE_ENDPOINT, REGION))
                 .withCredentials(new AWSStaticCredentialsProvider( new BasicAWSCredentials(ACCESS_KEY,SECRET_KEY)))

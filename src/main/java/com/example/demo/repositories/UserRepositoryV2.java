@@ -1,4 +1,5 @@
 package com.example.demo.repositories;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -21,6 +22,7 @@ public class UserRepositoryV2 {
     private DynamoDBMapper mapper;
 
     public UserV2 addUser(UserV2 user) {
+
         mapper.save(user);
         return user;
     }
@@ -35,7 +37,7 @@ public class UserRepositoryV2 {
     }
 
     public String editUser(UserV2 user) {
-        mapper.save(user, buildExpression(UserV2));
+        mapper.save(user, buildExpression(user));
         return "record updated ...";
     }
 

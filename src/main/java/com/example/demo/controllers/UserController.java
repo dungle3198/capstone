@@ -14,6 +14,7 @@ import com.example.demo.repositories.UserRepository;
 public class UserController {
 
 	private final UserRepository userRepository;
+
 	
 	@Autowired
 	public UserController(UserRepository userRepository) {
