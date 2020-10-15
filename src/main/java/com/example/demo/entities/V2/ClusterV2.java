@@ -8,7 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import java.io.Serializable;
 
 
-@DynamoDBTable(tableName = "user_std")
+@DynamoDBTable(tableName = "cluster")
 public class ClusterV2 implements Serializable {
     public ClusterV2(String id) {
         this.id = id;

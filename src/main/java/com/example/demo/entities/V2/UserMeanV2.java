@@ -8,7 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import java.io.Serializable;
 
 
-@DynamoDBTable(tableName = "user_std")
+@DynamoDBTable(tableName = "user_mean")
 public class UserMeanV2 implements Serializable {
     public UserMeanV2(String id) {
         this.id = id;
