@@ -190,8 +190,14 @@ public class BillController {
     }
 
     @CrossOrigin
+    @GetMapping("/bills/user/{id}/{type}")
+    public List<Bill> getBillsByUserId(@PathVariable("id") final int user_id,@PathVariable("id") final String type){
+        return billRepository.getBillsByUserIdAndType(user_id,type);
+    }
+
+    @CrossOrigin
     @GetMapping("/bills/user/{id}")
-    public List<Bill> getBillsByUserId(@PathVariable("id") final int user_id){
+    public List<Bill> getBillsByUserIdAndType(@PathVariable("id") final int user_id){
         return billRepository.getBillsByUserId(user_id);
     }
 
