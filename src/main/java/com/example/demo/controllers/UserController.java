@@ -84,8 +84,8 @@ public class UserController {
 		ElectricityMeanMonth electricityMeanMonth = existedUser.getElectricityMeanMonth();
 		WaterMeanMonth waterMeanMonth = existedUser.getWaterMeanMonth();
 		existedUser.setId(user.getId());
-		existedUser.setFirst_name(user.getFirst_name());
-		existedUser.setLast_name(user.getLast_name());
+		existedUser.setFirstName(user.getFirstName());
+		existedUser.setLastName(user.getLastName());
 		setUserRelation(existedUser, userMean, userStd, gasMeanMonth, internetMeanMonth, electricityMeanMonth, waterMeanMonth);
 		userRepository.save(existedUser);
 	}

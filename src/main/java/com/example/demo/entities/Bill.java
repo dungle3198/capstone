@@ -195,13 +195,6 @@ public class Bill{
                 }
                 b = userStd.getWater() * 2;
         }
-        System.out.println("user: " + user.getId());
-        System.out.println("type:" + type);
-        System.out.println("month: " + month);
-        System.out.println("amount: " + amount);
-        System.out.println("a: " + a);
-        System.out.println("b: " + b);
-        System.out.println("----------------------");
         this.label = a < b;
     }
 }

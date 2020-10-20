@@ -205,14 +205,13 @@ public class BillController {
     @PostMapping("/bills")
     public void add(@RequestBody Bill newBill)
     {
-
         if (newBill.getUser() == null || !getListOfUserId().contains(newBill.getUser().getId())){
             userController.add(newBill.getUser());
         }
         User user = userRepository.findById(newBill.getUser().getId()).get();
         newBill.setUser(user);
         newBill.setMonth();
-        if (user.getTotal_bill() == 0){
+        if (user.getTotalBill() == 0){
             newBill.setLabel(true);
         }
         else if (user.isNewUser()){
@@ -221,7 +220,7 @@ public class BillController {
         else {newBill.setOldUserBillLabel();}
         //newBill.setLabel(true);
         billRepository.save(newBill);
-        user.setTotal_bill(user.getBills().size());
+        user.setTotalBill(user.getBills().size());
         if (newBill.isLabel()) {
             extractAll(newBill);
         }
@@ -257,8 +256,8 @@ public class BillController {
             }
 
             if (user.getId() != existedUser.getId()){
-                existedUser.setTotal_bill(existedUser.getBills().size() - 1);
-                user.setTotal_bill(user.getBills().size() + 1);
+                existedUser.setTotalBill(existedUser.getBills().size() - 1);
+                user.setTotalBill(user.getBills().size() + 1);
             }
 
             existedBill.setId(bill.getId());
@@ -297,7 +296,7 @@ public class BillController {
             }
         }
         billRepository.deleteById(id);
-        user.setTotal_bill(user.getBills().size());
+        user.setTotalBill(user.getBills().size());
         userRepository.save(user);
     }
 

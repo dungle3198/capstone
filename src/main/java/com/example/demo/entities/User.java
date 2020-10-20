@@ -34,24 +34,20 @@ public class User {
 	private WaterMeanMonth waterMeanMonth;
 
 	@Column(name = "first_name")
-	private String first_name;
+	private String firstName;
 
 	@Column(name = "last_name")
-	private String last_name;
+	private String lastName;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	List<Bill> bills = new ArrayList<>();
 
 	@Column(name = "total_bill")
-	private int total_bill;
+	private int totalBill;
 
 	@ManyToOne
 	@JoinColumn(name = "cluster_id")
 	private Cluster cluster;
-
-	public User(int total_bill) {
-		this.total_bill = 0;
-	}
 
 	public User() {
 	}
@@ -97,20 +93,20 @@ public class User {
 		this.userStd = userStd;
 	}
 
-	public String getFirst_name() {
-		return first_name;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFirst_name(String first_name) {
-		this.first_name = first_name;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getLast_name() {
-		return last_name;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setLast_name(String last_name) {
-		this.last_name = last_name;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	@JsonIgnore
@@ -122,7 +118,6 @@ public class User {
 		this.bills = bills;
 	}
 
-	@JsonIgnore
 	public GasMeanMonth getGasMeanMonth() {
 		return gasMeanMonth;
 	}
@@ -131,7 +126,6 @@ public class User {
 		this.gasMeanMonth = gasMeanMonth;
 	}
 
-	@JsonIgnore
 	public ElectricityMeanMonth getElectricityMeanMonth() {
 		return electricityMeanMonth;
 	}
@@ -140,7 +134,6 @@ public class User {
 		this.electricityMeanMonth = electricityMeanMonth;
 	}
 
-	@JsonIgnore
 	public InternetMeanMonth getInternetMeanMonth() {
 		return internetMeanMonth;
 	}
@@ -149,7 +142,6 @@ public class User {
 		this.internetMeanMonth = internetMeanMonth;
 	}
 
-	@JsonIgnore
 	public WaterMeanMonth getWaterMeanMonth() {
 		return waterMeanMonth;
 	}
@@ -158,12 +150,12 @@ public class User {
 		this.waterMeanMonth = waterMeanMonth;
 	}
 
-	public int getTotal_bill() {
-		return total_bill;
+	public int getTotalBill() {
+		return totalBill;
 	}
 
-	public void setTotal_bill(int total_bill) {
-		this.total_bill = total_bill;
+	public void setTotalBill(int totalBill) {
+		this.totalBill = totalBill;
 	}
 
 	public Cluster getCluster() {
