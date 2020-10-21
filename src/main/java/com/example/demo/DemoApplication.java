@@ -1,9 +1,9 @@
 package com.example.demo;
 
-import com.example.demo.entities.V2.BillV2;
-import com.example.demo.entities.V2.UserV2;
-import com.example.demo.repositories.V2.BillRepositoryV2;
-import com.example.demo.repositories.V2.UserRepositoryV2;
+//import com.example.demo.entities.V2.BillV2;
+//import com.example.demo.entities.V2.UserV2;
+//import com.example.demo.repositories.V2.BillRepositoryV2;
+//import com.example.demo.repositories.V2.UserRepositoryV2;
 import org.joda.time.DateTime;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

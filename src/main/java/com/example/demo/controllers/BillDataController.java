@@ -8,9 +8,7 @@ import com.example.demo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class BillDataController {
@@ -31,9 +29,43 @@ public class BillDataController {
     }
 
     @CrossOrigin
-    @GetMapping ("/bill_data/entity/{id}")
+    @GetMapping ("/bill_data/user/{id}")
     public List<BillData> getBillDataByUserId(@PathVariable("id") final int id){
         return billDataRepository.getBillDataByUserId(id);
+    }
+
+    @CrossOrigin
+    @GetMapping ("/bill_data/count/user/{id}")
+    public Map<String, List> getNumberOfBillsByCategoryAndBiller(@PathVariable ("id") final int id){
+        Map<String, List> mapOfLists = new HashMap<>();
+        List<BillData> billDataList = billDataRepository.getBillDataByUserId(id);
+        List<String> categoryList = new ArrayList<>();
+        List<Integer> countList = new ArrayList<>();
+
+        for (BillData eachBillData : billDataList){
+            String categoryAndBiller = eachBillData.getCategory().toLowerCase() + " " +
+                                        eachBillData.getBiller().toLowerCase();
+            if (!categoryList.contains(categoryAndBiller)){
+                categoryList.add(categoryAndBiller);
+                countList.add(0);
+            }
+        }
+
+        for (BillData eachBillData : billDataList){
+            String categoryAndBiller = eachBillData.getCategory().toLowerCase() + " " +
+                                        eachBillData.getBiller().toLowerCase();
+            for (int i = 0; i < categoryList.size(); i++) {
+                if (categoryAndBiller.equals(categoryList.get(i))){
+                    countList.set(i, countList.get(i) + 1);
+                }
+            }
+        }
+
+        mapOfLists.put("categoryAndBiller", categoryList);
+        mapOfLists.put("numberOfBills", countList);
+        System.out.println(categoryList);
+        System.out.println(countList);
+        return mapOfLists;
     }
 
     public void predict (List<BillData> billDataList, BillData billData){

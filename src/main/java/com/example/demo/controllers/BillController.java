@@ -1,10 +1,10 @@
 package com.example.demo.controllers;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.example.demo.config.DynamoDBConfig;
+//import com.amazonaws.AmazonServiceException;
+//import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+//import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+//import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+//import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+//import com.example.demo.config.DynamoDBConfig;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.text.ParseException;
