@@ -2,10 +2,13 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Bill;
 import com.example.demo.entities.BillData;
+import com.example.demo.entities.Log;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.BillDataRepository;
+import com.example.demo.repositories.LogRepository;
 import com.example.demo.repositories.UserRepository;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +19,18 @@ public class BillDataController {
 
     private final BillDataRepository billDataRepository;
     private final UserRepository userRepository;
+    private final LogRepository logRepository;
 
     @Autowired
-    public BillDataController(BillDataRepository billDataRepository, UserRepository userRepository) {
+    public BillDataController(BillDataRepository billDataRepository, UserRepository userRepository, LogRepository logRepository) {
         this.billDataRepository = billDataRepository;
         this.userRepository = userRepository;
+        this.logRepository = logRepository;
+    }
+    @CrossOrigin
+    @GetMapping ("/log")
+    public List<Log> getAllLogData(){
+        return logRepository.findAll();
     }
 
     @CrossOrigin
@@ -138,6 +148,11 @@ public class BillDataController {
             billData.setPredictedAmount(0);
         }
         billDataRepository.save(billData);
+
+        //Log
+        String description = "New bill " + billData.getId() + " is added.";
+        Log activityLog = new Log("Bill", DateTime.now().toString(),billData.getId(),description);
+        logRepository.save(activityLog);
     }
 
     @CrossOrigin
@@ -157,5 +172,11 @@ public class BillDataController {
         existingBillData.setMonthlyAmount(billData.getMonthlyAmount());
         existingBillData.setPredictedAmount(billData.getPredictedAmount());
         billDataRepository.save(existingBillData);
+
+        //Log
+        String description = "Bill " + billData.getId() + " is edited.";
+        Log activityLog = new Log("Bill", DateTime.now().toString(),billData.getId(),description);
+        logRepository.save(activityLog);
+
     }
 }
