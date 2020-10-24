@@ -5,6 +5,7 @@ import com.example.demo.entities.BillData;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.BillDataRepository;
 import com.example.demo.repositories.UserRepository;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,36 +36,42 @@ public class BillDataController {
     }
 
     @CrossOrigin
-    @GetMapping ("/bill_data/count/user/{id}")
-    public Map<String, List> getNumberOfBillsByCategoryAndBiller(@PathVariable ("id") final int id){
+    @GetMapping ("/bill_data/stats/user/{id}")
+    public Map<String, List> getStatisticsDataByUserId(@PathVariable ("id") final int id){
         Map<String, List> mapOfLists = new HashMap<>();
         List<BillData> billDataList = billDataRepository.getBillDataByUserId(id);
-        List<String> categoryList = new ArrayList<>();
-        List<Integer> countList = new ArrayList<>();
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+        List<String> categoryAndBillerList = new ArrayList<>();
+        List<Integer> numberOfBillsList = new ArrayList<>();
+        List<Double> meanList = new ArrayList<>();
+        List<Double> standardDeviationList = new ArrayList<>();
 
         for (BillData eachBillData : billDataList){
             String categoryAndBiller = eachBillData.getCategory().toLowerCase() + " " +
                                         eachBillData.getBiller().toLowerCase();
-            if (!categoryList.contains(categoryAndBiller)){
-                categoryList.add(categoryAndBiller);
-                countList.add(0);
-            }
-        }
-
-        for (BillData eachBillData : billDataList){
-            String categoryAndBiller = eachBillData.getCategory().toLowerCase() + " " +
-                                        eachBillData.getBiller().toLowerCase();
-            for (int i = 0; i < categoryList.size(); i++) {
-                if (categoryAndBiller.equals(categoryList.get(i))){
-                    countList.set(i, countList.get(i) + 1);
+            if (!categoryAndBillerList.contains(categoryAndBiller)){
+                categoryAndBillerList.add(categoryAndBiller);
+                List<BillData> listOfBillData = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(id,
+                        eachBillData.getCategory(), eachBillData.getBiller());
+                numberOfBillsList.add(listOfBillData.size());
+                for (BillData everyBillData : listOfBillData){
+                    stats.addValue(everyBillData.getAmount());
                 }
+                double mean = stats.getMean();
+                double standardDeviation = stats.getStandardDeviation();
+                meanList.add(mean);
+                standardDeviationList.add(standardDeviation);
             }
         }
 
-        mapOfLists.put("categoryAndBiller", categoryList);
-        mapOfLists.put("numberOfBills", countList);
-        System.out.println(categoryList);
-        System.out.println(countList);
+        mapOfLists.put("categoryAndBiller", categoryAndBillerList);
+        mapOfLists.put("numberOfBills", numberOfBillsList);
+        mapOfLists.put("mean", meanList);
+        mapOfLists.put("standardDeviation", standardDeviationList);
+        System.out.println(categoryAndBillerList);
+        System.out.println(numberOfBillsList);
+        System.out.println(meanList);
+        System.out.println(standardDeviationList);
         return mapOfLists;
     }
 
