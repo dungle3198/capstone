@@ -96,8 +96,8 @@ public class BillDataController {
         Map<String, List> mapOfStats = getStatisticsDataByUserId(id);
         List<String> seasonalCategoryList = new ArrayList<>();
         List<String> categoryAndBillerList = mapOfStats.get("categoryAndBiller");
-        List<Double> meanList = mapOfStats.get("mean");
         List<Double> standardDeviationList = mapOfStats.get("standardDeviation");
+        List<Double> meanList = mapOfStats.get("mean");
         List<List<Double>> listOfMeanMonthLists = new ArrayList<>();
 
         for (int i = 0; i < categoryAndBillerList.size(); i++) {
@@ -105,7 +105,7 @@ public class BillDataController {
             System.out.println(result);
             if (result > 0.05){
                 String categoryAndBiller = categoryAndBillerList.get(i);
-                seasonalCategoryList.add(categoryAndBillerList.get(i));
+                seasonalCategoryList.add(categoryAndBiller);
                 List<Double> meanMonthList = new ArrayList<>(Collections.nCopies(12, 0.0));
                 List<Integer> frequencyList = new ArrayList<>(Collections.nCopies(12, 0));
                 List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(id,
@@ -113,8 +113,7 @@ public class BillDataController {
 
                 for (BillData billData : billDataList){
                     int index = billData.getMonth() - 1;
-                    double amount = billData.getAmount();
-                    meanMonthList.set(index, meanMonthList.get(index) + amount);
+                    meanMonthList.set(index, meanMonthList.get(index) + billData.getAmount());
                     frequencyList.set(index, frequencyList.get(index) + 1);
                 }
 
@@ -191,8 +190,8 @@ public class BillDataController {
         }
 
         if (billDataList2.size() >= 5){
-            List<BillData> billDataSubList = billDataList2.subList(billDataList2.size() - 5, billDataList2.size());
-            predict(billDataSubList, billData);
+            List<BillData> subList = billDataList2.subList(billDataList2.size() - 5, billDataList2.size());
+            predict(subList, billData);
         }
         else {
             billData.setPredictedAmount(0);
