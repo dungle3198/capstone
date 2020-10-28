@@ -46,6 +46,12 @@ public class BillDataController {
         return billDataRepository.getBillDataByUserId(id);
     }
 
+    @CrossOrigin
+    @GetMapping ("/bill_data/{id}")
+    public BillData getBillDataById(@PathVariable ("id") final int id){
+        return billDataRepository.findById(id).get();
+    }
+
     public List<Integer> getListOfUserId(){
         return userRepository.getListOfUserId();
     }
@@ -218,7 +224,7 @@ public class BillDataController {
     @CrossOrigin
     @PutMapping ("/bill_data/{id}")
     public void edit(@RequestBody BillData billData, @PathVariable("id") final int id){
-        BillData existingBillData = billDataRepository.findById(id).get();
+        BillData existingBillData = getBillDataById(id);
         User user = userRepository.findById(existingBillData.getUser().getId()).get();
         existingBillData.setId(billData.getId());
         existingBillData.setUser(user);
