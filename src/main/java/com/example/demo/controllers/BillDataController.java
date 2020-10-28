@@ -199,8 +199,8 @@ public class BillDataController {
         billDataRepository.save(billData);
 
         //Log
-        String description = "New bill " + billData.getId() + " is added.";
-        Log activityLog = new Log("Bill", DateTime.now().toString(),billData.getId(),description);
+        String description = "New bill " + billData.getId() + " is added";
+        Log activityLog = new Log("bg-primary", DateTime.now().toString(),billData.getId(),description);
         logRepository.save(activityLog);
     }
 
@@ -223,8 +223,8 @@ public class BillDataController {
         billDataRepository.save(existingBillData);
 
         //Log
-        String description = "Bill " + billData.getId() + " is edited.";
-        Log activityLog = new Log("Bill", DateTime.now().toString(),billData.getId(),description);
+        String description = "Bill " + billData.getId() + " is edited";
+        Log activityLog = new Log("bg-warning", DateTime.now().toString(),billData.getId(),description);
         logRepository.save(activityLog);
 
     }
