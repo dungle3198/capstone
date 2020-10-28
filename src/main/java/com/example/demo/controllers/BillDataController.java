@@ -253,7 +253,7 @@ public class BillDataController {
 
         //Log
         String description = "Bill " + id + " is deleted";
-        Log activityLog = new Log("bg-success", DateTime.now().toString(), id, description);
+        Log activityLog = new Log("bg-danger", DateTime.now().toString(), id, description);
         logRepository.save(activityLog);
     }
 }
