@@ -18,13 +18,16 @@ public class BillDataController {
     private final BillDataRepository billDataRepository;
     private final UserRepository userRepository;
     private final LogRepository logRepository;
+    private final UserController userController;
 
     @Autowired
-    public BillDataController(BillDataRepository billDataRepository, UserRepository userRepository, LogRepository logRepository) {
+    public BillDataController(BillDataRepository billDataRepository, UserRepository userRepository, LogRepository logRepository, UserController userController) {
         this.billDataRepository = billDataRepository;
         this.userRepository = userRepository;
         this.logRepository = logRepository;
+        this.userController = userController;
     }
+
     @CrossOrigin
     @GetMapping ("/log")
     public List<Log> getAllLogData(){
@@ -41,6 +44,10 @@ public class BillDataController {
     @GetMapping ("/bill_data/user/{id}")
     public List<BillData> getBillDataByUserId(@PathVariable("id") final int id){
         return billDataRepository.getBillDataByUserId(id);
+    }
+
+    public List<Integer> getListOfUserId(){
+        return userRepository.getListOfUserId();
     }
 
     public List<String> getListOfCategoryAndBiller(int id){
@@ -96,8 +103,8 @@ public class BillDataController {
         Map<String, List> mapOfStats = getStatisticsDataByUserId(id);
         List<String> seasonalCategoryList = new ArrayList<>();
         List<String> categoryAndBillerList = mapOfStats.get("categoryAndBiller");
-        List<Double> standardDeviationList = mapOfStats.get("standardDeviation");
         List<Double> meanList = mapOfStats.get("mean");
+        List<Double> standardDeviationList = mapOfStats.get("standardDeviation");
         List<List<Double>> listOfMeanMonthLists = new ArrayList<>();
 
         for (int i = 0; i < categoryAndBillerList.size(); i++) {
@@ -165,6 +172,10 @@ public class BillDataController {
     @CrossOrigin
     @PostMapping ("/bill_data")
     public void add(@RequestBody BillData billData){
+        if (billData.getUser() == null || !getListOfUserId().contains(billData.getUser().getId())){
+            userController.add(billData.getUser());
+        }
+
         List<BillData> billDataList1 = billDataRepository.getBillDataWithDate(billData.getUser().getId(),
                                                         billData.getCategory(), billData.getBiller());
         List<BillData> billDataList2 = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
@@ -200,7 +211,7 @@ public class BillDataController {
 
         //Log
         String description = "New bill " + billData.getId() + " is added";
-        Log activityLog = new Log("bg-primary", DateTime.now().toString(),billData.getId(),description);
+        Log activityLog = new Log("bg-primary", DateTime.now().toString(), billData.getId(), description);
         logRepository.save(activityLog);
     }
 
@@ -223,9 +234,20 @@ public class BillDataController {
         billDataRepository.save(existingBillData);
 
         //Log
-        String description = "Bill " + billData.getId() + " is edited";
-        Log activityLog = new Log("bg-warning", DateTime.now().toString(),billData.getId(),description);
+        String description = "Bill " + id + " is edited";
+        Log activityLog = new Log("bg-warning", DateTime.now().toString(), id, description);
         logRepository.save(activityLog);
 
+    }
+
+    @CrossOrigin
+    @DeleteMapping ("/bill_data/{id}")
+    public void delete(@PathVariable ("id") final int id){
+        billDataRepository.deleteById(id);
+
+        //Log
+        String description = "Bill " + id + " is deleted";
+        Log activityLog = new Log("bg-success", DateTime.now().toString(), id, description);
+        logRepository.save(activityLog);
     }
 }
