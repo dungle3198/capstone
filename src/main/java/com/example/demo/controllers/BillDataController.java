@@ -107,10 +107,10 @@ public class BillDataController {
     public Map<String, List> getCategoryMeanMonthByUserId(@PathVariable ("id") final int id){
         Map<String, List> mapOfLists = new HashMap<>();
         Map<String, List> mapOfStats = getStatisticsDataByUserId(id);
-        List<String> seasonalCategoryList = new ArrayList<>();
         List<String> categoryAndBillerList = mapOfStats.get("categoryAndBiller");
         List<Double> meanList = mapOfStats.get("mean");
         List<Double> standardDeviationList = mapOfStats.get("standardDeviation");
+        List<String> seasonalCategoryList = new ArrayList<>();
         List<List<Double>> listOfMeanMonthLists = new ArrayList<>();
 
         for (int i = 0; i < categoryAndBillerList.size(); i++) {
@@ -130,7 +130,7 @@ public class BillDataController {
                     frequencyList.set(index, frequencyList.get(index) + 1);
                 }
 
-                for (int j = 0; j < 12; j++) {
+                for (int j = 0; j < meanMonthList.size(); j++) {
                     if (frequencyList.get(j) != 0) {
                         meanMonthList.set(j, meanMonthList.get(j) / frequencyList.get(j));
                     }
