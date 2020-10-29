@@ -178,14 +178,24 @@ public class BillDataController {
     @CrossOrigin
     @PostMapping ("/bill_data")
     public void add(@RequestBody BillData billData){
+        List<BillData> billDataList1;
+        List<BillData> billDataList2;
         if (billData.getUser() == null || !getListOfUserId().contains(billData.getUser().getId())){
-            userController.add(billData.getUser());
+            User user = new User();
+            userController.add(user);
+            billData.setUser(user);
+            billDataList1 = billDataRepository.getBillDataWithDate(user.getId(),
+                    billData.getCategory(), billData.getBiller());
+            billDataList2 = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
+                    user.getId(), billData.getCategory(), billData.getBiller());
         }
 
-        List<BillData> billDataList1 = billDataRepository.getBillDataWithDate(billData.getUser().getId(),
-                                                        billData.getCategory(), billData.getBiller());
-        List<BillData> billDataList2 = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
-                            billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+        else {
+            billDataList1 = billDataRepository.getBillDataWithDate(billData.getUser().getId(),
+                    billData.getCategory(), billData.getBiller());
+            billDataList2 = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
+                    billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+        }
 
         if (billData.getMonth() == 0 || billData.getYear() == 0){
             billData.setPeriod(1);
