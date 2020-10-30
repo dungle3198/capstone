@@ -114,7 +114,7 @@ public class BillDataController {
         List<List<Double>> listOfMeanMonthLists = new ArrayList<>();
 
         for (int i = 0; i < categoryAndBillerList.size(); i++) {
-            double result = (standardDeviationList.get(i) / meanList.get(i)) * (-1);
+            double result = Math.abs((standardDeviationList.get(i) / meanList.get(i)));
             System.out.println(result);
             if (result > 0.05){
                 String categoryAndBiller = categoryAndBillerList.get(i);
