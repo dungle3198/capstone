@@ -42,6 +42,9 @@ public class BillData {
     @Column (name = "predicted_amount")
     private double predictedAmount;
 
+    @Column (name = "status")
+    private boolean status;
+
     public BillData() {
 
     }
@@ -132,5 +135,13 @@ public class BillData {
 
     public void setPredictedAmount(double predictedAmount) {
         this.predictedAmount = predictedAmount;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

@@ -219,9 +219,14 @@ public class BillDataController {
         if (billDataList2.size() >= 5){
             List<BillData> subList = billDataList2.subList(billDataList2.size() - 5, billDataList2.size());
             predict(subList, billData);
+            double monthlyAmount = Math.abs(billData.getMonthlyAmount());
+            double predictedAmount = Math.abs(billData.getPredictedAmount());
+            billData.setStatus(Math.min(monthlyAmount - 5, monthlyAmount - 0.05 * monthlyAmount) <= predictedAmount
+                    && predictedAmount <= Math.max(monthlyAmount + 5, monthlyAmount + 0.05 * monthlyAmount));
         }
         else {
             billData.setPredictedAmount(0);
+            billData.setStatus(true);
         }
         billDataRepository.save(billData);
 
@@ -229,6 +234,17 @@ public class BillDataController {
         String description = "New bill " + billData.getId() + " is added";
         Log activityLog = new Log("bg-primary", DateTime.now().toString(), billData.getId(), description);
         logRepository.save(activityLog);
+    }
+
+    @CrossOrigin
+    @GetMapping ("/bill_data/status")
+    public List<Integer> getNumberOfBillDataByStatus(){
+        int numberOfTrueBillData = billDataRepository.getTrueBillData().size();
+        int numberOfFalseBillData = billDataRepository.getFalseBillData().size();
+        List<Integer> list = new ArrayList<>();
+        list.add(numberOfTrueBillData);
+        list.add(numberOfFalseBillData);
+        return list;
     }
 
     @CrossOrigin
