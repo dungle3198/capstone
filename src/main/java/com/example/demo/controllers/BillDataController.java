@@ -6,6 +6,7 @@ import com.example.demo.entities.User;
 import com.example.demo.repositories.BillDataRepository;
 import com.example.demo.repositories.LogRepository;
 import com.example.demo.repositories.UserRepository;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +69,20 @@ public class BillDataController {
         return categoryAndBillerList;
     }
 
+    public List<BillData> calculatePercentiles(List<BillData> billDataList){
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+        billDataList.sort(Comparator.comparing(BillData::getAmount));
+        for (BillData billData : billDataList){
+            stats.addValue(billData.getAmount());
+        }
+        double q1 = stats.getPercentile(25);
+        double q3 = stats.getPercentile(75);
+        double iqr = q3 - q1;
+
+        billDataList.removeIf(billData -> billData.getAmount() < q1 - 1.5 * iqr || billData.getAmount() > q3 + 1.5 * iqr);
+        return billDataList;
+    }
+
     @CrossOrigin
     @GetMapping ("/bill_data/stats/user/{id}")
     public Map<String, List> getStatisticsDataByUserId(@PathVariable ("id") final int id){
@@ -76,17 +91,20 @@ public class BillDataController {
         List<Integer> numberOfBillsList = new ArrayList<>();
         List<Double> meanList = new ArrayList<>();
         List<Double> standardDeviationList = new ArrayList<>();
+        DescriptiveStatistics stats = new DescriptiveStatistics();
 
         for (String categoryAndBiller : categoryAndBillerList){
-            List<Double> amountList = billDataRepository.getBillAmountByUserIdAndCategoryAndBiller(id,
+            List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(id,
                     categoryAndBiller.split(" by ")[0], categoryAndBiller.split(" by ")[1]);
 
-            double mean = amountList.stream().mapToDouble(val -> val).average().orElse(0.0);
-            double variance = amountList.stream().map(i -> i - mean).map(i -> i*i).
-                                        mapToDouble(i -> i).average().orElse(0.0);
-            double standardDeviation = Math.sqrt(variance);
+            List<BillData> processedBillDataList = calculatePercentiles(billDataList);
+            for (BillData billData : processedBillDataList){
+                stats.addValue(billData.getAmount());
+            }
+            double mean = stats.getMean();
+            double standardDeviation = stats.getStandardDeviation();
 
-            numberOfBillsList.add(amountList.size());
+            numberOfBillsList.add(billDataList.size());
             meanList.add(mean);
             standardDeviationList.add(standardDeviation);
         }
@@ -118,13 +136,14 @@ public class BillDataController {
             System.out.println(result);
             if (result > 0.05){
                 String categoryAndBiller = categoryAndBillerList.get(i);
-                seasonalCategoryList.add(categoryAndBiller);
                 List<Double> meanMonthList = new ArrayList<>(Collections.nCopies(12, 0.0));
                 List<Integer> frequencyList = new ArrayList<>(Collections.nCopies(12, 0));
-                List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(id,
+                List<BillData> billDataList = billDataRepository.getBillDataWithDate(id,
                         categoryAndBiller.split(" by ")[0], categoryAndBiller.split(" by ")[1]);
+                if (billDataList.isEmpty()){ continue; }
 
-                for (BillData billData : billDataList){
+                List<BillData> processedBillDataList = calculatePercentiles(billDataList);
+                for (BillData billData : processedBillDataList){
                     int index = billData.getMonth() - 1;
                     meanMonthList.set(index, meanMonthList.get(index) + billData.getAmount());
                     frequencyList.set(index, frequencyList.get(index) + 1);
@@ -135,6 +154,7 @@ public class BillDataController {
                         meanMonthList.set(j, meanMonthList.get(j) / frequencyList.get(j));
                     }
                 }
+                seasonalCategoryList.add(categoryAndBiller);
                 listOfMeanMonthLists.add(meanMonthList);
             }
         }
@@ -281,5 +301,13 @@ public class BillDataController {
         String description = "Bill " + id + " is deleted";
         Log activityLog = new Log("bg-danger", DateTime.now().toString(), id, description);
         logRepository.save(activityLog);
+    }
+
+    @CrossOrigin
+    @GetMapping ("bill_data/confirm/{id}")
+    public void confirmBillData (@PathVariable ("id") final int id){
+        BillData billData = billDataRepository.findById(id).get();
+        billData.setStatus(!billData.isStatus());
+        billDataRepository.save(billData);
     }
 }
