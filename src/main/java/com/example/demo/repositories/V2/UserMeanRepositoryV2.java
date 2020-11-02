@@ -14,7 +14,7 @@ import java.util.Map;
 public class UserMeanRepositoryV2 {
 
     public UserMeanRepositoryV2() {
-        this.mapper = DynamoDBConfig.mapper();
+        this.mapper = DynamoDBConfig.getMapper();
     }
 
     private DynamoDBMapper mapper;

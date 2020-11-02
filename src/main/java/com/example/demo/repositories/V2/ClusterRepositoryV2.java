@@ -14,7 +14,7 @@ import java.util.Map;
 public class ClusterRepositoryV2 {
 
     public ClusterRepositoryV2() {
-        this.mapper = DynamoDBConfig.mapper();
+        this.mapper = DynamoDBConfig.getMapper();
     }
 
     private DynamoDBMapper mapper;

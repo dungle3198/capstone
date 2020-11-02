@@ -14,7 +14,7 @@ import java.util.Map;
 public class UserRepositoryV2 {
 
     public UserRepositoryV2() {
-        this.mapper = DynamoDBConfig.mapper();
+        this.mapper = DynamoDBConfig.getMapper();
     }
 
     private DynamoDBMapper mapper;
