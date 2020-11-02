@@ -42,6 +42,12 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	List<Bill> bills = new ArrayList<>();
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	List<BillData> billData = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	List<UserStats> userStats = new ArrayList<>();
+
 	@Column(name = "total_bill")
 	private int totalBill;
 
@@ -116,6 +122,23 @@ public class User {
 
 	public void setBills(List<Bill> bills) {
 		this.bills = bills;
+	}
+
+	@JsonIgnore
+	public List<BillData> getBillData() {
+		return billData;
+	}
+
+	public void setBillData(List<BillData> billData) {
+		this.billData = billData;
+	}
+
+	public List<UserStats> getUserStats() {
+		return userStats;
+	}
+
+	public void setUserStats(List<UserStats> userStats) {
+		this.userStats = userStats;
 	}
 
 	public GasMeanMonth getGasMeanMonth() {
