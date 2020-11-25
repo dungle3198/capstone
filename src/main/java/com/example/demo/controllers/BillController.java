@@ -203,12 +203,15 @@ public class BillController {
 
     @CrossOrigin
     @PostMapping("/bills")
-    public void add(@RequestBody Bill newBill)
-    {
-        if (newBill.getUser() == null || !getListOfUserId().contains(newBill.getUser().getId())){
-            userController.add(newBill.getUser());
+    public void add(@RequestBody Bill newBill) {
+        User user;
+        if (newBill.getUser() == null || !getListOfUserId().contains(newBill.getUser().getId())) {
+            user = new User();
+            userController.add(user);
         }
-        User user = userRepository.findById(newBill.getUser().getId()).get();
+        else {
+            user = userRepository.findById(newBill.getUser().getId()).get();
+        }
         newBill.setUser(user);
         newBill.setMonth();
         if (user.getTotalBill() == 0){
