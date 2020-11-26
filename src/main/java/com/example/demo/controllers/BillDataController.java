@@ -58,51 +58,58 @@ public class BillDataController {
         return userRepository.getListOfUserId();
     }
 
-//    @CrossOrigin
-//    @GetMapping ("/bill_data/mean_month/user/{id}")
-//    public Map<String, List> getCategoryMeanMonthByUserId(@PathVariable ("id") final int id){
-//        Map<String, List> mapOfLists = new HashMap<>();
-//        Map<String, List> mapOfStats = getStatisticsDataByUserId(id);
-//        List<String> categoryAndBillerList = mapOfStats.get("categoryAndBiller");
-//        List<Double> meanList = mapOfStats.get("mean");
-//        List<Double> standardDeviationList = mapOfStats.get("standardDeviation");
-//        List<String> seasonalCategoryList = new ArrayList<>();
-//        List<List<Double>> listOfMeanMonthLists = new ArrayList<>();
-//
-//        for (int i = 0; i < categoryAndBillerList.size(); i++) {
-//            double result = Math.abs((standardDeviationList.get(i) / meanList.get(i)));
-//            System.out.println(result);
-//            if (result > 0.05){
-//                String categoryAndBiller = categoryAndBillerList.get(i);
-//                List<Double> meanMonthList = new ArrayList<>(Collections.nCopies(12, 0.0));
-//                List<Integer> frequencyList = new ArrayList<>(Collections.nCopies(12, 0));
-//                List<BillData> billDataList = billDataRepository.getBillDataWithDate(id,
-//                        categoryAndBiller.split(" by ")[0], categoryAndBiller.split(" by ")[1]);
-//                if (billDataList.isEmpty()){ continue; }
-//
-//                List<BillData> processedBillDataList = calculatePercentiles(billDataList);
-//                for (BillData billData : processedBillDataList){
-//                    int index = billData.getMonth() - 1;
-//                    meanMonthList.set(index, meanMonthList.get(index) + billData.getAmount());
-//                    frequencyList.set(index, frequencyList.get(index) + 1);
-//                }
-//
-//                for (int j = 0; j < meanMonthList.size(); j++) {
-//                    if (frequencyList.get(j) != 0) {
-//                        meanMonthList.set(j, meanMonthList.get(j) / frequencyList.get(j));
-//                    }
-//                }
-//                seasonalCategoryList.add(categoryAndBiller);
-//                listOfMeanMonthLists.add(meanMonthList);
-//            }
-//        }
-//
-//        mapOfLists.put("seasonalCategory", seasonalCategoryList);
-//        mapOfLists.put("meanMonthList", listOfMeanMonthLists);
-//        System.out.println(seasonalCategoryList);
-//        System.out.println(listOfMeanMonthLists);
-//        return mapOfLists;
-//    }
+    @CrossOrigin
+    @GetMapping ("/bill_data/mean_month/user/{id}")
+    public Map<String, List> getCategoryMeanMonthByUserId(@PathVariable ("id") final int id){
+        Map<String, List> mapOfLists = new HashMap<>();
+        //Map<String, List> mapOfStats = getStatisticsDataByUserId(id);
+        List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserId(id);
+        List<String> categoryList = new ArrayList<>();
+        List<String> billerList = new ArrayList<>();
+        List<Double> meanList = new ArrayList<>();
+        List<Double> standardDeviationList = new ArrayList<>();
+        for (UserStats userStats : userStatsList){
+            categoryList.add(userStats.getCategory());
+            billerList.add(userStats.getBiller());
+            meanList.add(userStats.getMean());
+            standardDeviationList.add(userStats.getStandardDeviation());
+        }
+        List<String> seasonalCategoryList = new ArrayList<>();
+        List<List<Double>> listOfMeanMonthLists = new ArrayList<>();
+
+        for (int i = 0; i < categoryList.size(); i++) {
+            double result = Math.abs((standardDeviationList.get(i) / meanList.get(i)));
+            System.out.println(result);
+            if (result > 0.05){
+                List<Double> meanMonthList = new ArrayList<>(Collections.nCopies(12, 0.0));
+                List<Integer> frequencyList = new ArrayList<>(Collections.nCopies(12, 0));
+                List<BillData> billDataList = billDataRepository.getBillDataWithDate(id,
+                                                    categoryList.get(i), billerList.get(i));
+                if (billDataList.isEmpty()){ continue; }
+
+                List<BillData> processedBillDataList = calculatePercentiles(billDataList);
+                for (BillData billData : processedBillDataList){
+                    int index = billData.getMonth() - 1;
+                    meanMonthList.set(index, meanMonthList.get(index) + billData.getAmount());
+                    frequencyList.set(index, frequencyList.get(index) + 1);
+                }
+
+                for (int j = 0; j < meanMonthList.size(); j++) {
+                    if (frequencyList.get(j) != 0) {
+                        meanMonthList.set(j, meanMonthList.get(j) / frequencyList.get(j));
+                    }
+                }
+                seasonalCategoryList.add(categoryList.get(i) + " " + billerList.get(i));
+                listOfMeanMonthLists.add(meanMonthList);
+            }
+        }
+
+        mapOfLists.put("seasonalCategory", seasonalCategoryList);
+        mapOfLists.put("meanMonthList", listOfMeanMonthLists);
+        System.out.println(seasonalCategoryList);
+        System.out.println(listOfMeanMonthLists);
+        return mapOfLists;
+    }
 
     public List<BillData> calculatePercentiles(List<BillData> billDataList){
         DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -428,6 +435,55 @@ public class BillDataController {
         return Math.abs((a * k + b * distP2C + c)) / (Math.sqrt(a * a + b * b));
     }
 
+    public double predict(List<BillData> billDataList, int k, BillData billData){
+        List<Double> sumList = new ArrayList<>();
+        List<Map> clusters = new ArrayList<>();
+        List<Map> centroids = new ArrayList<>();
+        for (int i = 1; i <= k; i++) {
+            Map<Integer, List<BillData>> cluster = clusters(billDataList, i).get(0);
+            Map<Integer, Double> centroid = clusters(billDataList, i).get(1);
+            sumList.add(calculateDistP2C(cluster, centroid, i));
+            clusters.add(cluster);
+            centroids.add(centroid);
+        }
+
+        List<Double> resultList = new ArrayList<>();
+        double a = sumList.get(0) - sumList.get(sumList.size() - 1);
+        int b = k - 1;
+        double c1 = 1 * sumList.get(sumList.size() - 1);
+        double c2 = k * sumList.get(0);
+        double c = c1 - c2;
+        for (int i = 0; i < k; i++) {
+            resultList.add(calculateDistance(i + 1, sumList.get(i), a, b, c));
+        }
+        System.out.println(resultList);
+
+        int resultIndex = resultList.indexOf(Collections.max(resultList));
+        Map<Integer, List<BillData>> chosenCluster = clusters.get(resultIndex);
+        Map<Integer, Double> chosenCentroid = centroids.get(resultIndex);
+        List<Integer> sizeList = new ArrayList<>();
+
+        if (chosenCluster.size() == 1){
+            return chosenCentroid.get(0);
+        }
+        else if (chosenCluster.size() == 5){
+            DescriptiveStatistics stats = new DescriptiveStatistics();
+            for (int i = 0; i < chosenCluster.size(); i++) {
+                stats.addValue(chosenCentroid.get(i));
+            }
+            return stats.getMean();
+        }
+        else {
+            for (int i = 0; i < chosenCluster.size(); i++) {
+                sizeList.add(chosenCluster.get(i).size());
+            }
+            int index = sizeList.indexOf(Collections.max(sizeList));
+            System.out.println(chosenCentroid);
+            System.out.println(chosenCentroid.get(index));
+            return chosenCentroid.get(index);
+        }
+    }
+
 //    @CrossOrigin
 //    @GetMapping("/bill_data/test/{k}")
 //    public List<Double> test(@PathVariable("k") final int k){
@@ -485,55 +541,4 @@ public class BillDataController {
 //
 //        return sumList;
 //    }
-
-    public double predict(List<BillData> billDataList, int k, BillData billData){
-        List<Double> sumList = new ArrayList<>();
-        List<Map> clusters = new ArrayList<>();
-        List<Map> centroids = new ArrayList<>();
-        for (int i = 1; i <= k; i++) {
-            Map<Integer, List<BillData>> cluster = clusters(billDataList, i).get(0);
-            Map<Integer, Double> centroid = clusters(billDataList, i).get(1);
-            sumList.add(calculateDistP2C(cluster, centroid, i));
-            clusters.add(cluster);
-            centroids.add(centroid);
-        }
-
-        List<Double> resultList = new ArrayList<>();
-        double a = sumList.get(0) - sumList.get(sumList.size() - 1);
-        int b = k - 1;
-        double c1 = 1 * sumList.get(sumList.size() - 1);
-        double c2 = k * sumList.get(0);
-        double c = c1 - c2;
-        for (int i = 0; i < k; i++) {
-            resultList.add(calculateDistance(i + 1, sumList.get(i), a, b, c));
-        }
-        System.out.println(resultList);
-
-        int resultIndex = resultList.indexOf(Collections.max(resultList));
-        Map<Integer, List<BillData>> chosenCluster = clusters.get(resultIndex);
-        Map<Integer, Double> chosenCentroid = centroids.get(resultIndex);
-        List<Integer> sizeList = new ArrayList<>();
-
-        billData.setCluster(resultIndex);
-
-        if (chosenCluster.size() == 1){
-            return chosenCentroid.get(0);
-        }
-        else if (chosenCluster.size() == 5){
-            DescriptiveStatistics stats = new DescriptiveStatistics();
-            for (int i = 0; i < chosenCluster.size(); i++) {
-                stats.addValue(chosenCentroid.get(i));
-            }
-            return stats.getMean();
-        }
-        else {
-            for (int i = 0; i < chosenCluster.size(); i++) {
-                sizeList.add(chosenCluster.get(i).size());
-            }
-            int index = sizeList.indexOf(Collections.max(sizeList));
-            System.out.println(chosenCentroid);
-            System.out.println(chosenCentroid.get(index));
-            return chosenCentroid.get(index);
-        }
-    }
 }

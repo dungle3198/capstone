@@ -133,6 +133,7 @@ public class User {
 		this.billData = billData;
 	}
 
+	@JsonIgnore
 	public List<UserStats> getUserStats() {
 		return userStats;
 	}
