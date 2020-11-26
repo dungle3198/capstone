@@ -237,8 +237,8 @@ public class BillDataController {
         }
 
         if (billDataList2.size() >= 5){
-            
-            List<BillData> subList = billDataList2.subList(billDataList2.size() - 5, billDataList2.size());
+            List<BillData> subList = billDataList2.subList(billDataList2.size() - 4, billDataList2.size());
+            subList.add(billData);
             billData.setPredictedAmount(predict(subList, 5, billData));
             double monthlyAmount = Math.abs(billData.getAmount());
             double predictedAmount = Math.abs(billData.getPredictedAmount());
@@ -363,12 +363,14 @@ public class BillDataController {
             }
         }
 
-        Map<Integer, List<BillData>> lastState = new HashMap<>(cluster);
+        Map<Integer, List<BillData>> lastState = new HashMap<>();
         boolean maxIteration = true;
         int count = 0;
         while (maxIteration){
             for (int i = 0; i < k; i++) {
                 List<BillData> dataList = cluster.get(i);
+                List<BillData> clone = new ArrayList<>(dataList);
+                lastState.put(i, clone);
                 System.out.println(dataList);
                 if (dataList.size() > 1 && dataList.size() != mainBillDataList.size()){
                     List<BillData> listOfBillData = new ArrayList<>(dataList);
@@ -380,33 +382,40 @@ public class BillDataController {
                             if (j != i){
                                 double newDistance = Math.abs(billData.getAmount() - centroid.get(j));
                                 newDistanceList.add(newDistance);
+                                System.out.println(newDistance);
                             }
                             else {newDistanceList.add(Double.MAX_VALUE);}
                         }
 
                         System.out.println(newDistanceList);
                         double newDistance = Collections.min(newDistanceList);
-                        System.out.println(newDistance);
+                        System.out.println("chosen " + newDistance);
                         System.out.println(currentDistance);
                         if (newDistance < currentDistance){
                             int index = newDistanceList.indexOf(newDistance);
                             cluster.get(index).add(billData);
                             double newCentroid = calculateCentroid(cluster.get(index));
                             centroid.put(index, newCentroid);
+                            System.out.println(cluster.get(index));
 
                             dataList.remove(billData);
                             double updatedCentroid = calculateCentroid(dataList);
                             centroid.put(i, updatedCentroid);
+                            System.out.println(dataList);
                         }
                     }
                 }
             }
+            System.out.println(lastState);
+            System.out.println(cluster);
 
             if (cluster.equals(lastState)){
                 maxIteration = false;
+                System.out.println("FINISH");
             }
             else {
                 lastState = cluster;
+                System.out.println("AGAIN");
                 count++;
             }
         }
@@ -440,8 +449,9 @@ public class BillDataController {
         List<Map> clusters = new ArrayList<>();
         List<Map> centroids = new ArrayList<>();
         for (int i = 1; i <= k; i++) {
-            Map<Integer, List<BillData>> cluster = clusters(billDataList, i).get(0);
-            Map<Integer, Double> centroid = clusters(billDataList, i).get(1);
+            List<Map> calculateCluster = clusters(billDataList, i);
+            Map<Integer, List<BillData>> cluster = calculateCluster.get(0);
+            Map<Integer, Double> centroid = calculateCluster.get(1);
             sumList.add(calculateDistP2C(cluster, centroid, i));
             clusters.add(cluster);
             centroids.add(centroid);
@@ -462,6 +472,8 @@ public class BillDataController {
         Map<Integer, List<BillData>> chosenCluster = clusters.get(resultIndex);
         Map<Integer, Double> chosenCentroid = centroids.get(resultIndex);
         List<Integer> sizeList = new ArrayList<>();
+
+        billData.setCluster(resultIndex);
 
         if (chosenCluster.size() == 1){
             return chosenCentroid.get(0);
@@ -484,61 +496,69 @@ public class BillDataController {
         }
     }
 
-//    @CrossOrigin
-//    @GetMapping("/bill_data/test/{k}")
-//    public List<Double> test(@PathVariable("k") final int k){
-//        BillData billData = new BillData();
-//        billData.setAmount(198);
-//        BillData billData1 = new BillData();
-//        billData1.setAmount(324);
-//        BillData billData2 = new BillData();
-//        billData2.setAmount(198);
-//        BillData billData3 = new BillData();
-//        billData3.setAmount(314);
-//        BillData billData4 = new BillData();
-//        billData4.setAmount(198);
-//
-//        List<BillData> billDataList = new ArrayList<>();
-//        billDataList.add(billData);
-//        billDataList.add(billData1);
-//        billDataList.add(billData2);
-//        billDataList.add(billData3);
-//        billDataList.add(billData4);
-//
-//        List<Double> sumList = new ArrayList<>();
-//        List<Map> clusters = new ArrayList<>();
-//        List<Map> centroids = new ArrayList<>();
-//        for (int i = 1; i <= k; i++) {
-//            Map<Integer, List<BillData>> cluster = clusters(billDataList, i).get(0);
-//            Map<Integer, Double> centroid = clusters(billDataList, i).get(1);
-//            sumList.add(calculateDistP2C(cluster, centroid, i));
-//            clusters.add(cluster);
-//            centroids.add(centroid);
-//        }
-//
-//        List<Double> resultList = new ArrayList<>();
-//        double a = sumList.get(0) - sumList.get(sumList.size() - 1);
-//        int b = k - 1;
-//        double c1 = 1 * sumList.get(sumList.size() - 1);
-//        double c2 = k * sumList.get(0);
-//        double c = c1 - c2;
-//        for (int i = 0; i < k; i++) {
-//            resultList.add(calculateDistance(i + 1, sumList.get(i), a, b, c));
-//        }
-//        System.out.println(resultList);
-//
-//        int index = resultList.indexOf(Collections.max(resultList));
-//        Map<Integer, List<BillData>> chosenCluster = clusters.get(2);
-//        Map<Integer, Double> chosenCentroid = centroids.get(index);
-//        List<Integer> sizeList = new ArrayList<>();
-//        for (int i = 0; i < chosenCluster.size(); i++) {
-//            sizeList.add(chosenCluster.get(i).size());
-//        }
-//
-//        int index1 = sizeList.indexOf(Collections.max(sizeList));
-//        System.out.println(chosenCentroid);
-//        System.out.println(chosenCentroid.get(index1));
-//
-//        return sumList;
-//    }
+    @CrossOrigin
+    @GetMapping("/bill_data/test/{k}")
+    public List<Double> test(@PathVariable("k") final int k){
+        BillData billData = new BillData();
+        billData.setAmount(277);
+        BillData billData1 = new BillData();
+        billData1.setAmount(284);
+        BillData billData2 = new BillData();
+        billData2.setAmount(342);
+        BillData billData3 = new BillData();
+        billData3.setAmount(328);
+        BillData billData4 = new BillData();
+        billData4.setAmount(334);
+
+        List<BillData> billDataList = new ArrayList<>();
+        billDataList.add(billData);
+        billDataList.add(billData1);
+        billDataList.add(billData2);
+        billDataList.add(billData3);
+        billDataList.add(billData4);
+
+        List<Double> sumList = new ArrayList<>();
+        List<Map> clusters = new ArrayList<>();
+        List<Map> centroids = new ArrayList<>();
+        for (int i = 1; i <= k; i++) {
+            List<Map> calculateCluster = clusters(billDataList, i);
+            Map<Integer, List<BillData>> cluster = calculateCluster.get(0);
+            Map<Integer, Double> centroid = calculateCluster.get(1);
+            sumList.add(calculateDistP2C(cluster, centroid, i));
+            clusters.add(cluster);
+            centroids.add(centroid);
+        }
+
+        List<Double> resultList = new ArrayList<>();
+        double a = sumList.get(0) - sumList.get(sumList.size() - 1);
+        int b = k - 1;
+        double c1 = 1 * sumList.get(sumList.size() - 1);
+        double c2 = k * sumList.get(0);
+        double c = c1 - c2;
+        for (int i = 0; i < k; i++) {
+            resultList.add(calculateDistance(i + 1, sumList.get(i), a, b, c));
+        }
+        System.out.println(resultList);
+
+        int index = resultList.indexOf(Collections.max(resultList));
+        Map<Integer, List<BillData>> chosenCluster = clusters.get(index);
+        Map<Integer, Double> chosenCentroid = centroids.get(index);
+        List<Integer> sizeList = new ArrayList<>();
+        for (int i = 0; i < chosenCluster.size(); i++) {
+            sizeList.add(chosenCluster.get(i).size());
+        }
+
+        int index1 = sizeList.indexOf(Collections.max(sizeList));
+        System.out.println(index);
+        for (List<BillData> dataList : chosenCluster.values()){
+            for (BillData billData5 : dataList){
+                System.out.println(billData5.getAmount());
+            }
+        }
+        System.out.println(chosenCluster);
+        System.out.println(chosenCentroid);
+        System.out.println(chosenCentroid.get(index1));
+
+        return sumList;
+    }
 }
