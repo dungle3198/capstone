@@ -473,7 +473,7 @@ public class BillDataController {
         Map<Integer, Double> chosenCentroid = centroids.get(resultIndex);
         List<Integer> sizeList = new ArrayList<>();
 
-        billData.setCluster(resultIndex);
+//        billData.setCluster(resultIndex);
 
         if (chosenCluster.size() == 1){
             return chosenCentroid.get(0);
