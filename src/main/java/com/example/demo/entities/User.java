@@ -40,9 +40,6 @@ public class User {
 	private String lastName;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	List<Bill> bills = new ArrayList<>();
-
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	List<BillData> billData = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -115,14 +112,14 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	@JsonIgnore
-	public List<Bill> getBills() {
-		return bills;
-	}
-
-	public void setBills(List<Bill> bills) {
-		this.bills = bills;
-	}
+//	@JsonIgnore
+//	public List<Bill> getBills() {
+//		return bills;
+//	}
+//
+//	public void setBills(List<Bill> bills) {
+//		this.bills = bills;
+//	}
 
 	@JsonIgnore
 	public List<BillData> getBillData() {
@@ -190,30 +187,30 @@ public class User {
 		this.cluster = cluster;
 	}
 
-	public boolean isNewUser()
-	{
-		List<Bill> bills = getBills();
-		int electricityCount = 0;
-		int gasCount = 0;
-		int waterCount = 0;
-		int internetCount = 0;
-		for (Bill bill: bills) {
-			switch (bill.getType().toLowerCase())
-			{
-				case "phone and internet":
-					internetCount ++;
-					break;
-				case "gas":
-					gasCount++;
-					break;
-				case "water":
-					waterCount++;
-					break;
-				case "electricity":
-					electricityCount++;
-					break;
-			}
-		}
-		return internetCount < 5 && gasCount < 5 && waterCount < 5 && electricityCount < 5;
-	}
+//	public boolean isNewUser()
+//	{
+//		List<Bill> bills = getBills();
+//		int electricityCount = 0;
+//		int gasCount = 0;
+//		int waterCount = 0;
+//		int internetCount = 0;
+//		for (Bill bill: bills) {
+//			switch (bill.getType().toLowerCase())
+//			{
+//				case "phone and internet":
+//					internetCount ++;
+//					break;
+//				case "gas":
+//					gasCount++;
+//					break;
+//				case "water":
+//					waterCount++;
+//					break;
+//				case "electricity":
+//					electricityCount++;
+//					break;
+//			}
+//		}
+//		return internetCount < 5 && gasCount < 5 && waterCount < 5 && electricityCount < 5;
+//	}
 }
