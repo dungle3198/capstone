@@ -45,8 +45,8 @@ public class BillData {
     @Column (name = "status")
     private boolean status;
 
-//    @Column (name = "cluster")
-//    private int cluster;
+    @Column (name = "cluster")
+    private int cluster;
 
     public BillData() {
 
@@ -148,11 +148,11 @@ public class BillData {
         this.status = status;
     }
 
-//    public int getCluster() {
-//        return cluster;
-//    }
-//
-//    public void setCluster(int cluster) {
-//        this.cluster = cluster;
-//    }
+    public int getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(int cluster) {
+        this.cluster = cluster;
+    }
 }

@@ -59,21 +59,6 @@ public class WaterMeanMonth {
 
     }
 
-    public WaterMeanMonth(int id) {
-        this.waterMeanMonth1 = 0;
-        this.waterMeanMonth2 = 0;
-        this.waterMeanMonth3 = 0;
-        this.waterMeanMonth4 = 0;
-        this.waterMeanMonth5 = 0;
-        this.waterMeanMonth6 = 0;
-        this.waterMeanMonth7 = 0;
-        this.waterMeanMonth8 = 0;
-        this.waterMeanMonth9 = 0;
-        this.waterMeanMonth10 = 0;
-        this.waterMeanMonth11 = 0;
-        this.waterMeanMonth12 = 0;
-    }
-
     public void calculateWaterMeanMonth (List<Double> amounts, int month){
         DescriptiveStatistics stats = new DescriptiveStatistics();
 

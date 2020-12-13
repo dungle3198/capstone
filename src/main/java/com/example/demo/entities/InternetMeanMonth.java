@@ -59,21 +59,6 @@ public class InternetMeanMonth {
         
     }
 
-    public InternetMeanMonth(int id) {
-        this.internetMeanMonth1 = 0;
-        this.internetMeanMonth2 = 0;
-        this.internetMeanMonth3 = 0;
-        this.internetMeanMonth4 = 0;
-        this.internetMeanMonth5 = 0;
-        this.internetMeanMonth6 = 0;
-        this.internetMeanMonth7 = 0;
-        this.internetMeanMonth8 = 0;
-        this.internetMeanMonth9 = 0;
-        this.internetMeanMonth10 = 0;
-        this.internetMeanMonth11 = 0;
-        this.internetMeanMonth12 = 0;
-    }
-
     public void calculateInternetMeanMonth (List<Double> amounts, int month){
         DescriptiveStatistics stats = new DescriptiveStatistics();
 

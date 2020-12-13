@@ -59,21 +59,6 @@ public class ElectricityMeanMonth {
 
     }
 
-    public ElectricityMeanMonth(int id) {
-        this.electricityMeanMonth1 = 0;
-        this.electricityMeanMonth2 = 0;
-        this.electricityMeanMonth3 = 0;
-        this.electricityMeanMonth4 = 0;
-        this.electricityMeanMonth5 = 0;
-        this.electricityMeanMonth6 = 0;
-        this.electricityMeanMonth7 = 0;
-        this.electricityMeanMonth8 = 0;
-        this.electricityMeanMonth9 = 0;
-        this.electricityMeanMonth10 = 0;
-        this.electricityMeanMonth11 = 0;
-        this.electricityMeanMonth12 = 0;
-    }
-
     public void calculateElectricityMeanMonth (List<Double> amounts, int month){
         DescriptiveStatistics stats = new DescriptiveStatistics();
 

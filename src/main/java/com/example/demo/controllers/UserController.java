@@ -96,4 +96,14 @@ public class UserController {
 	{
 		userRepository.deleteById(id);
 	}
+
+	@CrossOrigin
+	@GetMapping("/users/delete")
+	public void setNull (){
+		List<User> userList = userRepository.findAll();
+		for (User user : userList){
+			user.setTotalBill(0);
+			userRepository.save(user);
+		}
+	}
 }

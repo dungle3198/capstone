@@ -60,21 +60,6 @@ public class GasMeanMonth {
 
     }
 
-    public GasMeanMonth(int id) {
-        this.gasMeanMonth1 = 0;
-        this.gasMeanMonth2 = 0;
-        this.gasMeanMonth3 = 0;
-        this.gasMeanMonth4 = 0;
-        this.gasMeanMonth5 = 0;
-        this.gasMeanMonth6 = 0;
-        this.gasMeanMonth7 = 0;
-        this.gasMeanMonth8 = 0;
-        this.gasMeanMonth9 = 0;
-        this.gasMeanMonth10 = 0;
-        this.gasMeanMonth11 = 0;
-        this.gasMeanMonth12 = 0;
-    }
-
     public void calculateGasMeanMonth (List<Double> amounts, int month){
         DescriptiveStatistics stats = new DescriptiveStatistics();
 

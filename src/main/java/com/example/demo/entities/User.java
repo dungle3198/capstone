@@ -112,15 +112,6 @@ public class User {
 		this.lastName = lastName;
 	}
 
-//	@JsonIgnore
-//	public List<Bill> getBills() {
-//		return bills;
-//	}
-//
-//	public void setBills(List<Bill> bills) {
-//		this.bills = bills;
-//	}
-
 	@JsonIgnore
 	public List<BillData> getBillData() {
 		return billData;
