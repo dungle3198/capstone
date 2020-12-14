@@ -41,34 +41,10 @@ public class UserController {
 		return userRepository.getUsersByClusterId(cluster_id);
 	}
 
-	public void setUserRelation(User user, UserMean userMean, UserStd userStd, GasMeanMonth gasMeanMonth,
-								InternetMeanMonth internetMeanMonth, ElectricityMeanMonth electricityMeanMonth,
-								WaterMeanMonth waterMeanMonth){
-		user.setUserMean(userMean);
-		user.setUserStd(userStd);
-		user.setGasMeanMonth(gasMeanMonth);
-		user.setInternetMeanMonth(internetMeanMonth);
-		user.setElectricityMeanMonth(electricityMeanMonth);
-		user.setWaterMeanMonth(waterMeanMonth);
-		userMean.setUser(user);
-		userStd.setUser(user);
-		gasMeanMonth.setUser(user);
-		internetMeanMonth.setUser(user);
-		electricityMeanMonth.setUser(user);
-		waterMeanMonth.setUser(user);
-	}
-
 	@CrossOrigin
 	@PostMapping("/users")
 	public void add(@RequestBody User user)
 	{
-		UserMean userMean = new UserMean();
-		UserStd userStd = new UserStd();
-		GasMeanMonth gasMeanMonth = new GasMeanMonth();
-		InternetMeanMonth internetMeanMonth = new InternetMeanMonth();
-		ElectricityMeanMonth electricityMeanMonth = new ElectricityMeanMonth();
-		WaterMeanMonth waterMeanMonth = new WaterMeanMonth();
-		setUserRelation(user, userMean, userStd, gasMeanMonth, internetMeanMonth, electricityMeanMonth, waterMeanMonth);
 		userRepository.save(user);
 	}
 
@@ -77,17 +53,10 @@ public class UserController {
 	public void edit(@RequestBody User user, @PathVariable("id") final Integer id)
 	{
 		User existedUser = userRepository.findById(id).get();
-		UserMean userMean = existedUser.getUserMean();
-		UserStd userStd = existedUser.getUserStd();
-		GasMeanMonth gasMeanMonth = existedUser.getGasMeanMonth();
-		InternetMeanMonth internetMeanMonth = existedUser.getInternetMeanMonth();
-		ElectricityMeanMonth electricityMeanMonth = existedUser.getElectricityMeanMonth();
-		WaterMeanMonth waterMeanMonth = existedUser.getWaterMeanMonth();
 		existedUser.setId(user.getId());
 		existedUser.setFirstName(user.getFirstName());
 		existedUser.setLastName(user.getLastName());
-		setUserRelation(existedUser, userMean, userStd, gasMeanMonth, internetMeanMonth, electricityMeanMonth, waterMeanMonth);
-		userRepository.save(existedUser);
+				userRepository.save(existedUser);
 	}
 
 	@CrossOrigin

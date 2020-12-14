@@ -15,24 +15,6 @@ public class User {
 	@Column(name = "id")
 	private int id;
 
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private UserMean userMean;
-
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private UserStd userStd;
-
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private GasMeanMonth gasMeanMonth;
-
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ElectricityMeanMonth electricityMeanMonth;
-
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private InternetMeanMonth internetMeanMonth;
-
-	@OneToOne (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private WaterMeanMonth waterMeanMonth;
-
 	@Column(name = "first_name")
 	private String firstName;
 
@@ -55,45 +37,12 @@ public class User {
 	public User() {
 	}
 
-	public void setMeanMonthType(List<Double> amounts, String type, int month){
-		switch (type.toLowerCase()){
-			case "phone and internet":
-				internetMeanMonth.calculateInternetMeanMonth(amounts, month);
-				break;
-			case "electricity":
-				electricityMeanMonth.calculateElectricityMeanMonth(amounts, month);
-				break;
-			case "gas":
-				gasMeanMonth.calculateGasMeanMonth(amounts, month);
-				break;
-			case "water":
-				waterMeanMonth.calculateWaterMeanMonth(amounts, month);
-				break;
-		}
-	}
-
 	public int getId() {
 		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public UserMean getUserMean() {
-		return userMean;
-	}
-
-	public void setUserMean(UserMean userMean) {
-		this.userMean = userMean;
-	}
-
-	public UserStd getUserStd() {
-		return userStd;
-	}
-
-	public void setUserStd(UserStd userStd) {
-		this.userStd = userStd;
 	}
 
 	public String getFirstName() {
@@ -128,38 +77,6 @@ public class User {
 
 	public void setUserStats(List<UserStats> userStats) {
 		this.userStats = userStats;
-	}
-
-	public GasMeanMonth getGasMeanMonth() {
-		return gasMeanMonth;
-	}
-
-	public void setGasMeanMonth(GasMeanMonth gasMeanMonth) {
-		this.gasMeanMonth = gasMeanMonth;
-	}
-
-	public ElectricityMeanMonth getElectricityMeanMonth() {
-		return electricityMeanMonth;
-	}
-
-	public void setElectricityMeanMonth(ElectricityMeanMonth electricityMeanMonth) {
-		this.electricityMeanMonth = electricityMeanMonth;
-	}
-
-	public InternetMeanMonth getInternetMeanMonth() {
-		return internetMeanMonth;
-	}
-
-	public void setInternetMeanMonth(InternetMeanMonth internetMeanMonth) {
-		this.internetMeanMonth = internetMeanMonth;
-	}
-
-	public WaterMeanMonth getWaterMeanMonth() {
-		return waterMeanMonth;
-	}
-
-	public void setWaterMeanMonth(WaterMeanMonth waterMeanMonth) {
-		this.waterMeanMonth = waterMeanMonth;
 	}
 
 	public int getTotalBill() {

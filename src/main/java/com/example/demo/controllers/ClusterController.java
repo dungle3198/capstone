@@ -1,13 +1,11 @@
 package com.example.demo.controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.example.demo.entities.*;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.repositories.UserStatsRepository;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,16 +15,48 @@ import com.example.demo.repositories.ClusterRepository;
 public class ClusterController {
 
     private final ClusterRepository clusterRepository;
-    private final UserController userController;
     private final UserRepository userRepository;
     private final UserStatsRepository userStatsRepository;
 
     @Autowired
-    public ClusterController(ClusterRepository clusterRepository, UserController userController, UserRepository userRepository, UserStatsRepository userStatsRepository) {
+    public ClusterController(ClusterRepository clusterRepository, UserRepository userRepository, UserStatsRepository userStatsRepository) {
         this.clusterRepository = clusterRepository;
-        this.userController = userController;
         this.userRepository = userRepository;
         this.userStatsRepository = userStatsRepository;
+    }
+
+    public void calculateCluster(Cluster cluster){
+        List<String> listOfUtility = Arrays.asList("Electricity", "Phone and Internet", "Water", "Gas");
+        Map<String, List<Double>> utilityStatsMap = new HashMap<>();
+
+        for (String utility : listOfUtility){
+            DescriptiveStatistics meanStats = new DescriptiveStatistics();
+            DescriptiveStatistics stdStats = new DescriptiveStatistics();
+            List<Double> statsList = new ArrayList<>();
+
+            for (User user : cluster.getUsers()){
+                List<UserStats> userStats = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
+                        user.getId(), utility, "");
+                if (!userStats.isEmpty()){
+                    meanStats.addValue(userStats.get(0).getMean());
+                    stdStats.addValue(userStats.get(0).getStandardDeviation());
+                }
+            }
+
+            statsList.add(meanStats.getMean());
+            statsList.add(stdStats.getMean());
+            utilityStatsMap.put(utility, statsList);
+            System.out.println(utilityStatsMap);
+        }
+
+        cluster.setElectricityClusterMean(utilityStatsMap.get("Electricity").get(0));
+        cluster.setElectricityClusterStd(utilityStatsMap.get("Electricity").get(1));
+        cluster.setInternetClusterMean(utilityStatsMap.get("Phone and Internet").get(0));
+        cluster.setInternetClusterStd(utilityStatsMap.get("Phone and Internet").get(1));
+        cluster.setWaterClusterMean(utilityStatsMap.get("Water").get(0));
+        cluster.setWaterClusterStd(utilityStatsMap.get("Water").get(1));
+        cluster.setGasClusterMean(utilityStatsMap.get("Gas").get(0));
+        cluster.setGasClusterStd(utilityStatsMap.get("Gas").get(1));
     }
 
     public List<String> createUtilityList(User user){
@@ -41,12 +71,10 @@ public class ClusterController {
         return utilityList;
     }
 
-    public List<User> createCluster(User userA, List<User> users){
+    public List<User> createCluster(User userA, List<User> users, int num){
         List<User> userList = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
         Cluster cluster = new Cluster();
-        User userB;
-        User userC;
         users.remove(userA);
 
         userA.setCluster(cluster);
@@ -54,7 +82,7 @@ public class ClusterController {
         userList.add(userA);
         if (users.isEmpty()){
             add(cluster);
-            cluster.calculateCluster();
+            calculateCluster(cluster);
             edit(cluster, cluster.getId());
             return userList;
         }
@@ -89,29 +117,22 @@ public class ClusterController {
             System.out.println(distance);
         }
 
-        int index1 = distances.indexOf(Collections.min(distances));
-        userB = users.get(index1);
-        userB.setCluster(cluster);
-        cluster.getUsers().add(userB);
-        distances.remove(index1);
-        users.remove(index1);
-        userList.add(userB);
-
-        if (users.isEmpty()){
-            add(cluster);
-            cluster.calculateCluster();
-            edit(cluster, cluster.getId());
-            return userList;
+        for (int i = 0; i < num - 1; i++) {
+            User user;
+            int index = distances.indexOf(Collections.min(distances));
+            user = users.get(index);
+            user.setCluster(cluster);
+            cluster.getUsers().add(user);
+            distances.remove(index);
+            users.remove(index);
+            userList.add(user);
+            if (users.isEmpty()){
+                break;
+            }
         }
 
-        int index2 = distances.indexOf(Collections.min(distances));
-        userC = users.get(index2);
-        userC.setCluster(cluster);
-        cluster.getUsers().add(userC);
-        userList.add(userC);
-
         add(cluster);
-        cluster.calculateCluster();
+        calculateCluster(cluster);
         edit(cluster, cluster.getId());
         return userList;
     }
@@ -133,7 +154,7 @@ public class ClusterController {
                 break;
             }
             else if (user.getCluster() == null){
-                List<User> clusteredUsers = createCluster(user, userList);
+                List<User> clusteredUsers = createCluster(user, userList, 3);
                 userList.removeAll(clusteredUsers);
             }
         }
@@ -141,7 +162,7 @@ public class ClusterController {
 
     @CrossOrigin
     @GetMapping("/clusters/all")
-    public void getUserIdByCluster(){
+    public void getUserIdByCluster() {
         List<Cluster> clusters = clusterRepository.findAll();
         for (Cluster cluster : clusters){
             List<User> users = cluster.getUsers();
