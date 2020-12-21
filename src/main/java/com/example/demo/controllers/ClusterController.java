@@ -146,7 +146,7 @@ public class ClusterController {
     @CrossOrigin
     @GetMapping("/clusters/create")
     public void create(){
-        List<User> users = userRepository.getUsers();
+        List<User> users = userRepository.getUsersWithBills();
         //users.removeIf(User::isNewUser);
         List<User> userList = new ArrayList<>(users);
         for (User user : users) {

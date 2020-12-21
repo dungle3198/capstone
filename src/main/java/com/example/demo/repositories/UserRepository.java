@@ -15,5 +15,5 @@ public interface UserRepository extends JpaRepository<User, Integer>{
     List<User> getUsersByClusterId(int cluster_id);
 
     @Query("select u from User u where u.totalBill != 0")
-    List<User> getUsers();
+    List<User> getUsersWithBills();
 }

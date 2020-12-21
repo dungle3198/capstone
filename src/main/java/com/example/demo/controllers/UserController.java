@@ -29,16 +29,19 @@ public class UserController {
 
 	@CrossOrigin
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable("id") final int user_id)
+	public User getUserById(@PathVariable("id") final int user_id)
 	{
-		User user = userRepository.findById(user_id).get();
-		return ResponseEntity.ok().body(user);
+		return userRepository.findById(user_id).get();
 	}
 
 	@CrossOrigin
 	@GetMapping("/users/cluster/{id}")
 	public List<User> getUsersByClusterId(@PathVariable("id") final int cluster_id){
 		return userRepository.getUsersByClusterId(cluster_id);
+	}
+
+	public List<User> getUsersWithBills(){
+		return userRepository.getUsersWithBills();
 	}
 
 	@CrossOrigin
@@ -50,18 +53,18 @@ public class UserController {
 
 	@CrossOrigin
 	@PutMapping("/users/{id}")
-	public void edit(@RequestBody User user, @PathVariable("id") final Integer id)
+	public void edit(@RequestBody User user, @PathVariable("id") final int id)
 	{
 		User existedUser = userRepository.findById(id).get();
 		existedUser.setId(user.getId());
 		existedUser.setFirstName(user.getFirstName());
 		existedUser.setLastName(user.getLastName());
-				userRepository.save(existedUser);
+		userRepository.save(existedUser);
 	}
 
 	@CrossOrigin
 	@DeleteMapping("/users/{id}")
-	public void delete (@PathVariable("id") final Integer id)
+	public void delete (@PathVariable("id") final int id)
 	{
 		userRepository.deleteById(id);
 	}
