@@ -95,30 +95,4 @@ public class User {
 		this.cluster = cluster;
 	}
 
-//	public boolean isNewUser()
-//	{
-//		List<Bill> bills = getBills();
-//		int electricityCount = 0;
-//		int gasCount = 0;
-//		int waterCount = 0;
-//		int internetCount = 0;
-//		for (Bill bill: bills) {
-//			switch (bill.getType().toLowerCase())
-//			{
-//				case "phone and internet":
-//					internetCount ++;
-//					break;
-//				case "gas":
-//					gasCount++;
-//					break;
-//				case "water":
-//					waterCount++;
-//					break;
-//				case "electricity":
-//					electricityCount++;
-//					break;
-//			}
-//		}
-//		return internetCount < 5 && gasCount < 5 && waterCount < 5 && electricityCount < 5;
-//	}
 }

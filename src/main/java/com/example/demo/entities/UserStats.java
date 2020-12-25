@@ -22,6 +22,9 @@ public class UserStats {
     @Column(name = "biller")
     private String biller;
 
+    @Column(name = "bill_type")
+    private String billType;
+
     @Column(name = "number_of_bills")
     private int numberOfBills;
 
@@ -65,6 +68,14 @@ public class UserStats {
 
     public void setBiller(String biller) {
         this.biller = biller;
+    }
+
+    public String getBillType() {
+        return billType;
+    }
+
+    public void setBillType(String billType) {
+        this.billType = billType;
     }
 
     public int getNumberOfBills() {

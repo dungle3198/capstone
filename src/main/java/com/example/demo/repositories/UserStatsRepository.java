@@ -15,4 +15,7 @@ public interface UserStatsRepository extends JpaRepository<UserStats, Integer> {
 
     @Query("select u from UserStats u where u.user.id = ?1 and u.category = ?2 and u.biller = ?3")
     List<UserStats> getUserStatsByUserIdAndCategoryAndBiller(int id, String category, String biller);
+
+    @Query("select u from UserStats u where u.user.id = ?1 and u.billType = ?2")
+    List<UserStats> getUserStatsByUserIdAndBillType(int id, String billType);
 }
