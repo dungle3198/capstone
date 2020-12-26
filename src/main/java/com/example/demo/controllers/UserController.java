@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 
 import com.example.demo.entities.*;
@@ -29,9 +30,9 @@ public class UserController {
 
 	@CrossOrigin
 	@GetMapping("/users/{id}")
-	public User getUserById(@PathVariable("id") final int user_id)
+	public Optional<User> getUserById(@PathVariable("id") final int user_id)
 	{
-		return userRepository.findById(user_id).get();
+		return userRepository.findById(user_id);
 	}
 
 	@CrossOrigin
@@ -55,7 +56,11 @@ public class UserController {
 	@PutMapping("/users/{id}")
 	public void edit(@RequestBody User user, @PathVariable("id") final int id)
 	{
-		User existedUser = userRepository.findById(id).get();
+		User existedUser;
+		if (getUserById(id).isPresent()){
+			existedUser = getUserById(id).get();
+		}
+		else {return;}
 		existedUser.setId(user.getId());
 		existedUser.setFirstName(user.getFirstName());
 		existedUser.setLastName(user.getLastName());
@@ -71,7 +76,7 @@ public class UserController {
 
 	@CrossOrigin
 	@GetMapping("/users/delete")
-	public void setNull (){
+	public void deleteBillNumber (){
 		List<User> userList = userRepository.findAll();
 		for (User user : userList){
 			user.setTotalBill(0);

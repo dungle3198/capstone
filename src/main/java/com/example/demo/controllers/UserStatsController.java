@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserStatsController {
@@ -23,8 +24,8 @@ public class UserStatsController {
 
     @CrossOrigin
     @GetMapping("/user_stats/{id}")
-    public UserStats getUserStatsById (@PathVariable ("id") final int id){
-        return userStatsRepository.findById(id).get();
+    public Optional<UserStats> getUserStatsById (@PathVariable ("id") final int id){
+        return userStatsRepository.findById(id);
     }
 
     @CrossOrigin
@@ -48,8 +49,12 @@ public class UserStatsController {
     @CrossOrigin
     @PutMapping("/user_stats/{id}")
     public void edit(@RequestBody UserStats userStats, @PathVariable ("id") final int id){
+        UserStats existingUserStats;
+        if (getUserStatsById(id).isPresent()){
+            existingUserStats = getUserStatsById(id).get();
+        }
+        else {return;}
         User user = userRepository.findById(userStats.getUser().getId()).get();
-        UserStats existingUserStats = getUserStatsById(id);
         existingUserStats.setId(id);
         existingUserStats.setUser(user);
         existingUserStats.setCategory(userStats.getCategory());

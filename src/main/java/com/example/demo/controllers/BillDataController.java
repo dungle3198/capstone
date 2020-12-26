@@ -7,7 +7,6 @@ import com.example.demo.repositories.UserRepository;
 import com.example.demo.repositories.UserStatsRepository;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +19,15 @@ public class BillDataController {
     private final LogRepository logRepository;
     private final UserStatsRepository userStatsRepository;
     private final UserRepository userRepository;
+    private final UserController userController;
 
     @Autowired
-    public BillDataController(BillDataRepository billDataRepository, LogRepository logRepository, UserStatsRepository userStatsRepository, UserRepository userRepository) {
+    public BillDataController(BillDataRepository billDataRepository, LogRepository logRepository, UserStatsRepository userStatsRepository, UserRepository userRepository, UserController userController) {
         this.billDataRepository = billDataRepository;
         this.logRepository = logRepository;
         this.userStatsRepository = userStatsRepository;
         this.userRepository = userRepository;
+        this.userController = userController;
     }
 
     @CrossOrigin
@@ -49,8 +50,8 @@ public class BillDataController {
 
     @CrossOrigin
     @GetMapping ("/bill_data/{id}")
-    public BillData getBillDataById(@PathVariable ("id") final int id){
-        return billDataRepository.findById(id).get();
+    public Optional<BillData> getBillDataById(@PathVariable ("id") final int id){
+        return billDataRepository.findById(id);
     }
 
     public List<Integer> getListOfUserId(){
@@ -207,7 +208,11 @@ public class BillDataController {
     @CrossOrigin
     @GetMapping("/bill_data/clustered_id/{id}")
     public List<Integer> getListOfClusteredBillDataId(@PathVariable ("id") final int id){
-        BillData billData = getBillDataById(id);
+        BillData billData;
+        if (getBillDataById(id).isPresent()){
+            billData = getBillDataById(id).get();
+        }
+        else {return null;}
         List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
                 billData.getUser().getId(), billData.getCategory(), billData.getBiller());
         List<BillData> subList = billDataList.subList(billDataList.size() - 4, billDataList.size());
@@ -223,7 +228,11 @@ public class BillDataController {
     @CrossOrigin
     @GetMapping("/bill_data/clustered_data/{id}")
     public List<BillData> getListOfClusteredBillData(@PathVariable ("id") final int id){
-        BillData billData = getBillDataById(id);
+        BillData billData;
+        if (getBillDataById(id).isPresent()){
+            billData = getBillDataById(id).get();
+        }
+        else {return null;}
         List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
                 billData.getUser().getId(), billData.getCategory(), billData.getBiller());
         List<BillData> subList = billDataList.subList(billDataList.size() - 4, billDataList.size());
@@ -234,8 +243,13 @@ public class BillDataController {
     @CrossOrigin
     @PostMapping ("/bill_data")
     public void add(@RequestBody BillData billData){
+        User user;
+        if (userController.getUserById(billData.getUser().getId()).isPresent()){
+            user = userController.getUserById(billData.getUser().getId()).get();
+        }
+        else {return;}
         List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
-                    billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+                                    user.getId(), billData.getCategory(), billData.getBiller());
         if (billData.getMonth() == 0 || billData.getYear() == 0){
             billData.setPeriod(1);
             billData.setMonthlyAmount(billData.getAmount() * (-1));
@@ -307,7 +321,11 @@ public class BillDataController {
 //    }
 
     public void predictSeasonal(BillData billData){
-        User user = billData.getUser();
+        User user;
+        if (userController.getUserById(billData.getUser().getId()).isPresent()){
+            user = userController.getUserById(billData.getUser().getId()).get();
+        }
+        else {return;}
         Cluster cluster = user.getCluster();
         String categoryAndBiller = billData.getCategory() + " " + billData.getBiller();
         if (cluster != null){
@@ -373,7 +391,11 @@ public class BillDataController {
     @CrossOrigin
     @PutMapping ("/bill_data/{id}")
     public void edit(@RequestBody BillData billData, @PathVariable("id") final int id){
-        BillData existingBillData = getBillDataById(id);
+        BillData existingBillData;
+        if (getBillDataById(id).isPresent()){
+            existingBillData = getBillDataById(id).get();
+        }
+        else {return;}
         User user = userRepository.findById(existingBillData.getUser().getId()).get();
         existingBillData.setId(billData.getId());
         existingBillData.setUser(user);
@@ -399,7 +421,11 @@ public class BillDataController {
     @CrossOrigin
     @DeleteMapping ("/bill_data/{id}")
     public void delete(@PathVariable ("id") final int id){
-        BillData existingBillData = getBillDataById(id);
+        BillData existingBillData;
+        if (getBillDataById(id).isPresent()){
+            existingBillData = getBillDataById(id).get();
+        }
+        else {return;}
         billDataRepository.deleteById(id);
         updateUserStats(existingBillData);
 
@@ -412,7 +438,11 @@ public class BillDataController {
     @CrossOrigin
     @GetMapping ("bill_data/confirm/{id}")
     public void confirmBillData (@PathVariable ("id") final int id){
-        BillData billData = getBillDataById(id);
+        BillData billData;
+        if (getBillDataById(id).isPresent()){
+            billData = getBillDataById(id).get();
+        }
+        else {return;}
         billData.setStatus(!billData.isStatus());
         billDataRepository.save(billData);
         updateUserStats(billData);
