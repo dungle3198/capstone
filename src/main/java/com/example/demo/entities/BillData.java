@@ -1,6 +1,10 @@
 package com.example.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table (name = "bill_data")
@@ -44,6 +48,9 @@ public class BillData {
 
     @Column (name = "status")
     private boolean status;
+
+    @Column (name = "label")
+    private int label;
 
     @Column (name = "cluster")
     private int cluster;
@@ -146,6 +153,14 @@ public class BillData {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public int getLabel() {
+        return label;
+    }
+
+    public void setLabel(int label) {
+        this.label = label;
     }
 
     public int getCluster() {

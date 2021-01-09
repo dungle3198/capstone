@@ -22,7 +22,7 @@ public interface BillDataRepository extends JpaRepository<BillData, Integer> {
     @Query ("select b from BillData b where b.user.id = ?1 and b.category = ?2 and b.biller = ?3")
     List<BillData> getBillDataByUserIdAndCategoryAndBiller(int id, String category, String biller);
 
-    @Query ("select b from BillData b where b.user.id = ?1 and b.category = ?2 and b.biller = ?3 and b.status = 1")
+    @Query ("select b from BillData b where b.user.id = ?1 and b.category = ?2 and b.biller = ?3 and b.label = 1")
     List<BillData> getTrueBillDataByUserIdAndCategoryAndBiller(int id, String category, String biller);
 
     @Query ("select b from BillData b where b.status = 1")
