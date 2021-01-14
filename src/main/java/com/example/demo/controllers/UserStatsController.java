@@ -2,7 +2,6 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.User;
 import com.example.demo.entities.UserStats;
-import com.example.demo.repositories.UserRepository;
 import com.example.demo.repositories.UserStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +13,12 @@ import java.util.Optional;
 public class UserStatsController {
 
     private final UserStatsRepository userStatsRepository;
-    private final UserRepository userRepository;
+    private final UserController userController;
 
     @Autowired
-    public UserStatsController(UserStatsRepository userStatsRepository, UserRepository userRepository) {
+    public UserStatsController(UserStatsRepository userStatsRepository, UserController userController) {
         this.userStatsRepository = userStatsRepository;
-        this.userRepository = userRepository;
+        this.userController = userController;
     }
 
     @CrossOrigin
@@ -50,11 +49,12 @@ public class UserStatsController {
     @PutMapping("/user_stats/{id}")
     public void edit(@RequestBody UserStats userStats, @PathVariable ("id") final int id){
         UserStats existingUserStats;
-        if (getUserStatsById(id).isPresent()){
+        User user;
+        if (userController.getUserById(userStats.getUser().getId()).isPresent() && getUserStatsById(id).isPresent()){
             existingUserStats = getUserStatsById(id).get();
+            user = userController.getUserById(userStats.getUser().getId()).get();
         }
         else {return;}
-        User user = userRepository.findById(userStats.getUser().getId()).get();
         existingUserStats.setId(id);
         existingUserStats.setUser(user);
         existingUserStats.setCategory(userStats.getCategory());

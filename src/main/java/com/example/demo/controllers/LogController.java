@@ -27,5 +27,4 @@ public class LogController {
         this.logRepository = logRepository;
     }
 
-
 }

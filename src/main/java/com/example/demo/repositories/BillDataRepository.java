@@ -16,7 +16,7 @@ public interface BillDataRepository extends JpaRepository<BillData, Integer> {
     List<BillData> getBillDataWithDate(int id, String category, String biller);
 
     @Query ("select b from BillData b where b.user.id = ?1 and b.category = ?2 and b.biller = ?3 " +
-                                "and b.month != 0 and b.year != 0 and b.status = 1")
+                                "and b.month != 0 and b.year != 0 and b.label = 1")
     List<BillData> getTrueBillDataWithDate(int id, String category, String biller);
 
     @Query ("select b from BillData b where b.user.id = ?1 and b.category = ?2 and b.biller = ?3")

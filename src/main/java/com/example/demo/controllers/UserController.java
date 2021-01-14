@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import com.example.demo.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.repositories.UserRepository;
@@ -16,7 +15,6 @@ public class UserController {
 
 	private final UserRepository userRepository;
 
-	
 	@Autowired
 	public UserController(UserRepository userRepository) {
 		this.userRepository = userRepository;
@@ -30,15 +28,15 @@ public class UserController {
 
 	@CrossOrigin
 	@GetMapping("/users/{id}")
-	public Optional<User> getUserById(@PathVariable("id") final int user_id)
+	public Optional<User> getUserById(@PathVariable("id") final int id)
 	{
-		return userRepository.findById(user_id);
+		return userRepository.findById(id);
 	}
 
 	@CrossOrigin
 	@GetMapping("/users/cluster/{id}")
-	public List<User> getUsersByClusterId(@PathVariable("id") final int cluster_id){
-		return userRepository.getUsersByClusterId(cluster_id);
+	public List<User> getUsersByClusterId(@PathVariable("id") final int id){
+		return userRepository.getUsersByClusterId(id);
 	}
 
 	public List<User> getUsersWithBills(){

@@ -1,6 +1,5 @@
 package com.example.demo.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,29 +15,8 @@ public class Cluster {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "electricity_cluster_mean")
-    private double electricityClusterMean;
-
-    @Column(name = "internet_cluster_mean")
-    private double internetClusterMean;
-
-    @Column(name = "water_cluster_mean")
-    private double waterClusterMean;
-
-    @Column(name = "gas_cluster_mean")
-    private double gasClusterMean;
-
-    @Column(name = "electricity_cluster_std")
-    private double electricityClusterStd;
-
-    @Column(name = "internet_cluster_std")
-    private double internetClusterStd;
-
-    @Column(name = "water_cluster_std")
-    private double waterClusterStd;
-
-    @Column(name = "gas_cluster_std")
-    private double gasClusterStd;
+    @OneToMany(mappedBy = "cluster", cascade = CascadeType.ALL)
+    List<ClusterDetail> clusterDetails = new ArrayList<>();
 
     @OneToMany(mappedBy = "cluster", cascade = CascadeType.PERSIST)
     List<User> users = new ArrayList<>();
@@ -46,17 +24,6 @@ public class Cluster {
     public Cluster()
     {
 
-    }
-
-    public Cluster(int id) {
-        this.electricityClusterMean = 0;
-        this.internetClusterMean = 0;
-        this.waterClusterMean = 0;
-        this.gasClusterMean = 0;
-        this.electricityClusterStd = 0;
-        this.internetClusterStd = 0;
-        this.waterClusterStd = 0;
-        this.gasClusterStd = 0;
     }
 
     public int getId() {
@@ -67,68 +34,13 @@ public class Cluster {
         this.id = id;
     }
 
-    public double getElectricityClusterMean() {
-        return electricityClusterMean;
+    @JsonIgnore
+    public List<ClusterDetail> getClusterDetails() {
+        return clusterDetails;
     }
 
-    public void setElectricityClusterMean(double electricityClusterMean) {
-        this.electricityClusterMean = electricityClusterMean;
-    }
-
-    public double getInternetClusterMean() {
-        return internetClusterMean;
-    }
-
-    public void setInternetClusterMean(double internetClusterMean) {
-        this.internetClusterMean = internetClusterMean;
-    }
-
-    public double getWaterClusterMean() {
-        return waterClusterMean;
-    }
-
-    public void setWaterClusterMean(double waterClusterMean) {
-        this.waterClusterMean = waterClusterMean;
-    }
-
-    public double getGasClusterMean() {
-        return gasClusterMean;
-    }
-
-    public void setGasClusterMean(double gasClusterMean) {
-        this.gasClusterMean = gasClusterMean;
-    }
-
-    public double getElectricityClusterStd() {
-        return electricityClusterStd;
-    }
-
-    public void setElectricityClusterStd(double electricityClusterStd) {
-        this.electricityClusterStd = electricityClusterStd;
-    }
-
-    public double getInternetClusterStd() {
-        return internetClusterStd;
-    }
-
-    public void setInternetClusterStd(double internetClusterStd) {
-        this.internetClusterStd = internetClusterStd;
-    }
-
-    public double getWaterClusterStd() {
-        return waterClusterStd;
-    }
-
-    public void setWaterClusterStd(double waterClusterStd) {
-        this.waterClusterStd = waterClusterStd;
-    }
-
-    public double getGasClusterStd() {
-        return gasClusterStd;
-    }
-
-    public void setGasClusterStd(double gasClusterStd) {
-        this.gasClusterStd = gasClusterStd;
+    public void setClusterDetails(List<ClusterDetail> clusterDetails) {
+        this.clusterDetails = clusterDetails;
     }
 
     @JsonIgnore
