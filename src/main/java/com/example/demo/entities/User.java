@@ -94,5 +94,4 @@ public class User {
 	public void setCluster(Cluster cluster) {
 		this.cluster = cluster;
 	}
-
 }

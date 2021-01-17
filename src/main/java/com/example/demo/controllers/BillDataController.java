@@ -15,17 +15,15 @@ public class BillDataController {
     private final BillDataRepository billDataRepository;
     private final LogRepository logRepository;
     private final UserStatsRepository userStatsRepository;
-    private final UserRepository userRepository;
     private final UserController userController;
     private final ClusterController clusterController;
     private final ClusterDetailRepository clusterDetailRepository;
 
     @Autowired
-    public BillDataController(BillDataRepository billDataRepository, LogRepository logRepository, UserStatsRepository userStatsRepository, UserRepository userRepository, UserController userController, ClusterController clusterController, ClusterDetailRepository clusterDetailRepository) {
+    public BillDataController(BillDataRepository billDataRepository, LogRepository logRepository, UserStatsRepository userStatsRepository, UserController userController, ClusterController clusterController, ClusterDetailRepository clusterDetailRepository) {
         this.billDataRepository = billDataRepository;
         this.logRepository = logRepository;
         this.userStatsRepository = userStatsRepository;
-        this.userRepository = userRepository;
         this.userController = userController;
         this.clusterController = clusterController;
         this.clusterDetailRepository = clusterDetailRepository;
@@ -150,6 +148,10 @@ public class BillDataController {
             UserStats userStats = userStatsList.get(0);
             List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
                     billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+            if (billDataList.isEmpty()){
+                userStatsRepository.deleteById(userStatsList.get(0).getId());
+                return;
+            }
             userStats.setNumberOfBills(billDataList.size());
             List<Double> statsList = calculateMeanAndStandardDeviation(billData);
             double mean = Math.abs(statsList.get(0));
@@ -158,7 +160,7 @@ public class BillDataController {
             userStats.setStandardDeviation(standardDeviation);
 
             double result = standardDeviation / mean;
-            if (result > 0.5){
+            if (result > 0.15){
                 userStats.setBillType("Seasonal");
             }
             else {
@@ -242,7 +244,7 @@ public class BillDataController {
         }
         else {return;}
         user.setTotalBill(user.getTotalBill() + 1);
-        userRepository.save(user);
+        userController.add(user);
         billData.setUser(user);
 
         List<BillData> billDataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
@@ -357,7 +359,7 @@ public class BillDataController {
                 //billData.setMonthlyAmount(userMean);
             }
             b = userStandardDeviation * 2;
-            billData.setPredictedAmount(userStandardDeviation);
+            billData.setPredictedAmount(b);
         }
         billData.setStatus(a < b);
     }
@@ -403,15 +405,23 @@ public class BillDataController {
     @PutMapping ("/bill_data/{id}")
     public void edit(@RequestBody BillData billData, @PathVariable("id") final int id){
         BillData existingBillData;
-        if (getBillDataById(id).isPresent()){
+        User user;
+        if (getBillDataById(id).isPresent() && userController.getUserById(billData.getUser().getId()).isPresent()){
             existingBillData = getBillDataById(id).get();
+            user = userController.getUserById(billData.getUser().getId()).get();
         }
         else {return;}
-        User user = userRepository.findById(existingBillData.getUser().getId()).get();
+        BillData proxy = new BillData();
+        proxy.setUser(existingBillData.getUser());
+        proxy.setCategory(existingBillData.getCategory());
+        proxy.setBiller(existingBillData.getBiller());
+
+        existingBillData.setId(id);
         existingBillData.setUser(user);
         existingBillData.setState(billData.getState());
         existingBillData.setMonth(billData.getMonth());
         existingBillData.setYear(billData.getYear());
+
         existingBillData.setCategory(billData.getCategory());
         existingBillData.setBiller(billData.getBiller());
         existingBillData.setAmount(billData.getAmount());
@@ -419,6 +429,12 @@ public class BillDataController {
         existingBillData.setMonthlyAmount(billData.getMonthlyAmount());
         existingBillData.setPredictedAmount(billData.getPredictedAmount());
         billDataRepository.save(existingBillData);
+
+        if (proxy.getUser().getId() != existingBillData.getUser().getId() ||
+        !proxy.getCategory().equalsIgnoreCase(existingBillData.getCategory()) ||
+        !proxy.getBiller().equalsIgnoreCase(existingBillData.getBiller())){
+            updateUserStats(proxy);
+        }
         updateUserStats(existingBillData);
 
         //Log

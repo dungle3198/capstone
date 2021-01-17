@@ -59,7 +59,7 @@ public class UserController {
 			existedUser = getUserById(id).get();
 		}
 		else {return;}
-		existedUser.setId(user.getId());
+		existedUser.setId(id);
 		existedUser.setFirstName(user.getFirstName());
 		existedUser.setLastName(user.getLastName());
 		userRepository.save(existedUser);

@@ -57,7 +57,7 @@ public class ClusterDetailController {
             cluster = clusterController.getClusterById(clusterDetail.getCluster().getId()).get();
         }
         else {return;}
-        existingDetail.setId(clusterDetail.getId());
+        existingDetail.setId(id);
         existingDetail.setCluster(cluster);
         existingDetail.setCategory(clusterDetail.getCategory());
         existingDetail.setBiller(clusterDetail.getBiller());
