@@ -1,6 +1,8 @@
 package com.example.demo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 
 import javax.persistence.*;
@@ -22,15 +24,18 @@ public class User {
 	private String lastName;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@NotFound(action= NotFoundAction.IGNORE)
 	List<BillData> billData = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@NotFound(action= NotFoundAction.IGNORE)
 	List<UserStats> userStats = new ArrayList<>();
 
 	@Column(name = "total_bill")
 	private int totalBill;
 
 	@ManyToOne
+	@NotFound(action= NotFoundAction.IGNORE)
 	@JoinColumn(name = "cluster_id")
 	private Cluster cluster;
 

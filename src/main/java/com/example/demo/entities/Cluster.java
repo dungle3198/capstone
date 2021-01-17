@@ -1,5 +1,7 @@
 package com.example.demo.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -15,10 +17,13 @@ public class Cluster {
     @Column(name = "id")
     private int id;
 
+
     @OneToMany(mappedBy = "cluster", cascade = CascadeType.ALL)
+    @NotFound(action= NotFoundAction.IGNORE)
     List<ClusterDetail> clusterDetails = new ArrayList<>();
 
     @OneToMany(mappedBy = "cluster", cascade = CascadeType.PERSIST)
+    @NotFound(action= NotFoundAction.IGNORE)
     List<User> users = new ArrayList<>();
 
     public Cluster()
