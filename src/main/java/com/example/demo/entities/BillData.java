@@ -52,8 +52,6 @@ public class BillData {
     @Column (name = "status")
     private boolean status;
 
-
-
     @Column (name = "cluster")
     private int cluster;
 
