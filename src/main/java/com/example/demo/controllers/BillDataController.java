@@ -303,8 +303,6 @@ public class BillDataController {
 
         Cluster cluster = billData.getUser().getCluster();
         if (clusterController.clusters().isEmpty()) {
-            billData.setStatus(true);
-            billData.setLabel(1);
         }
         else if (cluster != null){
             predictSeasonalWithCluster(billData, cluster);

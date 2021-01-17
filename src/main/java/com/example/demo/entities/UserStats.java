@@ -1,6 +1,9 @@
 package com.example.demo.entities;
 
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,6 +16,7 @@ public class UserStats {
     private int id;
 
     @ManyToOne
+    @NotFound(action= NotFoundAction.IGNORE)
     @JoinColumn(name = "user_id")
     private User user;
 
