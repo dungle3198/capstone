@@ -263,7 +263,7 @@ public class BillDataController {
 
         //Log
         String description = "New bill " + billData.getId() + " is added";
-        Log activityLog = new Log("bg-primary", DateTime.now().toString(), billData.getId(), description);
+        Log activityLog = new Log("bg-primary", DateTime.now().toString(), billData.getUser().getId(), description);
         logRepository.save(activityLog);
     }
 
@@ -437,7 +437,7 @@ public class BillDataController {
 
         //Log
         String description = "Bill " + id + " is edited";
-        Log activityLog = new Log("bg-warning", DateTime.now().toString(), id, description);
+        Log activityLog = new Log("bg-warning", DateTime.now().toString(), proxy.getUser().getId(), description);
         logRepository.save(activityLog);
 
     }
@@ -450,12 +450,17 @@ public class BillDataController {
             existingBillData = getBillDataById(id).get();
         }
         else {return;}
+        User user = userController.getUserById(existingBillData.getUser().getId()).get();
+        BillData proxy = new BillData();
+        proxy.setUser(user);
+        proxy.setCategory(existingBillData.getCategory());
+        proxy.setBiller(existingBillData.getBiller());
         billDataRepository.deleteById(id);
-        updateUserStats(existingBillData);
+        updateUserStats(proxy);
 
         //Log
         String description = "Bill " + id + " is deleted";
-        Log activityLog = new Log("bg-danger", DateTime.now().toString(), id, description);
+        Log activityLog = new Log("bg-danger", DateTime.now().toString(), proxy.getUser().getId(), description);
         logRepository.save(activityLog);
     }
 
