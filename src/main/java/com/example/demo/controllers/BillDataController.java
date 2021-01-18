@@ -179,10 +179,10 @@ public class BillDataController {
             int year = existingBillData.getYear();
             int period = billData.getMonth() + ((billData.getYear() - year) * 12) - month;
             billData.setPeriod(period);
-            billData.setMonthlyAmount(billData.getAmount() / period);
+            billData.setMonthlyAmount(Math.abs(billData.getAmount() / period));
             if (billDataList.size() == 1) {
                 existingBillData.setPeriod(period);
-                existingBillData.setMonthlyAmount(existingBillData.getAmount() / period);
+                existingBillData.setMonthlyAmount(Math.abs(existingBillData.getAmount() / period));
                 edit(existingBillData, existingBillData.getId());
             }
         }
@@ -247,6 +247,12 @@ public class BillDataController {
         userController.add(user);
         billData.setUser(user);
 
+//        if (billData.getBiller().equals("")){
+//            billData.setBiller("p");
+//        }
+//        billData.setPeriod(1);
+//        billData.setMonthlyAmount(Math.abs(billData.getAmount()));
+
         List<BillData> billDataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
                                     user.getId(), billData.getCategory(), billData.getBiller());
         List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
@@ -254,7 +260,7 @@ public class BillDataController {
 
         if (billData.getMonth() == 0 || billData.getYear() == 0){
             billData.setPeriod(1);
-            billData.setMonthlyAmount(billData.getAmount() * (-1));
+            billData.setMonthlyAmount(Math.abs(billData.getAmount()));
         }
         else { calculatePeriodAndMonthlyAmount(billData); }
 
@@ -268,7 +274,7 @@ public class BillDataController {
 
         else if (userStatsList.get(0).getNumberOfBills() < 5){
             billData.setStatus(true);
-            billData.setPredictedAmount(0);
+            billData.setPredictedAmount(4);
         }
         else {
             addSeasonal(billData, userStatsList);
@@ -301,19 +307,12 @@ public class BillDataController {
     }
 
     public void addSeasonal(BillData billData, List<UserStats> userStatsList) {
-        if (billData.getBiller().equals("")){
-            billData.setBiller("p");
-        }
-        if (billData.getMonthlyAmount() == 0) {
-            billData.setMonthlyAmount(billData.getAmount());
-        }
-
         Cluster cluster = billData.getUser().getCluster();
         if (clusterController.clusters().isEmpty()) {
             predictSeasonal(billData, userStatsList);
         }
         else if (cluster != null){
-            predictSeasonalWithCluster(billData, cluster);
+            predictSeasonalWithCluster(billData, cluster, userStatsList);
         }
         else {
             predictSeasonalWithoutCluster(billData, userStatsList);
@@ -335,10 +334,10 @@ public class BillDataController {
         double userStandardDeviation = userStatsList.get(0).getStandardDeviation();
 
         if (value != 0) {
-            a = Math.abs(billData.getAmount() - value);
+            a = Math.abs(billData.getMonthlyAmount() - value);
             billData.setPeriod(2);
         } else {
-            a = Math.abs(billData.getAmount() - userMean);
+            a = Math.abs(billData.getMonthlyAmount() - userMean);
             billData.setPeriod(3);
         }
         b = userStandardDeviation * 2;
@@ -346,7 +345,7 @@ public class BillDataController {
         billData.setStatus(a < b);
     }
 
-    public void predictSeasonalWithCluster(BillData billData, Cluster cluster){
+    public void predictSeasonalWithCluster(BillData billData, Cluster cluster, List<UserStats> userStatsList){
         User user = billData.getUser();
         List<ClusterDetail> clusterDetailList = clusterDetailRepository.getClusterDetailsByClusterIdAndCategoryAndBiller(
                 cluster.getId(), billData.getCategory(), billData.getBiller());
@@ -357,11 +356,14 @@ public class BillDataController {
         double a;
         double b;
         if (billDataList.size() < 5 && !clusterDetailList.isEmpty()) {
-            a = Math.abs(billData.getAmount() - clusterDetailList.get(0).getMean());
+            a = Math.abs(billData.getMonthlyAmount() - clusterDetailList.get(0).getMean());
             b = clusterDetailList.get(0).getStandardDeviation() * 2;
             billData.setPeriod(1);
             billData.setPredictedAmount(b);
             billData.setStatus(a < b);
+        }
+        else {
+            predictSeasonal(billData, userStatsList);
         }
     }
 
@@ -385,13 +387,13 @@ public class BillDataController {
         Cluster chosenCluster = clusterList.get(index);
         List<ClusterDetail> chosenClusterDetailList = clusterDetailRepository.getClusterDetailsByClusterIdAndCategoryAndBiller(
                 chosenCluster.getId(), billData.getCategory(), billData.getBiller());
-        double a = Math.abs(billData.getAmount() - chosenClusterDetailList.get(0).getMean());
+        double a = Math.abs(billData.getMonthlyAmount() - chosenClusterDetailList.get(0).getMean());
         double b = chosenClusterDetailList.get(0).getStandardDeviation() * 2;
         billData.setStatus(a < b);
         billData.setPredictedAmount(chosenCluster.getId());
     }
 
-    
+
     @CrossOrigin
     @PutMapping ("/bill_data/{id}")
     public void edit(@RequestBody BillData billData, @PathVariable("id") final int id){
