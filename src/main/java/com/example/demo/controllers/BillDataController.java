@@ -300,6 +300,8 @@ public class BillDataController {
 
         double a = Math.abs(billData.getMonthlyAmount() - billData.getPredictedAmount());
         double b = userStatsList.get(0).getStandardDeviation();
+        System.out.println("A " + a);
+        System.out.println("B " + b);
         billData.setStatus(a <= b);
     }
 
@@ -496,6 +498,7 @@ public class BillDataController {
                 billData.getUser().getId(), billData.getCategory(), billData.getBiller());
         int index = billDataList.indexOf(billData);
         List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
+        System.out.println(followingDataSubList);
 
         for (BillData eachBillData : followingDataSubList){
             List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
@@ -515,42 +518,45 @@ public class BillDataController {
                 else {
                     subDataList = dataList.subList(dataIndex - 4, dataIndex + 1);
                 }
+                System.out.println("-------------");
+                System.out.println("TRUE BILL");
+                System.out.println("--------------");
                 addNonSeasonal(eachBillData, subDataList, userStatsList);
             }
 
             else {
-                List<BillData> previousDataSubList = billDataList.subList(0, index);
+                List<BillData> billList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
+                        billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+                int dataIndex = billDataList.indexOf(eachBillData);
+                List<BillData> previousDataSubList = billList.subList(0, dataIndex);
                 List<BillData> dataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
                         billData.getUser().getId(), billData.getCategory(), billData.getBiller());
                 Collections.reverse(previousDataSubList);
-                int dataIndex = 0;
+                int chosenIndex = 0;
                 for (BillData data : previousDataSubList){
                     if (dataList.contains(data)){
-                        dataIndex = dataList.indexOf(data);
+                        chosenIndex = dataList.indexOf(data);
                         break;
                     }
                 }
 
                 List<BillData> subDataList;
-                if (dataIndex < 1){
-                    return;
+                if (chosenIndex < 1){
+                    continue;
                 }
-                else if (dataIndex < 3){
-                    subDataList = dataList.subList(0, dataIndex + 1);
+                else if (chosenIndex < 3){
+                    subDataList = dataList.subList(0, chosenIndex + 1);
                     subDataList.add(eachBillData);
                 }
                 else {
-                    subDataList = dataList.subList(dataIndex - 3, dataIndex + 1);
+                    subDataList = dataList.subList(chosenIndex - 3, chosenIndex + 1);
                     subDataList.add(eachBillData);
                 }
+                System.out.println("-------------");
+                System.out.println("FALSE BILL");
+                System.out.println("--------------");
                 addNonSeasonal(eachBillData, subDataList, userStatsList);
             }
-
-            double a = Math.abs(eachBillData.getMonthlyAmount() - eachBillData.getPredictedAmount());
-            double b = userStatsList.get(0).getStandardDeviation();
-            eachBillData.setStatus(a <= b);
-            edit(eachBillData, eachBillData.getId());
-            updateUserStats(eachBillData);
         }
     }
 
