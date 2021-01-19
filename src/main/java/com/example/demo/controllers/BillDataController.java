@@ -245,22 +245,22 @@ public class BillDataController {
         userController.edit(user, user.getId());
         billData.setUser(user);
 
-//        if (billData.getBiller().equals("")){
-//            billData.setBiller("p");
-//        }
-//        billData.setPeriod(1);
-//        billData.setMonthlyAmount(Math.abs(billData.getAmount()));
+        if (billData.getBiller().equals("")){
+            billData.setBiller("p");
+        }
+        billData.setPeriod(1);
+        billData.setMonthlyAmount(Math.abs(billData.getAmount()));
 
         List<BillData> billDataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
                                     user.getId(), billData.getCategory(), billData.getBiller());
         List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
                 billData.getUser().getId(), billData.getCategory(), billData.getBiller());
 
-        if (billData.getMonth() == 0 || billData.getYear() == 0){
-            billData.setPeriod(1);
-            billData.setMonthlyAmount(Math.abs(billData.getAmount()));
-        }
-        else { calculatePeriodAndMonthlyAmount(billData); }
+//        if (billData.getMonth() == 0 || billData.getYear() == 0){
+//            billData.setPeriod(1);
+//            billData.setMonthlyAmount(Math.abs(billData.getAmount()));
+//        }
+//        else { calculatePeriodAndMonthlyAmount(billData); }
 
         if (userStatsList.isEmpty() || userStatsList.get(0).getNumberOfBills() < 2){
             billData.setStatus(true);
@@ -300,9 +300,12 @@ public class BillDataController {
 
         double a = Math.abs(billData.getMonthlyAmount() - billData.getPredictedAmount());
         double b = userStatsList.get(0).getStandardDeviation();
-        System.out.println("A " + a);
-        System.out.println("B " + b);
-        billData.setStatus(a <= b);
+        if (a == 0){
+            billData.setStatus(true);
+        }
+        else {
+            billData.setStatus(a <= b);
+        }
     }
 
     public void addSeasonal(BillData billData, List<UserStats> userStatsList) {
