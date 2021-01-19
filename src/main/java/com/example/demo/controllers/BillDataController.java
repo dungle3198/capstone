@@ -498,7 +498,6 @@ public class BillDataController {
                 billData.getUser().getId(), billData.getCategory(), billData.getBiller());
         int index = billDataList.indexOf(billData);
         List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
-        System.out.println(followingDataSubList);
 
         for (BillData eachBillData : followingDataSubList){
             List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
@@ -529,9 +528,10 @@ public class BillDataController {
                         billData.getUser().getId(), billData.getCategory(), billData.getBiller());
                 int dataIndex = billDataList.indexOf(eachBillData);
                 List<BillData> previousDataSubList = billList.subList(0, dataIndex);
+                Collections.reverse(previousDataSubList);
                 List<BillData> dataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
                         billData.getUser().getId(), billData.getCategory(), billData.getBiller());
-                Collections.reverse(previousDataSubList);
+
                 int chosenIndex = 0;
                 for (BillData data : previousDataSubList){
                     if (dataList.contains(data)){
@@ -539,7 +539,6 @@ public class BillDataController {
                         break;
                     }
                 }
-
                 List<BillData> subDataList;
                 if (chosenIndex < 1){
                     continue;
@@ -557,6 +556,8 @@ public class BillDataController {
                 System.out.println("--------------");
                 addNonSeasonal(eachBillData, subDataList, userStatsList);
             }
+            edit(eachBillData, eachBillData.getId());
+            updateUserStats(eachBillData);
         }
     }
 
