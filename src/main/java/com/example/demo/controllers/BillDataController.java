@@ -218,17 +218,15 @@ public class BillDataController {
 
         if (billData.isStatus() && billDataList.size() >= 3) {
             int index = billDataList.indexOf(billData);
-            if (index <= 1){
+            if (index < 2){
                 return null;
             }
             else if (index < 4) {
-                subList = billDataList.subList(0, index);
-                subList.add(billData);
+                subList = billDataList.subList(0, index + 1);
                 return predict(subList, subList.size(), billData);
             }
             else {
-                subList = billDataList.subList(index - 4, index);
-                subList.add(billData);
+                subList = billDataList.subList(index - 4, index + 1);
                 return predict(subList, 5, billData);
             }
         }
@@ -244,31 +242,32 @@ public class BillDataController {
         }
         else {return;}
         user.setTotalBill(user.getTotalBill() + 1);
-        userController.add(user);
+        userController.edit(user, user.getId());
         billData.setUser(user);
 
-//        if (billData.getBiller().equals("")){
-//            billData.setBiller("p");
-//        }
-//        billData.setPeriod(1);
-//        billData.setMonthlyAmount(Math.abs(billData.getAmount()));
+        if (billData.getBiller().equals("")){
+            billData.setBiller("p");
+        }
+        billData.setPeriod(1);
+        billData.setMonthlyAmount(Math.abs(billData.getAmount()));
 
         List<BillData> billDataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
                                     user.getId(), billData.getCategory(), billData.getBiller());
         List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
                 billData.getUser().getId(), billData.getCategory(), billData.getBiller());
 
-        if (billData.getMonth() == 0 || billData.getYear() == 0){
-            billData.setPeriod(1);
-            billData.setMonthlyAmount(Math.abs(billData.getAmount()));
-        }
-        else { calculatePeriodAndMonthlyAmount(billData); }
+//        if (billData.getMonth() == 0 || billData.getYear() == 0){
+//            billData.setPeriod(1);
+//            billData.setMonthlyAmount(Math.abs(billData.getAmount()));
+//        }
+//        else { calculatePeriodAndMonthlyAmount(billData); }
 
         if (userStatsList.isEmpty() || userStatsList.get(0).getNumberOfBills() < 2){
             billData.setStatus(true);
             billData.setPredictedAmount(0);
         }
         else if (userStatsList.get(0).getBillType().equalsIgnoreCase("nonseasonal")) {
+            billDataList.add(billData);
             addNonSeasonal(billData, billDataList, userStatsList);
         }
 
@@ -292,12 +291,10 @@ public class BillDataController {
     public void addNonSeasonal(BillData billData, List<BillData> billDataList, List<UserStats> userStatsList){
         if (billDataList.size() < 5){
             List<BillData> subList = billDataList.subList(0, billDataList.size());
-            subList.add(billData);
             predict(subList, billDataList.size(), billData);
         }
         else {
-            List<BillData> subList = billDataList.subList(billDataList.size() - 4, billDataList.size());
-            subList.add(billData);
+            List<BillData> subList = billDataList.subList(billDataList.size() - 5, billDataList.size());
             predict(subList, 5, billData);
         }
 
@@ -393,7 +390,6 @@ public class BillDataController {
         billData.setPredictedAmount(chosenCluster.getId());
     }
 
-
     @CrossOrigin
     @PutMapping ("/bill_data/{id}")
     public void edit(@RequestBody BillData billData, @PathVariable("id") final int id){
@@ -434,7 +430,6 @@ public class BillDataController {
         String description = "Bill " + id + " is edited";
         Log activityLog = new Log("bg-warning", DateTime.now().toString(), proxy.getUser().getId(), description);
         logRepository.save(activityLog);
-
     }
 
     @CrossOrigin
@@ -470,17 +465,107 @@ public class BillDataController {
         billData.setStatus(!billData.isStatus());
         billDataRepository.save(billData);
         updateUserStats(billData);
+
+        List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
+                billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+        if (userStatsList.get(0).getBillType() != null){
+            if (userStatsList.get(0).getBillType().equalsIgnoreCase("nonseasonal")){
+                modifyFollowingNonseasonalData(billData);
+            }
+            else {
+                modifyFollowingSeasonalData(billData);
+            }
+        }
+
+        if (billData.isStatus()) {
+            //Log
+            String description = "Bill " + id + " is confirmed";
+            Log activityLog = new Log("bg-success", DateTime.now().toString(), billData.getUser().getId(), description);
+            logRepository.save(activityLog);
+        }
+        else {
+            //Log
+            String description = "Bill " + id + " is reported";
+            Log activityLog = new Log("bg-danger", DateTime.now().toString(), billData.getUser().getId(), description);
+            logRepository.save(activityLog);
+        }
     }
 
-    @CrossOrigin
-    @GetMapping ("/bill_data/status")
-    public List<Integer> getNumberOfBillDataByStatus(){
-        int numberOfTrueBillData = billDataRepository.getTrueBillData().size();
-        int numberOfFalseBillData = billDataRepository.getFalseBillData().size();
-        List<Integer> list = new ArrayList<>();
-        list.add(numberOfTrueBillData);
-        list.add(numberOfFalseBillData);
-        return list;
+    public void modifyFollowingNonseasonalData(BillData billData){
+        List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
+                billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+        int index = billDataList.indexOf(billData);
+        List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
+
+        for (BillData eachBillData : followingDataSubList){
+            List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
+                    billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+            if (eachBillData.isStatus()){
+                List<BillData> dataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
+                        billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+                int dataIndex = dataList.indexOf(eachBillData);
+
+                List<BillData> subDataList;
+                if (dataIndex < 2){
+                    return;
+                }
+                else if (dataIndex < 4){
+                    subDataList = dataList.subList(0, dataIndex + 1);
+                }
+                else {
+                    subDataList = dataList.subList(dataIndex - 4, dataIndex + 1);
+                }
+                addNonSeasonal(eachBillData, subDataList, userStatsList);
+            }
+
+            else {
+                List<BillData> previousDataSubList = billDataList.subList(0, index);
+                List<BillData> dataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
+                        billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+                Collections.reverse(previousDataSubList);
+                int dataIndex = 0;
+                for (BillData data : previousDataSubList){
+                    if (dataList.contains(data)){
+                        dataIndex = dataList.indexOf(data);
+                        break;
+                    }
+                }
+
+                List<BillData> subDataList;
+                if (dataIndex < 1){
+                    return;
+                }
+                else if (dataIndex < 3){
+                    subDataList = dataList.subList(0, dataIndex + 1);
+                    subDataList.add(eachBillData);
+                }
+                else {
+                    subDataList = dataList.subList(dataIndex - 3, dataIndex + 1);
+                    subDataList.add(eachBillData);
+                }
+                addNonSeasonal(eachBillData, subDataList, userStatsList);
+            }
+
+            double a = Math.abs(eachBillData.getMonthlyAmount() - eachBillData.getPredictedAmount());
+            double b = userStatsList.get(0).getStandardDeviation();
+            eachBillData.setStatus(a <= b);
+            edit(eachBillData, eachBillData.getId());
+            updateUserStats(eachBillData);
+        }
+    }
+
+    public void modifyFollowingSeasonalData(BillData billData){
+        List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
+                billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+        int index = billDataList.indexOf(billData);
+        List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
+        for (BillData eachBillData : followingDataSubList){
+            List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
+                    billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+            addSeasonal(eachBillData, userStatsList);
+            edit(eachBillData, eachBillData.getId());
+            updateUserStats(eachBillData);
+        }
     }
 
     public double calculateCentroid(List<BillData> billDataList){
@@ -636,6 +721,7 @@ public class BillDataController {
         if (chosenCluster.size() == 1){
             billData.setPredictedAmount(chosenCentroid.get(0));
             chosenBillDataList = chosenCluster.get(0);
+            System.out.println(billData.getPredictedAmount());
         }
 
         else if (chosenCluster.size() == billDataList.size()){
@@ -677,15 +763,15 @@ public class BillDataController {
     @GetMapping("/bill_data/test/{k}")
     public void test(@PathVariable("k") final int k){
         BillData billData = new BillData();
-        billData.setMonthlyAmount(500);
+        billData.setMonthlyAmount(93);
         BillData billData1 = new BillData();
-        billData1.setMonthlyAmount(501);
+        billData1.setMonthlyAmount(93);
         BillData billData2 = new BillData();
-        billData2.setMonthlyAmount(600);
+        billData2.setMonthlyAmount(93);
         BillData billData3 = new BillData();
-        billData3.setMonthlyAmount(503);
+        billData3.setMonthlyAmount(93);
         BillData billData4 = new BillData();
-        billData4.setMonthlyAmount(600);
+        billData4.setMonthlyAmount(93);
 
         List<BillData> billDataList = new ArrayList<>();
         billDataList.add(billData);
@@ -694,6 +780,21 @@ public class BillDataController {
         billDataList.add(billData3);
         billDataList.add(billData4);
 
+        for (BillData billData5 : billDataList){
+            System.out.println(billData5.getMonthlyAmount());
+        }
+
         predict(billDataList, 5, billData4);
+    }
+
+    @CrossOrigin
+    @GetMapping ("/bill_data/status")
+    public List<Integer> getNumberOfBillDataByStatus(){
+        int numberOfTrueBillData = billDataRepository.getTrueBillData().size();
+        int numberOfFalseBillData = billDataRepository.getFalseBillData().size();
+        List<Integer> list = new ArrayList<>();
+        list.add(numberOfTrueBillData);
+        list.add(numberOfFalseBillData);
+        return list;
     }
 }

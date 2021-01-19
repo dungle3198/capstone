@@ -195,9 +195,8 @@ public class ClusterController {
 
     @CrossOrigin
     @DeleteMapping("/clusters")
-    public void delete ()
-    {
-        List<Cluster> clusters = clusterRepository.findAll();
+    public void delete(){
+        List<Cluster> clusters = clusters();
         List<Cluster> clusterList = new ArrayList<>(clusters);
         for (Cluster cluster : clusterList){
             List<User> users = userController.getUsersByClusterId(cluster.getId());
@@ -207,5 +206,4 @@ public class ClusterController {
             clusterRepository.delete(cluster);
         }
     }
-
 }

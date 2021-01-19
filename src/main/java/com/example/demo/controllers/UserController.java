@@ -52,8 +52,7 @@ public class UserController {
 
 	@CrossOrigin
 	@PutMapping("/users/{id}")
-	public void edit(@RequestBody User user, @PathVariable("id") final int id)
-	{
+	public void edit(@RequestBody User user, @PathVariable("id") final int id) {
 		User existedUser;
 		if (getUserById(id).isPresent()){
 			existedUser = getUserById(id).get();
@@ -67,15 +66,15 @@ public class UserController {
 
 	@CrossOrigin
 	@DeleteMapping("/users/{id}")
-	public void delete (@PathVariable("id") final int id)
+	public void delete(@PathVariable("id") final int id)
 	{
 		userRepository.deleteById(id);
 	}
 
 	@CrossOrigin
 	@GetMapping("/users/delete")
-	public void deleteBillNumber (){
-		List<User> userList = userRepository.findAll();
+	public void deleteBillNumber(){
+		List<User> userList = users();
 		for (User user : userList){
 			user.setTotalBill(0);
 			userRepository.save(user);
