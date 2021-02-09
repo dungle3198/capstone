@@ -20,11 +20,15 @@ public class Cluster {
 
     @OneToMany(mappedBy = "cluster", cascade = CascadeType.ALL)
     @NotFound(action= NotFoundAction.IGNORE)
+    List<ClusterStats> clusterStats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "cluster", cascade = CascadeType.ALL)
+    @NotFound(action= NotFoundAction.IGNORE)
+    //List<User> users = new ArrayList<>();
     List<ClusterDetail> clusterDetails = new ArrayList<>();
 
-    @OneToMany(mappedBy = "cluster", cascade = CascadeType.PERSIST)
-    @NotFound(action= NotFoundAction.IGNORE)
-    List<User> users = new ArrayList<>();
+    @Column(name = "primary_user")
+    private int userId;
 
     public Cluster()
     {
@@ -40,20 +44,37 @@ public class Cluster {
     }
 
     @JsonIgnore
-    public List<ClusterDetail> getClusterDetails() {
+    public List<ClusterStats> getClusterDetails() {
+        return clusterStats;
+    }
+
+    public void setClusterDetails(List<ClusterStats> clusterStats) {
+        this.clusterStats = clusterStats;
+    }
+
+//    @JsonIgnore
+//    public List<User> getUsers() {
+//        return users;
+//    }
+//
+//    public void setUsers(List<User> users) {
+//        this.users = users;
+//    }
+
+    @JsonIgnore
+    public List<ClusterDetail> getGroups() {
         return clusterDetails;
     }
 
-    public void setClusterDetails(List<ClusterDetail> clusterDetails) {
+    public void setGroups(List<ClusterDetail> clusterDetails) {
         this.clusterDetails = clusterDetails;
     }
 
-    @JsonIgnore
-    public List<User> getUsers() {
-        return users;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

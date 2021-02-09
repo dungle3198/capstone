@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Cluster;
 import com.example.demo.entities.ClusterDetail;
+import com.example.demo.entities.User;
 import com.example.demo.repositories.ClusterDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,33 +14,41 @@ import java.util.Optional;
 public class ClusterDetailController {
     private final ClusterDetailRepository clusterDetailRepository;
     private final ClusterController clusterController;
+    private final UserController userController;
 
     @Autowired
-    public ClusterDetailController(ClusterDetailRepository clusterDetailRepository, ClusterController clusterController) {
+    public ClusterDetailController(ClusterDetailRepository clusterDetailRepository, ClusterController clusterController, UserController userController) {
         this.clusterDetailRepository = clusterDetailRepository;
         this.clusterController = clusterController;
+        this.userController = userController;
     }
 
     @CrossOrigin
-    @GetMapping ("/cluster_details")
-    public List<ClusterDetail> getAllClusterDetails(){
+    @GetMapping ("/cluster_detail")
+    public List<ClusterDetail> getAllClusterDetail(){
         return clusterDetailRepository.findAll();
     }
 
     @CrossOrigin
-    @GetMapping ("/cluster_details/{id}")
-    public Optional<ClusterDetail> getClusterDetailsById(@PathVariable("id") final int id){
+    @GetMapping ("/cluster_detail/{id}")
+    public Optional<ClusterDetail> getClusterDetailById(@PathVariable("id") final int id){
         return clusterDetailRepository.findById(id);
     }
 
     @CrossOrigin
-    @GetMapping ("/cluster_details/cluster/{id}")
-    public List<ClusterDetail> getClusterDetailsByClusterId(@PathVariable("id") final int id){
+    @GetMapping ("/cluster_detail/cluster/{id}")
+    public List<ClusterDetail> getClusterDetailByClusterId(@PathVariable("id") final int id){
         return clusterDetailRepository.getClusterDetailsByClusterId(id);
     }
 
     @CrossOrigin
-    @PostMapping ("/cluster_details")
+    @GetMapping ("/cluster_detail/user/{id}")
+    public List<ClusterDetail> getClusterDetailByUserId(@PathVariable("id") final int id){
+        return clusterDetailRepository.getClusterDetailsByUserId(id);
+    }
+
+    @CrossOrigin
+    @PostMapping ("/cluster_detail")
     public void add(@RequestBody ClusterDetail clusterDetail){
         if (clusterController.getClusterById(clusterDetail.getCluster().getId()).isPresent()){
             clusterDetailRepository.save(clusterDetail);
@@ -47,27 +56,27 @@ public class ClusterDetailController {
     }
 
     @CrossOrigin
-    @PutMapping ("/cluster_details/{id}")
+    @PutMapping ("/cluster_detail/{id}")
     public void edit(@RequestBody ClusterDetail clusterDetail, @PathVariable("id") final int id){
         ClusterDetail existingDetail;
         Cluster cluster;
+        User user;
         if (clusterController.getClusterById(clusterDetail.getCluster().getId()).isPresent() &&
-                getClusterDetailsById(id).isPresent()){
-            existingDetail = getClusterDetailsById(id).get();
+                userController.getUserById(clusterDetail.getUser().getId()).isPresent() &&
+                getClusterDetailById(id).isPresent()){
+            existingDetail = getClusterDetailById(id).get();
             cluster = clusterController.getClusterById(clusterDetail.getCluster().getId()).get();
+            user = userController.getUserById(clusterDetail.getUser().getId()).get();
         }
         else {return;}
         existingDetail.setId(id);
         existingDetail.setCluster(cluster);
-        existingDetail.setCategory(clusterDetail.getCategory());
-        existingDetail.setBiller(clusterDetail.getBiller());
-        existingDetail.setMean(clusterDetail.getMean());
-        existingDetail.setStandardDeviation(clusterDetail.getStandardDeviation());
+        existingDetail.setUser(user);
         clusterDetailRepository.save(existingDetail);
     }
 
     @CrossOrigin
-    @DeleteMapping ("/cluster_details/{id}")
+    @DeleteMapping ("/cluster_detail/{id}")
     public void delete(@PathVariable("id") final int id){
         clusterDetailRepository.deleteById(id);
     }

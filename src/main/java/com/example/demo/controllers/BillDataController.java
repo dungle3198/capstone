@@ -17,16 +17,16 @@ public class BillDataController {
     private final UserStatsRepository userStatsRepository;
     private final UserController userController;
     private final ClusterController clusterController;
-    private final ClusterDetailRepository clusterDetailRepository;
+    private final ClusterStatsRepository clusterStatsRepository;
 
     @Autowired
-    public BillDataController(BillDataRepository billDataRepository, LogRepository logRepository, UserStatsRepository userStatsRepository, UserController userController, ClusterController clusterController, ClusterDetailRepository clusterDetailRepository) {
+    public BillDataController(BillDataRepository billDataRepository, LogRepository logRepository, UserStatsRepository userStatsRepository, UserController userController, ClusterController clusterController, ClusterStatsRepository clusterStatsRepository) {
         this.billDataRepository = billDataRepository;
         this.logRepository = logRepository;
         this.userStatsRepository = userStatsRepository;
         this.userController = userController;
         this.clusterController = clusterController;
-        this.clusterDetailRepository = clusterDetailRepository;
+        this.clusterStatsRepository = clusterStatsRepository;
     }
 
     @CrossOrigin
@@ -53,6 +53,8 @@ public class BillDataController {
         return billDataRepository.findById(id);
     }
 
+    //Calculate mean month of seasonal data from a specific user
+    //return a map of category list and its respective list of mean month
     @CrossOrigin
     @GetMapping ("/bill_data/mean_month/user/{id}")
     public Map<String, List> getCategoryAndMeanMonthByUserId(@PathVariable ("id") final int id){
@@ -91,6 +93,7 @@ public class BillDataController {
         return mapOfLists;
     }
 
+    //Calculate percentiles of a billing amount list to remove outliers from the equation
     public List<BillData> calculatePercentiles(List<BillData> billDataList){
         DescriptiveStatistics stats = new DescriptiveStatistics();
         billDataList.sort(Comparator.comparing(BillData::getMonthlyAmount));
@@ -105,6 +108,7 @@ public class BillDataController {
         return billDataList;
     }
 
+    //Calculate mean and standard deviation of a billing category of a specific user
     public List<Double> calculateMeanAndStandardDeviation(BillData billData){
         DescriptiveStatistics stats = new DescriptiveStatistics();
         List<Double> statsList = new ArrayList<>();
@@ -129,6 +133,7 @@ public class BillDataController {
         return statsList;
     }
 
+    //Update user_stats table in database after adding, editing, or deleting bills5555
     public void updateUserStats(BillData billData){
         User user = billData.getUser();
         List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
@@ -160,7 +165,7 @@ public class BillDataController {
             userStats.setStandardDeviation(standardDeviation);
 
             double result = standardDeviation / mean;
-            if (result > 0.15){
+            if (result > 0.05){
                 userStats.setBillType("Seasonal");
             }
             else {
@@ -170,6 +175,7 @@ public class BillDataController {
         }
     }
 
+    //Calculate the period between subsequent bills
     public void calculatePeriodAndMonthlyAmount(BillData billData){
         List<BillData> billDataList = billDataRepository.getBillDataWithDate(billData.getUser().getId(),
                                     billData.getCategory(), billData.getBiller());
@@ -204,6 +210,7 @@ public class BillDataController {
         return idList;
     }
 
+    //Get a list of bills which belong to the same cluster with the chosen one for nonseasonal data
     @CrossOrigin
     @GetMapping("/bill_data/clustered_data/{id}")
     public List<BillData> getListOfClusteredBillData(@PathVariable ("id") final int id){
@@ -233,6 +240,7 @@ public class BillDataController {
         return null;
     }
 
+    //Add bill
     @CrossOrigin
     @PostMapping ("/bill_data")
     public void add(@RequestBody BillData billData){
@@ -270,11 +278,6 @@ public class BillDataController {
             billDataList.add(billData);
             addNonSeasonal(billData, billDataList, userStatsList);
         }
-
-        else if (userStatsList.get(0).getNumberOfBills() < 5){
-            billData.setStatus(true);
-            billData.setPredictedAmount(4);
-        }
         else {
             addSeasonal(billData, userStatsList);
         }
@@ -288,6 +291,7 @@ public class BillDataController {
         logRepository.save(activityLog);
     }
 
+    //Add nonseasonal bill
     public void addNonSeasonal(BillData billData, List<BillData> billDataList, List<UserStats> userStatsList){
         if (billDataList.size() < 5){
             List<BillData> subList = billDataList.subList(0, billDataList.size());
@@ -308,8 +312,14 @@ public class BillDataController {
         }
     }
 
+    //Add seasonal bill
     public void addSeasonal(BillData billData, List<UserStats> userStatsList) {
-        Cluster cluster = billData.getUser().getCluster();
+        Cluster cluster = null;
+        List<Cluster> clusters = clusterController.getClusterByPrimaryUserId(billData.getUser().getId());
+        if (!clusters.isEmpty()){
+            cluster = clusters.get(0);
+        }
+
         if (clusterController.clusters().isEmpty()) {
             predictSeasonal(billData, userStatsList);
         }
@@ -321,6 +331,7 @@ public class BillDataController {
         }
     }
 
+    //Predict and determine new bill status by comparing with mean month or category mean before clustering
     public void predictSeasonal(BillData billData, List<UserStats> userStatsList){
         User user = billData.getUser();
         double a;
@@ -347,54 +358,103 @@ public class BillDataController {
         billData.setStatus(a < b);
     }
 
+    //Determine the bill status by comparing with mean of the category in the cluster
     public void predictSeasonalWithCluster(BillData billData, Cluster cluster, List<UserStats> userStatsList){
         User user = billData.getUser();
-        List<ClusterDetail> clusterDetailList = clusterDetailRepository.getClusterDetailsByClusterIdAndCategoryAndBiller(
+        List<ClusterStats> clusterStatsList = clusterStatsRepository.getClusterStatsByClusterIdAndCategoryAndBiller(
                 cluster.getId(), billData.getCategory(), billData.getBiller());
         List<BillData> billDataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
                 user.getId(), billData.getCategory(), billData.getBiller());
 
-        System.out.println(clusterDetailList);
+        System.out.println(clusterStatsList);
         double a;
         double b;
-        if (billDataList.size() < 5 && !clusterDetailList.isEmpty()) {
-            a = Math.abs(billData.getMonthlyAmount() - clusterDetailList.get(0).getMean());
-            b = clusterDetailList.get(0).getStandardDeviation() * 2;
+        if (billDataList.size() < 5 && !clusterStatsList.isEmpty()) {
+            a = Math.abs(billData.getMonthlyAmount() - clusterStatsList.get(0).getMean());
+            b = clusterStatsList.get(0).getStandardDeviation() * 2;
             billData.setPeriod(1);
             billData.setPredictedAmount(b);
             billData.setStatus(a < b);
+        }
+        else if (billDataList.size() < 5){
+            predictSeasonalWithoutCluster(billData, userStatsList);
         }
         else {
             predictSeasonal(billData, userStatsList);
         }
     }
 
+    //Find the closest cluster with the particular category
+    //Determine the bill status based on the mean and standard deviation of the category in the cluster
     public void predictSeasonalWithoutCluster(BillData billData, List<UserStats> userStatsList){
-        double mean = userStatsList.get(0).getMean();
-        double standardDeviation = userStatsList.get(0).getStandardDeviation();
-        List<Cluster> clusterList = clusterController.clusters();
-        List<Double> distanceList = new ArrayList<>();
-        for (Cluster cluster : clusterList){
-            double distance = Double.MAX_VALUE;
-            List<ClusterDetail> clusterDetailList = clusterDetailRepository.getClusterDetailsByClusterIdAndCategoryAndBiller(
-                    cluster.getId(), billData.getCategory(), billData.getBiller());
-            if (!clusterDetailList.isEmpty()){
-                distance = Math.pow(mean - clusterDetailList.get(0).getMean(), 2) +
-                        Math.pow(standardDeviation - clusterDetailList.get(0).getStandardDeviation(), 2);
+        List<UserStats> statsListByUser = userStatsRepository.getUserStatsByUserId(billData.getUser().getId());
+        String billDataUtility = billData.getCategory() + " by " + billData.getBiller();
+        List<String> utilityList = new ArrayList<>();
+        if (!statsListByUser.isEmpty()){
+            for (UserStats userStats : statsListByUser) {
+                String utility = userStats.getCategory() + " by " + userStats.getBiller();
+                utilityList.add(utility);
             }
-            distanceList.add(distance);
         }
 
-        int index = distanceList.indexOf(Collections.min(distanceList));
-        Cluster chosenCluster = clusterList.get(index);
-        List<ClusterDetail> chosenClusterDetailList = clusterDetailRepository.getClusterDetailsByClusterIdAndCategoryAndBiller(
-                chosenCluster.getId(), billData.getCategory(), billData.getBiller());
-        double a = Math.abs(billData.getMonthlyAmount() - chosenClusterDetailList.get(0).getMean());
-        double b = chosenClusterDetailList.get(0).getStandardDeviation() * 2;
-        billData.setStatus(a < b);
-        billData.setPredictedAmount(chosenCluster.getId());
+        List<Cluster> clusterList = clusterController.clusters();
+        List<Cluster> proxyClusterList = new ArrayList<>(clusterList);
+        List<Double> distanceList = new ArrayList<>();
+        for (Cluster cluster : clusterList){
+            List<ClusterStats> clusterStatsList = clusterStatsRepository.getClusterStatsByClusterId(cluster.getId());
+            List<String> clusterUtilityList = new ArrayList<>();
+            for (ClusterStats clusterStats : clusterStatsList){
+                String utility = clusterStats.getCategory() + " by " + clusterStats.getBiller();
+                clusterUtilityList.add(utility);
+            }
+
+            if (clusterUtilityList.contains(billDataUtility)){
+                double distance = Double.MAX_VALUE;
+                List<String> commonUtilityList = new ArrayList<>(utilityList);
+                commonUtilityList.retainAll(clusterUtilityList);
+                double sumOfDistance = 0;
+                int numberOfPoints = 0;
+                if (!commonUtilityList.isEmpty()){
+                    for (String utility : commonUtilityList){
+                        List<UserStats> statsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
+                                billData.getUser().getId(), utility.split(" by ")[0], utility.split(" by ")[1]);
+                        List<ClusterStats> clusterStats = clusterStatsRepository.getClusterStatsByClusterIdAndCategoryAndBiller(
+                                cluster.getId(), utility.split(" by ")[0], utility.split(" by ")[1]);
+                        double mean = statsList.get(0).getMean();
+                        double standardDeviation = statsList.get(0).getStandardDeviation();
+                        sumOfDistance += Math.pow(mean - clusterStats.get(0).getMean(), 2) +
+                                Math.pow(standardDeviation - clusterStats.get(0).getStandardDeviation(), 2);
+                        numberOfPoints += 2;
+                    }
+                    if (sumOfDistance != 0) {
+                        distance = (1 / Math.sqrt(numberOfPoints)) * Math.sqrt(sumOfDistance);
+                        System.out.println(numberOfPoints);
+                    }
+                }
+                distanceList.add(distance);
+            }
+            else {
+                proxyClusterList.remove(cluster);
+            }
+        }
+
+        if (!proxyClusterList.isEmpty()){
+            int index = distanceList.indexOf(Collections.min(distanceList));
+            Cluster chosenCluster = proxyClusterList.get(index);
+            List<ClusterStats> chosenClusterStatsList = clusterStatsRepository.getClusterStatsByClusterIdAndCategoryAndBiller(
+                    chosenCluster.getId(), billData.getCategory(), billData.getBiller());
+            double a = Math.abs(billData.getMonthlyAmount() - chosenClusterStatsList.get(0).getMean());
+            double b = chosenClusterStatsList.get(0).getStandardDeviation() * 2;
+            billData.setStatus(a < b);
+            billData.setPeriod(4);
+            billData.setPredictedAmount(chosenCluster.getId());
+        }
+        else {
+            predictSeasonal(billData, userStatsList);
+        }
     }
 
+    //Edit bill
     @CrossOrigin
     @PutMapping ("/bill_data/{id}")
     public void edit(@RequestBody BillData billData, @PathVariable("id") final int id){
@@ -409,13 +469,13 @@ public class BillDataController {
         proxy.setUser(existingBillData.getUser());
         proxy.setCategory(existingBillData.getCategory());
         proxy.setBiller(existingBillData.getBiller());
+        proxy.setMonthlyAmount(existingBillData.getMonthlyAmount());
 
         existingBillData.setId(id);
         existingBillData.setUser(user);
         existingBillData.setState(billData.getState());
         existingBillData.setMonth(billData.getMonth());
         existingBillData.setYear(billData.getYear());
-
         existingBillData.setCategory(billData.getCategory());
         existingBillData.setBiller(billData.getBiller());
         existingBillData.setAmount(billData.getAmount());
@@ -431,12 +491,32 @@ public class BillDataController {
         }
         updateUserStats(existingBillData);
 
+        //Determine the status of the following bills if the billing amount is changed
+        if (proxy.getMonthlyAmount() != existingBillData.getMonthlyAmount()){
+            List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
+                    existingBillData.getUser().getId(), existingBillData.getCategory(), existingBillData.getBiller());
+            if (userStatsList.get(0).getBillType() != null){
+                List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
+                        existingBillData.getUser().getId(), existingBillData.getCategory(), existingBillData.getBiller());
+                int index = billDataList.indexOf(existingBillData);
+                List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
+
+                if (userStatsList.get(0).getBillType().equalsIgnoreCase("nonseasonal")){
+                    modifyFollowingNonseasonalData(existingBillData, followingDataSubList);
+                }
+                else {
+                    modifyFollowingSeasonalData(existingBillData,followingDataSubList);
+                }
+            }
+        }
+
         //Log
         String description = "Bill " + id + " is edited";
         Log activityLog = new Log("bg-warning", DateTime.now().toString(), proxy.getUser().getId(), description);
         logRepository.save(activityLog);
     }
 
+    //Delete bill
     @CrossOrigin
     @DeleteMapping ("/bill_data/{id}")
     public void delete(@PathVariable ("id") final int id){
@@ -450,8 +530,31 @@ public class BillDataController {
         proxy.setUser(user);
         proxy.setCategory(existingBillData.getCategory());
         proxy.setBiller(existingBillData.getBiller());
+        proxy.setStatus(existingBillData.isStatus());
+
+        List<BillData> followingDataSubList = new ArrayList<>();
+        if (existingBillData.isStatus()){
+            List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
+                    existingBillData.getUser().getId(), existingBillData.getCategory(), existingBillData.getBiller());
+            int index = billDataList.indexOf(existingBillData);
+            followingDataSubList = billDataList.subList(index + 1, billDataList.size());
+        }
         billDataRepository.deleteById(id);
         updateUserStats(proxy);
+
+        //Determine the status of the following bills if the deleted bill's status is true
+        if (proxy.isStatus()){
+            List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
+                    proxy.getUser().getId(), proxy.getCategory(), proxy.getBiller());
+            if (userStatsList.get(0).getBillType() != null){
+                if (userStatsList.get(0).getBillType().equalsIgnoreCase("nonseasonal")){
+                    modifyFollowingNonseasonalData(proxy, followingDataSubList);
+                }
+                else {
+                    modifyFollowingSeasonalData(proxy,followingDataSubList);
+                }
+            }
+        }
 
         //Log
         String description = "Bill " + id + " is deleted";
@@ -459,6 +562,7 @@ public class BillDataController {
         logRepository.save(activityLog);
     }
 
+    //Confirm and change bill stats
     @CrossOrigin
     @GetMapping ("bill_data/confirm/{id}")
     public void confirmBillData (@PathVariable ("id") final int id){
@@ -471,14 +575,20 @@ public class BillDataController {
         billDataRepository.save(billData);
         updateUserStats(billData);
 
+        //Determine the status of the following bills
         List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
                 billData.getUser().getId(), billData.getCategory(), billData.getBiller());
         if (userStatsList.get(0).getBillType() != null){
+            List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
+                    billData.getUser().getId(), billData.getCategory(), billData.getBiller());
+            int index = billDataList.indexOf(billData);
+            List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
+
             if (userStatsList.get(0).getBillType().equalsIgnoreCase("nonseasonal")){
-                modifyFollowingNonseasonalData(billData);
+                modifyFollowingNonseasonalData(billData, followingDataSubList);
             }
             else {
-                modifyFollowingSeasonalData(billData);
+                modifyFollowingSeasonalData(billData,followingDataSubList);
             }
         }
 
@@ -496,12 +606,8 @@ public class BillDataController {
         }
     }
 
-    public void modifyFollowingNonseasonalData(BillData billData){
-        List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
-                billData.getUser().getId(), billData.getCategory(), billData.getBiller());
-        int index = billDataList.indexOf(billData);
-        List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
-
+    //Determine and modify the status of the following bills for nonseasonal data
+    public void modifyFollowingNonseasonalData(BillData billData, List<BillData> followingDataSubList){
         for (BillData eachBillData : followingDataSubList){
             List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
                     billData.getUser().getId(), billData.getCategory(), billData.getBiller());
@@ -529,7 +635,7 @@ public class BillDataController {
             else {
                 List<BillData> billList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
                         billData.getUser().getId(), billData.getCategory(), billData.getBiller());
-                int dataIndex = billDataList.indexOf(eachBillData);
+                int dataIndex = billList.indexOf(eachBillData);
                 List<BillData> previousDataSubList = billList.subList(0, dataIndex);
                 Collections.reverse(previousDataSubList);
                 List<BillData> dataList = billDataRepository.getTrueBillDataByUserIdAndCategoryAndBiller(
@@ -564,11 +670,8 @@ public class BillDataController {
         }
     }
 
-    public void modifyFollowingSeasonalData(BillData billData){
-        List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
-                billData.getUser().getId(), billData.getCategory(), billData.getBiller());
-        int index = billDataList.indexOf(billData);
-        List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
+    //Determine and modify the status of the following bills for seasonal data
+    public void modifyFollowingSeasonalData(BillData billData, List<BillData> followingDataSubList){
         for (BillData eachBillData : followingDataSubList){
             List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
                     billData.getUser().getId(), billData.getCategory(), billData.getBiller());
@@ -578,6 +681,7 @@ public class BillDataController {
         }
     }
 
+    //Calculate cluster centroid
     public double calculateCentroid(List<BillData> billDataList){
         DescriptiveStatistics stats = new DescriptiveStatistics();
         for (BillData billData : billDataList){
@@ -586,6 +690,8 @@ public class BillDataController {
         return stats.getMean();
     }
 
+    //Use K-Mean Clustering algorithm with K=[1,2,3,4,5] for 5 nearest correct nonseasonal bills
+    //return a map of cluster list and its respective centroid value
     public List<Map> clusters(List<BillData> mainBillDataList, int k) {
         List<BillData> billDataList = new ArrayList<>(mainBillDataList);
         Map<Integer, List<BillData>> cluster = new HashMap<>();
@@ -679,6 +785,7 @@ public class BillDataController {
         return maps;
     }
 
+    //Calculate distance from point to cluster
     public double calculateDistP2C(Map<Integer, List<BillData>> cluster, Map<Integer, Double> centroid, int k){
         double distP2C = 0.0;
         for (int i = 0; i < k; i++) {
@@ -696,6 +803,8 @@ public class BillDataController {
         return Math.abs((a * k + b * distP2C + c)) / (Math.sqrt(a * a + b * b));
     }
 
+    //User the Elbow method to determine the optimal K
+    //get the predicted amount for comparison with the actual billing amount to determine billing status
     public List<BillData> predict(List<BillData> billDataList, int k, BillData billData){
         List<Double> sumList = new ArrayList<>();
         List<Map> clusters = new ArrayList<>();

@@ -33,12 +33,6 @@ public class UserController {
 		return userRepository.findById(id);
 	}
 
-	@CrossOrigin
-	@GetMapping("/users/cluster/{id}")
-	public List<User> getUsersByClusterId(@PathVariable("id") final int id){
-		return userRepository.getUsersByClusterId(id);
-	}
-
 	public List<User> getUsersWithBills(){
 		return userRepository.getUsersWithBills();
 	}

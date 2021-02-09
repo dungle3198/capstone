@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.example.demo.entities.*;
+import com.example.demo.repositories.ClusterStatsRepository;
 import com.example.demo.repositories.ClusterDetailRepository;
 import com.example.demo.repositories.UserStatsRepository;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -17,13 +18,15 @@ public class ClusterController {
     private final ClusterRepository clusterRepository;
     private final UserController userController;
     private final UserStatsRepository userStatsRepository;
+    private final ClusterStatsRepository clusterStatsRepository;
     private final ClusterDetailRepository clusterDetailRepository;
 
     @Autowired
-    public ClusterController(ClusterRepository clusterRepository, UserController userController, UserStatsRepository userStatsRepository, ClusterDetailRepository clusterDetailRepository) {
+    public ClusterController(ClusterRepository clusterRepository, UserController userController, UserStatsRepository userStatsRepository, ClusterStatsRepository clusterStatsRepository, ClusterDetailRepository clusterDetailRepository) {
         this.clusterRepository = clusterRepository;
         this.userController = userController;
         this.userStatsRepository = userStatsRepository;
+        this.clusterStatsRepository = clusterStatsRepository;
         this.clusterDetailRepository = clusterDetailRepository;
     }
 
@@ -39,64 +42,61 @@ public class ClusterController {
         return utilityList;
     }
 
-    public void calculateClusterDetails(Cluster cluster, List<ClusterDetail> clusterDetailList){
-        for (ClusterDetail clusterDetail : clusterDetailList){
+    //Calculate mean and standard of categories of the cluster
+    public void calculateClusterStats(List<ClusterStats> clusterStatsList, List<User> users){
+        for (ClusterStats clusterStats : clusterStatsList){
             DescriptiveStatistics meanStats = new DescriptiveStatistics();
             DescriptiveStatistics standardDeviationStats = new DescriptiveStatistics();
 
-            for (User user : cluster.getUsers()){
+            for (User user : users){
                 List<UserStats> userStats = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
-                        user.getId(), clusterDetail.getCategory(), clusterDetail.getBiller());
+                        user.getId(), clusterStats.getCategory(), clusterStats.getBiller());
                 if (!userStats.isEmpty()){
                     meanStats.addValue(userStats.get(0).getMean());
                     standardDeviationStats.addValue(userStats.get(0).getStandardDeviation());
                 }
             }
 
-            clusterDetail.setMean(meanStats.getMean());
-            clusterDetail.setStandardDeviation(standardDeviationStats.getMean());
-            clusterDetailRepository.save(clusterDetail);
+            clusterStats.setMean(meanStats.getMean());
+            clusterStats.setStandardDeviation(standardDeviationStats.getMean());
+            clusterStatsRepository.save(clusterStats);
         }
     }
 
-    public void createAndCalculateClusterDetails(Cluster cluster, List<String> utilityList){
-        List<ClusterDetail> clusterDetailList = new ArrayList<>();
+    public void createAndCalculateClusterStats(Cluster cluster, List<String> utilityList, List<User> users){
+        List<ClusterStats> clusterStatsList = new ArrayList<>();
         for (String utility : utilityList){
-            ClusterDetail clusterDetail = new ClusterDetail();
-            clusterDetail.setCluster(cluster);
-            clusterDetail.setCategory(utility.split(" by ")[0]);
-            clusterDetail.setBiller(utility.split(" by ")[1]);
-            clusterDetailList.add(clusterDetail);
+            ClusterStats clusterStats = new ClusterStats();
+            clusterStats.setCluster(cluster);
+            clusterStats.setCategory(utility.split(" by ")[0]);
+            clusterStats.setBiller(utility.split(" by ")[1]);
+            clusterStatsList.add(clusterStats);
         }
-        calculateClusterDetails(cluster, clusterDetailList);
+        calculateClusterStats(clusterStatsList, users);
     }
 
-    public List<User> createCluster(User userA, List<User> users, int num){
+    //Create cluster, cluster stats and cluster details
+    public void createCluster(User userA, List<User> users, int num){
+        List<User> proxy = new ArrayList<>(users);
         List<User> userList = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
         List<String> utilityListA = createUtilityList(userA);
         Cluster cluster = new Cluster();
-        users.remove(userA);
+        proxy.remove(userA);
 
-        userA.setCluster(cluster);
-        cluster.getUsers().add(userA);
+        cluster.setUserId(userA.getId());
         userList.add(userA);
-        if (users.isEmpty()){
-            add(cluster);
-            createAndCalculateClusterDetails(cluster, utilityListA);
-            return userList;
-        }
 
-        for (User user : users) {
+        for (User user : proxy) {
             double distance = Double.MAX_VALUE;
-            List<String> commonUtility = new ArrayList<>(utilityListA);
+            List<String> commonUtilityList = new ArrayList<>(utilityListA);
             List<String> utilityList = createUtilityList(user);
-            commonUtility.retainAll(utilityList);
+            commonUtilityList.retainAll(utilityList);
             double sumOfDistance = 0;
             int numberOfPoints = 0;
 
-            if (!commonUtility.isEmpty()) {
-                for (String utility : commonUtility) {
+            if (!commonUtilityList.isEmpty()) {
+                for (String utility : commonUtilityList) {
                     List<UserStats> userStats = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
                             user.getId(), utility.split(" by ")[0], utility.split(" by ")[1]);
                     List<UserStats> userStatsA = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
@@ -115,29 +115,30 @@ public class ClusterController {
             System.out.println(distance);
         }
 
+        System.out.println(distances);
         List<String> newUtilityList = new ArrayList<>(utilityListA);
         for (int i = 0; i < num - 1; i++) {
             User user;
             int index = distances.indexOf(Collections.min(distances));
-            user = users.get(index);
+            System.out.println(index);
+            user = proxy.get(index);
             List<String> utilityList = createUtilityList(user);
             newUtilityList.addAll(utilityList);
-
-            user.setCluster(cluster);
-            cluster.getUsers().add(user);
             distances.remove(index);
-            users.remove(index);
+            proxy.remove(index);
             userList.add(user);
-            if (users.isEmpty()){
-                break;
-            }
         }
 
         List<String> result = newUtilityList.stream().distinct().collect(Collectors.toList());
         System.out.println("RESULT = " + result);
         add(cluster);
-        createAndCalculateClusterDetails(cluster, result);
-        return userList;
+        createAndCalculateClusterStats(cluster, result, userList);
+        for (User user : userList){
+            ClusterDetail clusterDetail = new ClusterDetail();
+            clusterDetail.setUser(user);
+            clusterDetail.setCluster(cluster);
+            clusterDetailRepository.save(clusterDetail);
+        }
     }
 
     @CrossOrigin
@@ -146,28 +147,34 @@ public class ClusterController {
         return clusterRepository.findAll();
     }
 
+    //Create cluster
     @CrossOrigin
     @GetMapping("/clusters/create")
     public void create(){
+        if (!clusters().isEmpty()){
+            delete();
+        }
+
         List<User> users = userController.getUsersWithBills();
-        //users.removeIf(User::isNewUser);
         List<User> userList = new ArrayList<>(users);
         for (User user : users){
-            List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndBillType(user.getId(), "Seasonal");
+            List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndBillType(
+                                                    user.getId(), "Seasonal");
             if (userStatsList.isEmpty()){
                 userList.remove(user);
+            }
+            else {
+                for (UserStats userStats : userStatsList){
+                    if (userStats.getNumberOfBills() < 5){
+                        userList.remove(user);
+                    }
+                }
             }
         }
 
         users.retainAll(userList);
         for (User user : users) {
-            if (userList.isEmpty()){
-                break;
-            }
-            else if (user.getCluster() == null){
-                List<User> clusteredUsers = createCluster(user, userList, 3);
-                userList.removeAll(clusteredUsers);
-            }
+            createCluster(user, userList, 3);
         }
     }
 
@@ -176,6 +183,13 @@ public class ClusterController {
     public Optional<Cluster> getClusterById(@PathVariable("id") final int id)
     {
         return clusterRepository.findById(id);
+    }
+
+    @CrossOrigin
+    @GetMapping("/clusters/user/{id}")
+    public List<Cluster> getClusterByPrimaryUserId(@PathVariable("id") final int id)
+    {
+        return clusterRepository.getClusterByPrimaryUserId(id);
     }
 
     @CrossOrigin
@@ -199,10 +213,6 @@ public class ClusterController {
         List<Cluster> clusters = clusters();
         List<Cluster> clusterList = new ArrayList<>(clusters);
         for (Cluster cluster : clusterList){
-            List<User> users = userController.getUsersByClusterId(cluster.getId());
-            for (User user : users){
-                user.setCluster(null);
-            }
             clusterRepository.delete(cluster);
         }
     }

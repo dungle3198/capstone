@@ -1,9 +1,9 @@
 package com.example.demo.repositories;
-
-import com.example.demo.entities.ClusterDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import com.example.demo.entities.ClusterDetail;
 
 import java.util.List;
 
@@ -12,6 +12,6 @@ public interface ClusterDetailRepository extends JpaRepository<ClusterDetail, In
     @Query("select c from ClusterDetail c where c.cluster.id = ?1")
     List<ClusterDetail> getClusterDetailsByClusterId(int id);
 
-    @Query("select c from ClusterDetail c where c.cluster.id = ?1 and c.category = ?2 and c.biller = ?3")
-    List<ClusterDetail> getClusterDetailsByClusterIdAndCategoryAndBiller(int id, String category, String biller);
+    @Query("select c from ClusterDetail c where c.user.id = ?1")
+    List<ClusterDetail> getClusterDetailsByUserId(int id);
 }
