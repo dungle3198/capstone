@@ -35,7 +35,10 @@ public class ClusterStatsController {
     @CrossOrigin
     @GetMapping ("/cluster_stats/cluster/{id}")
     public List<ClusterStats> getClusterStatsByClusterId(@PathVariable("id") final int id){
-        return clusterStatsRepository.getClusterStatsByClusterId(id);
+        if (clusterController.getClusterById(id).isPresent()) {
+            return clusterStatsRepository.getClusterStatsByClusterId(id);
+        }
+        return null;
     }
 
     @CrossOrigin

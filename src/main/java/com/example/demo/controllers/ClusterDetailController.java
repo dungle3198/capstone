@@ -38,19 +38,26 @@ public class ClusterDetailController {
     @CrossOrigin
     @GetMapping ("/cluster_detail/cluster/{id}")
     public List<ClusterDetail> getClusterDetailByClusterId(@PathVariable("id") final int id){
-        return clusterDetailRepository.getClusterDetailsByClusterId(id);
+        if (clusterController.getClusterById(id).isPresent()) {
+            return clusterDetailRepository.getClusterDetailsByClusterId(id);
+        }
+        return null;
     }
 
     @CrossOrigin
     @GetMapping ("/cluster_detail/user/{id}")
     public List<ClusterDetail> getClusterDetailByUserId(@PathVariable("id") final int id){
-        return clusterDetailRepository.getClusterDetailsByUserId(id);
+        if (userController.getUserById(id).isPresent()){
+            return clusterDetailRepository.getClusterDetailsByUserId(id);
+        }
+        return null;
     }
 
     @CrossOrigin
     @PostMapping ("/cluster_detail")
     public void add(@RequestBody ClusterDetail clusterDetail){
-        if (clusterController.getClusterById(clusterDetail.getCluster().getId()).isPresent()){
+        if (clusterController.getClusterById(clusterDetail.getCluster().getId()).isPresent() &&
+                userController.getUserById(clusterDetail.getUser().getId()).isPresent()){
             clusterDetailRepository.save(clusterDetail);
         }
     }

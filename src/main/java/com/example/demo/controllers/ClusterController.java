@@ -189,22 +189,33 @@ public class ClusterController {
     @GetMapping("/clusters/user/{id}")
     public List<Cluster> getClusterByPrimaryUserId(@PathVariable("id") final int id)
     {
-        return clusterRepository.getClusterByPrimaryUserId(id);
+        if (userController.getUserById(id).isPresent()) {
+            return clusterRepository.getClusterByPrimaryUserId(id);
+        }
+        return null;
     }
 
     @CrossOrigin
     @PostMapping("/clusters")
     public void add(@RequestBody Cluster cluster)
     {
-        clusterRepository.save(cluster);
+        if (userController.getUserById(cluster.getUserId()).isPresent()) {
+            clusterRepository.save(cluster);
+        }
     }
 
     @CrossOrigin
     @PutMapping("/clusters/{id}")
     public void edit(@RequestBody Cluster cluster, @PathVariable("id") final int id){
-        if (getClusterById(id).isPresent()){
-            clusterRepository.save(cluster);
+        Cluster existingCluster;
+        if (userController.getUserById(cluster.getUserId()).isPresent() &&
+                getClusterById(id).isPresent()){
+            existingCluster = getClusterById(id).get();
         }
+        else {return;}
+        existingCluster.setId(id);
+        existingCluster.setUserId(cluster.getUserId());
+        clusterRepository.save(cluster);
     }
 
     @CrossOrigin

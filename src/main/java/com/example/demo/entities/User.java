@@ -31,17 +31,12 @@ public class User {
 	@NotFound(action= NotFoundAction.IGNORE)
 	List<UserStats> userStats = new ArrayList<>();
 
-	@Column(name = "total_bill")
-	private int totalBill;
-
-//	@ManyToOne
-//	@NotFound(action= NotFoundAction.IGNORE)
-//	@JoinColumn(name = "cluster_id")
-//	private Cluster cluster;
-
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	@NotFound(action= NotFoundAction.IGNORE)
 	List<ClusterDetail> clusterDetails = new ArrayList<>();
+
+	@Column(name = "total_bill")
+	private int totalBill;
 
 	public User() {
 	}
@@ -96,20 +91,12 @@ public class User {
 		this.totalBill = totalBill;
 	}
 
-//	public Cluster getCluster() {
-//		return cluster;
-//	}
-//
-//	public void setCluster(Cluster cluster) {
-//		this.cluster = cluster;
-//	}
-
 	@JsonIgnore
-	public List<ClusterDetail> getGroups() {
+	public List<ClusterDetail> getClusterDetails() {
 		return clusterDetails;
 	}
 
-	public void setGroups(List<ClusterDetail> clusterDetails) {
+	public void setClusterDetails(List<ClusterDetail> clusterDetails) {
 		this.clusterDetails = clusterDetails;
 	}
 }

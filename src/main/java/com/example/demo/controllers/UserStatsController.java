@@ -22,6 +22,12 @@ public class UserStatsController {
     }
 
     @CrossOrigin
+    @GetMapping("/user_stats")
+    public List<UserStats> getAllUserStats(){
+        return userStatsRepository.findAll();
+    }
+
+    @CrossOrigin
     @GetMapping("/user_stats/{id}")
     public Optional<UserStats> getUserStatsById (@PathVariable ("id") final int id){
         return userStatsRepository.findById(id);
@@ -30,19 +36,18 @@ public class UserStatsController {
     @CrossOrigin
     @GetMapping("/user_stats/user/{id}")
     public List<UserStats> getUserStatsByUserId (@PathVariable ("id") final int id){
-        return userStatsRepository.getUserStatsByUserId(id);
-    }
-
-    @CrossOrigin
-    @GetMapping("/user_stats")
-    public List<UserStats> getAllUserStats(){
-        return userStatsRepository.findAll();
+        if (userController.getUserById(id).isPresent()) {
+            return userStatsRepository.getUserStatsByUserId(id);
+        }
+        return null;
     }
 
     @CrossOrigin
     @PostMapping("/user_stats")
     public void add(@RequestBody UserStats userStats){
-        userStatsRepository.save(userStats);
+        if (userController.getUserById(userStats.getUser().getId()).isPresent()) {
+            userStatsRepository.save(userStats);
+        }
     }
 
     @CrossOrigin
@@ -50,7 +55,8 @@ public class UserStatsController {
     public void edit(@RequestBody UserStats userStats, @PathVariable ("id") final int id){
         UserStats existingUserStats;
         User user;
-        if (userController.getUserById(userStats.getUser().getId()).isPresent() && getUserStatsById(id).isPresent()){
+        if (userController.getUserById(userStats.getUser().getId()).isPresent() &&
+                getUserStatsById(id).isPresent()){
             existingUserStats = getUserStatsById(id).get();
             user = userController.getUserById(userStats.getUser().getId()).get();
         }

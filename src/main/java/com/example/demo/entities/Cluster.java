@@ -24,7 +24,6 @@ public class Cluster {
 
     @OneToMany(mappedBy = "cluster", cascade = CascadeType.ALL)
     @NotFound(action= NotFoundAction.IGNORE)
-    //List<User> users = new ArrayList<>();
     List<ClusterDetail> clusterDetails = new ArrayList<>();
 
     @Column(name = "primary_user")
@@ -44,29 +43,20 @@ public class Cluster {
     }
 
     @JsonIgnore
-    public List<ClusterStats> getClusterDetails() {
+    public List<ClusterStats> getClusterStats() {
         return clusterStats;
     }
 
-    public void setClusterDetails(List<ClusterStats> clusterStats) {
+    public void setClusterStats(List<ClusterStats> clusterStats) {
         this.clusterStats = clusterStats;
     }
 
-//    @JsonIgnore
-//    public List<User> getUsers() {
-//        return users;
-//    }
-//
-//    public void setUsers(List<User> users) {
-//        this.users = users;
-//    }
-
     @JsonIgnore
-    public List<ClusterDetail> getGroups() {
+    public List<ClusterDetail> getClusterDetails() {
         return clusterDetails;
     }
 
-    public void setGroups(List<ClusterDetail> clusterDetails) {
+    public void setClusterDetails(List<ClusterDetail> clusterDetails) {
         this.clusterDetails = clusterDetails;
     }
 
