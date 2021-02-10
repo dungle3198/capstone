@@ -493,21 +493,7 @@ public class BillDataController {
 
         //Determine the status of the following bills if the billing amount is changed
         if (proxy.getMonthlyAmount() != existingBillData.getMonthlyAmount()){
-            List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
-                    existingBillData.getUser().getId(), existingBillData.getCategory(), existingBillData.getBiller());
-            if (userStatsList.get(0).getBillType() != null){
-                List<BillData> billDataList = billDataRepository.getBillDataByUserIdAndCategoryAndBiller(
-                        existingBillData.getUser().getId(), existingBillData.getCategory(), existingBillData.getBiller());
-                int index = billDataList.indexOf(existingBillData);
-                List<BillData> followingDataSubList = billDataList.subList(index + 1, billDataList.size());
-
-                if (userStatsList.get(0).getBillType().equalsIgnoreCase("nonseasonal")){
-                    modifyFollowingNonseasonalData(existingBillData, followingDataSubList);
-                }
-                else {
-                    modifyFollowingSeasonalData(existingBillData,followingDataSubList);
-                }
-            }
+            modifyFollowingData(existingBillData);
         }
 
         //Log
@@ -574,8 +560,25 @@ public class BillDataController {
         billData.setStatus(!billData.isStatus());
         billDataRepository.save(billData);
         updateUserStats(billData);
+        modifyFollowingData(billData);
 
-        //Determine the status of the following bills
+
+        if (billData.isStatus()) {
+            //Log
+            String description = "Bill " + id + " is confirmed";
+            Log activityLog = new Log("bg-success", DateTime.now().toString(), billData.getUser().getId(), description);
+            logRepository.save(activityLog);
+        }
+        else {
+            //Log
+            String description = "Bill " + id + " is reported";
+            Log activityLog = new Log("bg-danger", DateTime.now().toString(), billData.getUser().getId(), description);
+            logRepository.save(activityLog);
+        }
+    }
+
+    //Determine the status of the following bills
+    public void modifyFollowingData(BillData billData){
         List<UserStats> userStatsList = userStatsRepository.getUserStatsByUserIdAndCategoryAndBiller(
                 billData.getUser().getId(), billData.getCategory(), billData.getBiller());
         if (userStatsList.get(0).getBillType() != null){
@@ -590,19 +593,6 @@ public class BillDataController {
             else {
                 modifyFollowingSeasonalData(billData,followingDataSubList);
             }
-        }
-
-        if (billData.isStatus()) {
-            //Log
-            String description = "Bill " + id + " is confirmed";
-            Log activityLog = new Log("bg-success", DateTime.now().toString(), billData.getUser().getId(), description);
-            logRepository.save(activityLog);
-        }
-        else {
-            //Log
-            String description = "Bill " + id + " is reported";
-            Log activityLog = new Log("bg-danger", DateTime.now().toString(), billData.getUser().getId(), description);
-            logRepository.save(activityLog);
         }
     }
 
